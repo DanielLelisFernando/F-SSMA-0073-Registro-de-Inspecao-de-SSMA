@@ -1,6 +1,5 @@
 package br.com.ssma.inspecoes
 
-import android.app.Activity
 import android.content.ContentValues
 import android.content.Intent
 import android.database.sqlite.SQLiteDatabase
@@ -16,448 +15,87 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.lightColorScheme
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
+import org.json.JSONArray
+import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
-data class Finding(
-    val desc: String = "",
-    val severity: String = "LEVE",
-    val action: String = "",
-    val deadline: String = "",
-    val owner: String = "",
-    val photo: Uri? = null
-)
+private const val APP_VERSION = "2.0.0"
+data class Finding(val desc:String="",val severity:String="LEVE",val action:String="",val deadline:String="",val owner:String="",val photo:String="")
+data class Inspection(val id:Int,val responsible:String,val number:String,val date:String,val location:String,val findings:List<Finding>,val pdf:String="")
 
-class DB(context: Activity) : SQLiteOpenHelper(context, "ssma.db", null, 1) {
-    override fun onCreate(db: SQLiteDatabase) {
-        db.execSQL(
-            "CREATE TABLE inspections(" +
-                "id INTEGER PRIMARY KEY, responsible TEXT, number TEXT, date TEXT, " +
-                "location TEXT, findings TEXT, pdf TEXT)"
-        )
-    }
-
-    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) = Unit
-
-    fun save(
-        responsible: String,
-        number: String,
-        date: String,
-        location: String,
-        findings: String,
-        pdf: String
-    ) {
-        val values = ContentValues().apply {
-            put("responsible", responsible)
-            put("number", number)
-            put("date", date)
-            put("location", location)
-            put("findings", findings)
-            put("pdf", pdf)
-        }
-        writableDatabase.insert("inspections", null, values)
-    }
+class DB(ctx:android.content.Context):SQLiteOpenHelper(ctx,"ssma.db",null,2){
+ override fun onCreate(db:SQLiteDatabase){db.execSQL("CREATE TABLE inspections(id INTEGER PRIMARY KEY AUTOINCREMENT,responsible TEXT,number TEXT,date TEXT,location TEXT,findings TEXT,pdf TEXT)")}
+ override fun onUpgrade(db:SQLiteDatabase,old:Int,new:Int){ if(old<2){ try{db.execSQL("ALTER TABLE inspections ADD COLUMN findings TEXT")}catch(_:Exception){} } }
+ fun encode(fs:List<Finding>):String=JSONArray().apply{fs.forEach{put(JSONObject().put("desc",it.desc).put("severity",it.severity).put("action",it.action).put("deadline",it.deadline).put("owner",it.owner).put("photo",it.photo))}}.toString()
+ fun decode(s:String):List<Finding>{try{val a=JSONArray(s);return (0 until a.length()).map{val o=a.getJSONObject(it);Finding(o.optString("desc"),o.optString("severity","LEVE"),o.optString("action"),o.optString("deadline"),o.optString("owner"),o.optString("photo"))}}catch(_:Exception){return if(s.isBlank()) emptyList() else listOf(Finding(desc=s))}}
+ fun save(i:Inspection):Int{val v=ContentValues().apply{put("responsible",i.responsible);put("number",i.number);put("date",i.date);put("location",i.location);put("findings",encode(i.findings));put("pdf",i.pdf)};return writableDatabase.insert("inspections",null,v).toInt()}
+ fun update(i:Inspection){val v=ContentValues().apply{put("responsible",i.responsible);put("number",i.number);put("date",i.date);put("location",i.location);put("findings",encode(i.findings));put("pdf",i.pdf)};writableDatabase.update("inspections",v,"id=?",arrayOf(i.id.toString()))}
+ fun list():List<Inspection>{val c=readableDatabase.rawQuery("SELECT id,responsible,number,date,location,findings,pdf FROM inspections ORDER BY id DESC",null);val l=mutableListOf<Inspection>();while(c.moveToNext()){l+=Inspection(c.getInt(0),c.getString(1)?: "",c.getString(2)?: "",c.getString(3)?: "",c.getString(4)?: "",decode(c.getString(5)?: ""),c.getString(6)?: "")};c.close();return l}
 }
 
-class MainActivity : ComponentActivity() {
-    private lateinit var db: DB
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        db = DB(this)
-
-        setContent {
-            MaterialTheme(
-                colorScheme = lightColorScheme(
-                    primary = Color(0xFF252D87),
-                    secondary = Color(0xFF20A9D2),
-                    background = Color(0xFFF4F8FC),
-                    surface = Color.White,
-                    surfaceVariant = Color(0xFFEAF6FC)
-                )
-            ) {
-                var responsible by remember { mutableStateOf("") }
-                var number by remember { mutableStateOf("") }
-                var date by remember { mutableStateOf("") }
-                var location by remember { mutableStateOf("") }
-                var findings by remember { mutableStateOf(listOf(Finding())) }
-                var photoTarget by remember { mutableIntStateOf(0) }
-
-                val galleryLauncher = rememberLauncherForActivityResult(
-                    ActivityResultContracts.GetContent()
-                ) { uri ->
-                    if (uri != null && photoTarget in findings.indices) {
-                        findings = findings.toMutableList().also { list ->
-                            list[photoTarget] = list[photoTarget].copy(photo = uri)
-                        }
-                    }
-                }
-
-                val cameraLauncher = rememberLauncherForActivityResult(
-                    ActivityResultContracts.TakePicturePreview()
-                ) { bitmap ->
-                    if (bitmap != null && photoTarget in findings.indices) {
-                        val photoFile = File(cacheDir, "desvio_${System.currentTimeMillis()}.jpg")
-                        FileOutputStream(photoFile).use { output ->
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 85, output)
-                        }
-                        findings = findings.toMutableList().also { list ->
-                            list[photoTarget] = list[photoTarget].copy(
-                                photo = Uri.fromFile(photoFile)
-                            )
-                        }
-                    }
-                }
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                        .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Text(
-                        "Registro de Inspeção de SSMA",
-                        style = MaterialTheme.typography.headlineSmall
-                    )
-                    Text("F-SSMA-0073 • Rev.00")
-
-                    OutlinedTextField(
-                        value = responsible,
-                        onValueChange = { responsible = it },
-                        label = { Text("Responsável inspeção") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    OutlinedTextField(
-                        value = number,
-                        onValueChange = { number = it },
-                        label = { Text("Nº Inspeção") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    OutlinedTextField(
-                        value = date,
-                        onValueChange = { date = it },
-                        label = { Text("Data (dd/mm/aaaa)") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    OutlinedTextField(
-                        value = location,
-                        onValueChange = { location = it },
-                        label = { Text("Local") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    Text("Condições / desvios", style = MaterialTheme.typography.titleMedium)
-
-                    findings.forEachIndexed { index, finding ->
-                        FindingCard(
-                            index = index,
-                            finding = finding,
-                            onFindingChange = { updated ->
-                                findings = findings.toMutableList().also { it[index] = updated }
-                            },
-                            onGallery = {
-                                photoTarget = index
-                                galleryLauncher.launch("image/*")
-                            },
-                            onCamera = {
-                                photoTarget = index
-                                cameraLauncher.launch(null)
-                            },
-                            onRemovePhoto = {
-                                findings = findings.toMutableList().also {
-                                    it[index] = it[index].copy(photo = null)
-                                }
-                            },
-                            loadPhoto = ::loadPhoto
-                        )
-                    }
-
-                    Button(
-                        onClick = { findings = findings + Finding() },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("Adicionar desvio")
-                    }
-
-                    Button(
-                        onClick = {
-                            if (findings.any { it.desc.isBlank() }) {
-                                Toast.makeText(
-                                    this@MainActivity,
-                                    "Preencha a descrição de todos os desvios.",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                            } else {
-                                val pdfFile = makePdf(
-                                    responsible,
-                                    number,
-                                    date,
-                                    location,
-                                    findings
-                                )
-                                db.save(
-                                    responsible,
-                                    number,
-                                    date,
-                                    location,
-                                    findings.joinToString("\n") { it.desc },
-                                    pdfFile.absolutePath
-                                )
-                                Toast.makeText(
-                                    this@MainActivity,
-                                    "Inspeção salva e PDF criado.",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                                sharePdf(pdfFile)
-                            }
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("Salvar e gerar PDF")
-                    }
-                }
-            }
-        }
-    }
-
-    private fun loadPhoto(uri: Uri): Bitmap? {
-        return try {
-            if (uri.scheme == "file") {
-                uri.path?.let(BitmapFactory::decodeFile)
-            } else {
-                contentResolver.openInputStream(uri)?.use(BitmapFactory::decodeStream)
-            }
-        } catch (_: Exception) {
-            null
-        }
-    }
-
-    private fun makePdf(
-        responsible: String,
-        number: String,
-        date: String,
-        location: String,
-        findings: List<Finding>
-    ): File {
-        val document = PdfDocument()
-        var pageNumber = 1
-        var page = document.startPage(
-            PdfDocument.PageInfo.Builder(595, 842, pageNumber).create()
-        )
-        var canvas = page.canvas
-        var y = 48
-
-        val headingPaint = android.graphics.Paint().apply {
-            textSize = 16f
-            isFakeBoldText = true
-        }
-        val textPaint = android.graphics.Paint().apply { textSize = 12f }
-
-        fun writeLine(text: String) {
-            canvas.drawText(text.take(90), 40f, y.toFloat(), textPaint)
-            y += 20
-        }
-
-        fun nextPage() {
-            document.finishPage(page)
-            pageNumber += 1
-            page = document.startPage(
-                PdfDocument.PageInfo.Builder(595, 842, pageNumber).create()
-            )
-            canvas = page.canvas
-            y = 48
-        }
-
-        canvas.drawText(
-            "F-SSMA-0073 • REGISTRO DE INSPEÇÃO DE SSMA • Rev.00",
-            40f,
-            y.toFloat(),
-            headingPaint
-        )
-        y += 30
-        writeLine("Responsável: $responsible")
-        writeLine("Nº: $number   Data: $date   Local: $location")
-        y += 12
-
-        findings.forEachIndexed { index, finding ->
-            if (y > 700) nextPage()
-            canvas.drawText("DESVIO ${index + 1}", 40f, y.toFloat(), headingPaint)
-            y += 24
-
-            listOf(
-                "Descrição: ${finding.desc}",
-                "Severidade: ${finding.severity}",
-                "Ação: ${finding.action}",
-                "Prazo: ${finding.deadline}",
-                "Responsável: ${finding.owner}"
-            ).forEach { writeLine(it) }
-
-            finding.photo?.let { photoUri ->
-                val bitmap = loadPhoto(photoUri)
-                if (bitmap != null) {
-                    if (y + 230 > 790) nextPage()
-                    val ratio = minOf(300f / bitmap.width, 220f / bitmap.height)
-                    val scaled = Bitmap.createScaledBitmap(
-                        bitmap,
-                        (bitmap.width * ratio).toInt().coerceAtLeast(1),
-                        (bitmap.height * ratio).toInt().coerceAtLeast(1),
-                        true
-                    )
-                    canvas.drawBitmap(scaled, 40f, y.toFloat(), null)
-                    y += scaled.height + 12
-                    if (scaled !== bitmap) scaled.recycle()
-                    bitmap.recycle()
-                }
-            }
-            y += 18
-        }
-
-        document.finishPage(page)
-        val outputFile = File(filesDir, "Inspecao_${System.currentTimeMillis()}.pdf")
-        FileOutputStream(outputFile).use(document::writeTo)
-        document.close()
-        return outputFile
-    }
-
-    private fun sharePdf(file: File) {
-        val uri = Uri.fromFile(file)
-        val sendIntent = Intent(Intent.ACTION_SEND).apply {
-            type = "application/pdf"
-            putExtra(Intent.EXTRA_STREAM, uri)
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
-        startActivity(Intent.createChooser(sendIntent, "Compartilhar PDF"))
-    }
-}
-
-@androidx.compose.runtime.Composable
-private fun FindingCard(
-    index: Int,
-    finding: Finding,
-    onFindingChange: (Finding) -> Unit,
-    onGallery: () -> Unit,
-    onCamera: () -> Unit,
-    onRemovePhoto: () -> Unit,
-    loadPhoto: (Uri) -> Bitmap?
-) {
-    var severityMenuExpanded by remember(index) { mutableStateOf(false) }
-
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(18.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            Text("Desvio #${index + 1}", style = MaterialTheme.typography.titleSmall)
-
-            OutlinedTextField(
-                value = finding.desc,
-                onValueChange = { onFindingChange(finding.copy(desc = it)) },
-                label = { Text("Descrição do desvio (obrigatória)") },
-                modifier = Modifier.fillMaxWidth(),
-                minLines = 3
-            )
-
-            Box {
-                OutlinedButton(onClick = { severityMenuExpanded = true }) {
-                    Text("Severidade: ${finding.severity}")
-                }
-                DropdownMenu(
-                    expanded = severityMenuExpanded,
-                    onDismissRequest = { severityMenuExpanded = false }
-                ) {
-                    listOf("LEVE", "MODERADA", "GRAVE", "CRÍTICO").forEach { severity ->
-                        DropdownMenuItem(
-                            text = { Text(severity) },
-                            onClick = {
-                                onFindingChange(finding.copy(severity = severity))
-                                severityMenuExpanded = false
-                            }
-                        )
-                    }
-                }
-            }
-
-            OutlinedTextField(
-                value = finding.action,
-                onValueChange = { onFindingChange(finding.copy(action = it)) },
-                label = { Text("Ação para adequação/correção") },
-                modifier = Modifier.fillMaxWidth(),
-                minLines = 2
-            )
-            OutlinedTextField(
-                value = finding.deadline,
-                onValueChange = { onFindingChange(finding.copy(deadline = it)) },
-                label = { Text("Prazo de execução") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            OutlinedTextField(
-                value = finding.owner,
-                onValueChange = { onFindingChange(finding.copy(owner = it)) },
-                label = { Text("Responsável") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Button(onClick = onGallery) { Text("Galeria") }
-                Button(onClick = onCamera) { Text("Câmera") }
-            }
-
-            finding.photo?.let { uri ->
-                val bitmap = remember(uri) { loadPhoto(uri) }
-                if (bitmap != null) {
-                    Image(
-                        bitmap = bitmap.asImageBitmap(),
-                        contentDescription = "Foto do desvio ${index + 1}",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(180.dp)
-                    )
-                } else {
-                    Text("Não foi possível carregar a foto selecionada.")
-                }
-            }
-
-            if (finding.photo != null) {
-                TextButton(onClick = onRemovePhoto) {
-                    Text("Remover foto")
-                }
-            }
-        }
-    }
+class MainActivity:ComponentActivity(){
+ private lateinit var db:DB
+ override fun onCreate(savedInstanceState:Bundle?){super.onCreate(savedInstanceState);db=DB(this)
+ setContent { MaterialTheme(colorScheme=lightColorScheme(primary=Color(0xFF252D87),secondary=Color(0xFF20A9D2),background=Color(0xFFF4F8FC),surface=Color.White)){
+ var screen by remember{mutableStateOf("home")};var editing by remember{mutableStateOf<Inspection?>(null)};var refresh by remember{mutableIntStateOf(0)}
+ fun toast(s:String)=Toast.makeText(this@MainActivity,s,Toast.LENGTH_SHORT).show()
+ fun shareFiles(files:List<File>,zip:Boolean=false){try{val uris=files.map{FileProvider.getUriForFile(this@MainActivity,"br.com.ssma.inspecoes.fileprovider",it)};val intent=if(uris.size==1&&!zip)Intent(Intent.ACTION_SEND).apply{type="application/pdf";putExtra(Intent.EXTRA_STREAM,uris[0])}else Intent(Intent.ACTION_SEND_MULTIPLE).apply{type=if(zip)"application/zip" else "application/pdf";putParcelableArrayListExtra(Intent.EXTRA_STREAM,ArrayList(uris))};intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);startActivity(Intent.createChooser(intent,"Compartilhar exportação"))}catch(e:Exception){toast("Falha ao compartilhar: ${e.message}")}}
+ fun pdf(i:Inspection):File{val doc=PdfDocument();var page=doc.startPage(PdfDocument.PageInfo.Builder(595,842,1).create());var canvas=page.canvas;val p=android.graphics.Paint().apply{textSize=12f};val h=android.graphics.Paint().apply{textSize=16f;isFakeBoldText=true};var y=45
+ fun line(t:String){if(y>780){doc.finishPage(page);page=doc.startPage(PdfDocument.PageInfo.Builder(595,842,doc.pages.size+1).create());canvas=page.canvas;y=45};canvas.drawText(t.take(100),40f,y.toFloat(),p);y+=20}
+ canvas.drawText("F-SSMA-0073 • REGISTRO DE INSPEÇÃO DE SSMA",40f,y.toFloat(),h);y+=30;line("Responsável: ${i.responsible}");line("Nº: ${i.number} | Data: ${i.date} | Local: ${i.location}");y+=12
+ i.findings.forEachIndexed{n,f->canvas.drawText("DESVIO ${n+1}",40f,y.toFloat(),h);y+=25;line("Descrição: ${f.desc}");line("Severidade: ${f.severity}");line("Ação: ${f.action}");line("Prazo: ${f.deadline}");line("Responsável: ${f.owner}");if(f.photo.isNotBlank()){try{val b=loadBitmap(Uri.parse(f.photo));if(b!=null){if(y+200>780){doc.finishPage(page);page=doc.startPage(PdfDocument.PageInfo.Builder(595,842,doc.pages.size+1).create());canvas=page.canvas;y=45};val scaled=Bitmap.createScaledBitmap(b, minOf(b.width,300),minOf(b.height,200),true);canvas.drawBitmap(scaled,40f,y.toFloat(),null);y+=scaled.height+10;b.recycle()}}catch(_:Exception){}};y+=15}
+ doc.finishPage(page);val f=File(filesDir,"Inspecao_${i.number.ifBlank{System.currentTimeMillis().toString()}}.pdf");FileOutputStream(f).use{doc.writeTo(it)};doc.close();return f}
+ val gallery=rememberLauncherForActivityResult(ActivityResultContracts.GetContent()){uri->if(uri!=null&&photoIndex>=0&&photoIndex<findings.size)findings=findings.toMutableList().also{it[photoIndex]=it[photoIndex].copy(photo=uri.toString())}}
+ var photoIndex by remember{mutableIntStateOf(-1)}
+ val camera=rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()){b->if(b!=null&&photoIndex in findings.indices){val f=File(filesDir,"photo_${System.currentTimeMillis()}.jpg");FileOutputStream(f).use{b.compress(Bitmap.CompressFormat.JPEG,85,it)};findings=findings.toMutableList().also{it[photoIndex]=it[photoIndex].copy(photo=Uri.fromFile(f).toString())}}}
+ var responsible by remember{mutableStateOf("")};var number by remember{mutableStateOf("")};var date by remember{mutableStateOf("")};var location by remember{mutableStateOf("")};var findings by remember{mutableStateOf(listOf(Finding()))}
+ var filterStart by remember{mutableStateOf("")};var filterEnd by remember{mutableStateOf("")};var selected by remember{mutableStateOf(setOf<Int>())}
+ fun startForm(ins:Inspection?){editing=ins;responsible=ins?.responsible?: "";number=ins?.number?: "";date=ins?.date?: "";location=ins?.location?: "";findings=ins?.findings?:listOf(Finding());screen="form"}
+ Column(Modifier.fillMaxSize().imePadding().padding(16.dp),verticalArrangement=Arrangement.spacedBy(12.dp)){
+ when(screen){
+ "home"->Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(18.dp)){
+ Card(colors=CardDefaults.cardColors(containerColor=Color(0xFFEAF6FC)),modifier=Modifier.fillMaxWidth()){Column(Modifier.padding(24.dp),verticalArrangement=Arrangement.spacedBy(10.dp)){Text("SCL • SSMA",style=MaterialTheme.typography.headlineMedium,color=Color(0xFF252D87));Text("Registro de Inspeção de SSMA",style=MaterialTheme.typography.titleLarge);Text("F-SSMA-0073 • Rev.00");Text("Versão do aplicativo: $APP_VERSION")}}
+ Button(onClick={startForm(null)},modifier=Modifier.fillMaxWidth().height(60.dp)){Text("NOVO REGISTRO")}
+ OutlinedButton(onClick={screen="history"},modifier=Modifier.fillMaxWidth().height(60.dp)){Text("CONSULTAR INSPEÇÕES")}
+ }
+ "form"->Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(12.dp)){
+ Row{TextButton(onClick={screen="home"}){Text("← Início")};Text(if(editing==null)"Novo registro" else "Editar registro",style=MaterialTheme.typography.titleLarge)}
+ OutlinedTextField(responsible,{responsible=it},label={Text("Responsável inspeção")},modifier=Modifier.fillMaxWidth())
+ OutlinedTextField(number,{number=it},label={Text("Nº Inspeção")},modifier=Modifier.fillMaxWidth())
+ OutlinedTextField(date,{date=it},label={Text("Data (dd/mm/aaaa)")},modifier=Modifier.fillMaxWidth())
+ OutlinedTextField(location,{location=it},label={Text("Local")},modifier=Modifier.fillMaxWidth())
+ findings.forEachIndexed{idx,f->Card{Column(Modifier.padding(12.dp),verticalArrangement=Arrangement.spacedBy(8.dp)){Text("Desvio #${idx+1}",style=MaterialTheme.typography.titleMedium);OutlinedTextField(f.desc,{findings=findings.toMutableList().also{it[idx]=f.copy(desc=it)}},label={Text("Descrição (obrigatória)")},modifier=Modifier.fillMaxWidth(),minLines=2);var expanded by remember{mutableStateOf(false)};Box{OutlinedButton(onClick={expanded=true}){Text("Severidade: ${f.severity}")};DropdownMenu(expanded,{expanded=false}){listOf("LEVE","MODERADA","GRAVE","CRÍTICO").forEach{s->DropdownMenuItem(text={Text(s)},onClick={findings=findings.toMutableList().also{it[idx]=f.copy(severity=s)};expanded=false})}}};OutlinedTextField(f.action,{findings=findings.toMutableList().also{it[idx]=f.copy(action=it)}},label={Text("Ação para adequação/correção")},modifier=Modifier.fillMaxWidth());OutlinedTextField(f.deadline,{findings=findings.toMutableList().also{it[idx]=f.copy(deadline=it)}},label={Text("Prazo de execução")},modifier=Modifier.fillMaxWidth());OutlinedTextField(f.owner,{findings=findings.toMutableList().also{it[idx]=f.copy(owner=it)}},label={Text("Responsável")},modifier=Modifier.fillMaxWidth());Row{Button(onClick={photoIndex=idx;gallery.launch("image/*")}){Text("Galeria")};Button(onClick={photoIndex=idx;camera.launch(null)}){Text("Câmera")};TextButton(onClick={findings=findings.toMutableList().also{it[idx]=f.copy(photo="")}}){Text("Remover foto")}};if(f.photo.isNotBlank()){val bm=remember(f.photo){loadBitmap(Uri.parse(f.photo))};bm?.let{Image(it.asImageBitmap(),null,Modifier.fillMaxWidth().height(160.dp))}}}}}
+ Button(onClick={findings=findings+Finding()},modifier=Modifier.fillMaxWidth()){Text("Adicionar desvio")}
+ Button(onClick={if(findings.any{it.desc.isBlank()})toast("Preencha a descrição de todos os desvios") else {val record=Inspection(editing?.id?:0,responsible,number,date,location,findings);val file=pdf(record);val saved=record.copy(pdf=file.absolutePath);if(editing==null)db.save(saved) else db.update(saved);toast("Registro salvo");refresh++;shareFiles(listOf(file));screen="home"},modifier=Modifier.fillMaxWidth()){Text("Salvar e exportar PDF")}
+ }
+ "history"->Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(10.dp)){
+ Row{TextButton(onClick={screen="home"}){Text("← Início")};Text("Inspeções realizadas",style=MaterialTheme.typography.titleLarge)}
+ OutlinedTextField(filterStart,{filterStart=it},label={Text("Data inicial (dd/mm/aaaa)")},modifier=Modifier.fillMaxWidth());OutlinedTextField(filterEnd,{filterEnd=it},label={Text("Data final (dd/mm/aaaa)")},modifier=Modifier.fillMaxWidth())
+ val records=db.list().filter{(filterStart.isBlank()||it.date>=filterStart)&&(filterEnd.isBlank()||it.date<=filterEnd)}
+ Row{Checkbox(checked=records.isNotEmpty()&&records.all{it.id in selected},onCheckedChange={selected=if(it)selected+records.map{r->r.id}else selected-records.map{r->r.id}});Text("Selecionar todas")}
+ if(selected.isNotEmpty())Button(onClick={val chosen=records.filter{it.id in selected};val z=File(cacheDir,"Inspecoes_${System.currentTimeMillis()}.zip");ZipOutputStream(FileOutputStream(z)).use{zip->chosen.forEach{r->val f=File(r.pdf);val pdfFile=if(f.exists())f else pdf(r);zip.putNextEntry(ZipEntry("Inspecao_${r.number.ifBlank{r.id.toString()}}.pdf"));pdfFile.inputStream().use{it.copyTo(zip)};zip.closeEntry()}};shareFiles(listOf(z),true);selected=setOf()},modifier=Modifier.fillMaxWidth()){Text("Exportar selecionadas em ZIP")}
+ records.forEach{r->Card(Modifier.fillMaxWidth()){Column(Modifier.padding(12.dp),verticalArrangement=Arrangement.spacedBy(6.dp)){Row{Checkbox(checked=r.id in selected,onCheckedChange={selected=if(it)selected+r.id else selected-r.id});Column{Text("Inspeção ${r.number.ifBlank{"#${r.id}"}}",style=MaterialTheme.typography.titleMedium);Text("${r.date} • ${r.location}");Text("${r.responsible}")}};Row{Button(onClick={startForm(r)}){Text("Editar")};Button(onClick={val f=File(r.pdf);shareFiles(listOf(if(f.exists())f else pdf(r)))}){Text("PDF")}}}}}
+ }
+ }
+ }
+ }
+ }
+ }
+ }
+ private fun loadBitmap(uri:Uri):Bitmap?=try{if(uri.scheme=="file")uri.path?.let(BitmapFactory::decodeFile) else contentResolver.openInputStream(uri)?.use(BitmapFactory::decodeStream)}catch(_:Exception){null}
 }
