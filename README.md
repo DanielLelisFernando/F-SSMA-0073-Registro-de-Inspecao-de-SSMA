@@ -1,26 +1,34 @@
 # Inspeções SSMA Android
 
-**Versão 1.0.2 — protótipo em desenvolvimento.**
+**Versão de desenvolvimento: 2.1.0** (`versionCode 5`).
 
-O aplicativo Android tem como objetivo digitalizar o formulário corporativo F-SSMA-0073 Rev.00, com operação offline.
+Aplicativo Android nativo em Kotlin/Jetpack Compose para digitalização do formulário corporativo F-SSMA-0073 Rev.00. A versão 2.1.0 está em desenvolvimento na branch `2.1.0`.
 
-## Funcionalidades atualmente presentes no código
-- Identificação básica (responsável, número, data em texto e local).
-- Desvios repetíveis com descrição, severidade, ação, prazo e responsável.
-- Descrição do desvio obrigatória (regra de produto).
-- Foto opcional por desvio, escolha pela galeria ou captura simples pela câmera, visualização e remoção.
-- Geração básica de PDF e tentativa de compartilhamento.
-- Banco SQLite simplificado.
+## Escopo solicitado para 2.1.0
 
-## Limitações conhecidas
-Participantes e suas assinaturas, assinatura/matrícula final do responsável, histórico/pesquisa/edição, armazenamento durável de fotos, persistência estruturada de cada desvio, ZIP, FileProvider para compartilhamento, layout corporativo fiel, paginação robusta, logo e validação completa em dispositivo ainda não estão concluídos ou validados.
+- [ ] Ícone do APK: usar `icone apk Inspeções.png` como ícone adaptativo e legado.
+- [ ] Inserir o logo Salum no cabeçalho da tela inicial.
+- [ ] Redesenhar a tela inicial com padrão visual institucional.
+- [ ] Interceptar o botão Voltar do Android para navegar pela pilha interna de telas.
+- [x] Ajuste de janela com `adjustResize` para evitar sobreposição em cenários com teclado.
+- [ ] Corrigir insetos de barras de status/navegação e validar em diferentes versões de Android.
+- [ ] Aumentar área de toque e dimensão do botão Voltar.
+- [ ] Substituir entrada textual de data por seletor de data localizado.
+- [ ] Gerar número sequencial de inspeção a partir da sequência persistida no banco.
+- [ ] Implementar exclusão individual de desvio.
+- [ ] Nomear PDFs como `Inspeção_SCL_data_local.pdf` (com sanitização dos caracteres inválidos).
+- [ ] Inserir logo Salum no cabeçalho de todas as páginas do PDF.
 
-## Diretriz visual
-Paleta temática configurada no código: azul institucional `#252D87`, ciano `#20A9D2`, azul claro `#EAF6FC`, branco e fundo `#F4F8FC`. A aplicação ainda não implementa integralmente o cabeçalho/cartões corporativos nem o layout final.
+## Estado técnico e ressalvas
 
-## Controle de revisão
-Consulte [Checklist Mestre](docs/CHECKLIST-MESTRE-REVISAO.md) para o plano de conformidade e lacunas, baseado no formulário corporativo original. O checklist não representa, por si só, funcionalidade implementada ou testada.
+Apenas a versão do aplicativo/build foi atualizada e o manifesto recebeu `adjustResize`. Os demais itens ainda não devem ser considerados concluídos. A aplicação precisa de implementação e validação funcional em emulador/aparelho Android.
 
-## Build
-GitHub Actions é usado para compilar o APK debug e disponibilizar o artifact quando a execução conclui com sucesso. A compilação não substitui testes funcionais no aparelho.
+O projeto atual tem uma `MainActivity.kt` centralizada, armazenamento SQLite e geração de PDF com `PdfDocument`. O formulário corporativo original possui duas páginas: identificação (responsável, número, data, local e participantes), classificação de severidade (LEVE, MODERADA, GRAVE e CRÍTICO), tabela de desvios com ação, prazo e responsável, e assinatura/matrícula final do responsável. Essas áreas devem continuar representadas no PDF final.
 
+## Build e validação
+
+O workflow GitHub Actions em `.github/workflows/android.yml` executa `gradle assembleDebug` e publica o APK debug como artifact. A existência de workflow não significa que a build da versão 2.1.0 tenha passado; verificar a execução da Actions depois dos commits.
+
+## Histórico de desenvolvimento
+
+- `2.1.0`: branch aberta para as adequações solicitadas.
