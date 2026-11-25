@@ -32,7 +32,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.draw.onSizeChanged
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
@@ -148,7 +148,7 @@ private fun SignaturePadDialog(onDismiss:()->Unit,onSave:(String)->Unit){
        detectDragGestures(
         onDragStart={active=listOf(it)},
         onDrag={change,_->change.consume();active=active+change.position},
-        onDragEnd={if(active.isNotEmpty())strokes=strokes+active;active=emptyList()}
+        onDragEnd={if(active.isNotEmpty())strokes=strokes+listOf(active);active=emptyList()}
        )
       }
     ){
