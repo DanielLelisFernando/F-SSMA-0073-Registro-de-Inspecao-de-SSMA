@@ -32,7 +32,7 @@ Atualizado para o código da versão **2.2.2**. Os itens marcados como implement
 - [ ] Testar atualização sobre banco já existente.
 
 ## Pendências conhecidas
-- [ ] Recuperação automática de rascunho após encerramento inesperado.
+- [x] Recuperação de rascunho offline: autosave durante o preenchimento, retomada na home e confirmação antes de descartar ao iniciar novo registro.
 - [ ] Testes de lifecycle/permissões e em diferentes tamanhos de tela.
 - [ ] Validar layout do PDF visualmente contra o formulário original (o conteúdo está representado, mas a tabela ainda não é uma reprodução gráfica exata).
 - [ ] Confirmar no aparelho a captura de câmera, assinaturas e exportações.
