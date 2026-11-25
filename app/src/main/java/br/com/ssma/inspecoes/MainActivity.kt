@@ -26,6 +26,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
@@ -37,6 +39,7 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
 private const val APP_VERSION = "2.1.0"
+private const val LOGO_ASSET = "salum_logo.jpg"
 data class Finding(val desc:String="",val severity:String="LEVE",val action:String="",val deadline:String="",val owner:String="",val photo:String="")
 data class Inspection(val id:Int,val responsible:String,val number:String,val date:String,val location:String,val findings:List<Finding>,val pdf:String="")
 
@@ -55,15 +58,17 @@ class DB(ctx:android.content.Context):SQLiteOpenHelper(ctx,"ssma.db",null,2){
 class MainActivity:ComponentActivity(){
  private lateinit var db:DB
  override fun onCreate(savedInstanceState:Bundle?){super.onCreate(savedInstanceState);db=DB(this)
- setContent { MaterialTheme(colorScheme=lightColorScheme(primary=Color(0xFF252D87),secondary=Color(0xFF20A9D2),background=Color(0xFFF4F8FC),surface=Color.White)){
+ window.statusBarColor = android.graphics.Color.rgb(37,45,135); window.navigationBarColor = android.graphics.Color.rgb(244,248,252); if (android.os.Build.VERSION.SDK_INT >= 29) window.isNavigationBarContrastEnforced = false; setContent { MaterialTheme(colorScheme=lightColorScheme(primary=Color(0xFF252D87),secondary=Color(0xFF20A9D2),background=Color(0xFFF4F8FC),surface=Color.White)){
  var screen by remember{mutableStateOf("home")};var editing by remember{mutableStateOf<Inspection?>(null)};var refresh by remember{mutableIntStateOf(0)};var dateDialog by remember{mutableStateOf(false)}
  fun toast(s:String)=Toast.makeText(this@MainActivity,s,Toast.LENGTH_SHORT).show()
  fun shareFiles(files:List<File>,zip:Boolean=false){try{val uris=files.map{FileProvider.getUriForFile(this@MainActivity,"br.com.ssma.inspecoes.fileprovider",it)};val intent=if(uris.size==1&&!zip)Intent(Intent.ACTION_SEND).apply{type="application/pdf";putExtra(Intent.EXTRA_STREAM,uris[0])}else Intent(Intent.ACTION_SEND_MULTIPLE).apply{type=if(zip)"application/zip" else "application/pdf";putParcelableArrayListExtra(Intent.EXTRA_STREAM,ArrayList(uris))};intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);startActivity(Intent.createChooser(intent,"Compartilhar exportação"))}catch(e:Exception){toast("Falha ao compartilhar: ${e.message}")}}
- fun pdf(i:Inspection):File{val doc=PdfDocument();var page=doc.startPage(PdfDocument.PageInfo.Builder(595,842,1).create());var canvas=page.canvas;val p=android.graphics.Paint().apply{textSize=12f};val h=android.graphics.Paint().apply{textSize=16f;isFakeBoldText=true};var y=45
- fun line(t:String){if(y>780){doc.finishPage(page);page=doc.startPage(PdfDocument.PageInfo.Builder(595,842,doc.pages.size+1).create());canvas=page.canvas;y=45};canvas.drawText(t.take(100),40f,y.toFloat(),p);y+=20}
- canvas.drawText("F-SSMA-0073 • REGISTRO DE INSPEÇÃO DE SSMA",40f,y.toFloat(),h);y+=30;line("Responsável: ${i.responsible}");line("Nº: ${i.number} | Data: ${i.date} | Local: ${i.location}");y+=12
+ fun pdf(i:Inspection):File{val logo=assets.open(LOGO_ASSET).use{BitmapFactory.decodeStream(it)};val doc=PdfDocument();var page=doc.startPage(PdfDocument.PageInfo.Builder(595,842,1).create());var canvas=page.canvas;val p=android.graphics.Paint().apply{textSize=12f};val h=android.graphics.Paint().apply{textSize=16f;isFakeBoldText=true};var y=45
+ fun header(){val paint=android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);canvas.drawBitmap(logo,null,android.graphics.RectF(40f,24f,112f,96f),paint);canvas.drawText("F-SSMA-0073 • REGISTRO DE INSPEÇÃO DE SSMA",128f,58f,h);canvas.drawText("SALUM CONSTRUÇÕES",128f,80f,p)}
+ fun newPage(){doc.finishPage(page);page=doc.startPage(PdfDocument.PageInfo.Builder(595,842,doc.pages.size+1).create());canvas=page.canvas;y=120;header()}
+ fun line(t:String){if(y>780)newPage();canvas.drawText(t.take(100),40f,y.toFloat(),p);y+=20}
+ header();y=125;line("Responsável: ${i.responsible}");line("Nº: ${i.number} | Data: ${i.date} | Local: ${i.location}");y+=12
  i.findings.forEachIndexed{n,f->canvas.drawText("DESVIO ${n+1}",40f,y.toFloat(),h);y+=25;line("Descrição: ${f.desc}");line("Severidade: ${f.severity}");line("Ação: ${f.action}");line("Prazo: ${f.deadline}");line("Responsável: ${f.owner}");if(f.photo.isNotBlank()){try{val b=loadBitmap(this@MainActivity, Uri.parse(f.photo));if(b!=null){if(y+200>780){doc.finishPage(page);page=doc.startPage(PdfDocument.PageInfo.Builder(595,842,doc.pages.size+1).create());canvas=page.canvas;y=45};val scaled=Bitmap.createScaledBitmap(b, minOf(b.width,300),minOf(b.height,200),true);canvas.drawBitmap(scaled,40f,y.toFloat(),null);y+=scaled.height+10;b.recycle()}}catch(_:Exception){}};y+=15}
- doc.finishPage(page);val f=File(filesDir,"Inspeção_SCL_${safeFilePart(i.date)}_${safeFilePart(i.location)}.pdf");FileOutputStream(f).use{doc.writeTo(it)};doc.close();return f}
+ doc.finishPage(page);val f=File(filesDir,"Inspeção_${safeFilePart(i.number)}_${safeFilePart(i.date)}_${safeFilePart(i.location)}.pdf");FileOutputStream(f).use{doc.writeTo(it)};doc.close();logo.recycle();return f}
  var photoIndex by remember{mutableIntStateOf(-1)}
  var responsible by remember{mutableStateOf("")};var number by remember{mutableStateOf("")};var date by remember{mutableStateOf("")};var location by remember{mutableStateOf("")};var findings by remember{mutableStateOf(listOf(Finding()))}
  val gallery=rememberLauncherForActivityResult(ActivityResultContracts.GetContent()){uri->if(uri!=null&&photoIndex>=0&&photoIndex<findings.size)findings=findings.toMutableList().also{list->list[photoIndex]=list[photoIndex].copy(photo=uri.toString())}}
@@ -76,7 +81,7 @@ class MainActivity:ComponentActivity(){
  Column(Modifier.fillMaxSize().imePadding().padding(16.dp),verticalArrangement=Arrangement.spacedBy(12.dp)){
  when(screen){
  "home"->Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(18.dp)){
- Card(colors=CardDefaults.cardColors(containerColor=Color(0xFFEAF6FC)),modifier=Modifier.fillMaxWidth()){Column(Modifier.padding(24.dp),verticalArrangement=Arrangement.spacedBy(10.dp)){Row(verticalAlignment= androidx.compose.ui.Alignment.CenterVertically){Column(Modifier.width(100.dp),verticalArrangement=Arrangement.spacedBy(2.dp)){Box(Modifier.fillMaxWidth().height(8.dp).padding(horizontal=4.dp).background(Color(0xFF252D87)));Text("SCL",style=MaterialTheme.typography.headlineMedium,color=Color(0xFF252D87),modifier=Modifier.padding(start=8.dp));Text("SALUM CONSTRUÇÕES",style=MaterialTheme.typography.labelSmall,color=Color(0xFF252D87),maxLines=1)};Spacer(Modifier.width(12.dp));Text("Registro de Inspeção de SSMA",style=MaterialTheme.typography.titleLarge)};Text("F-SSMA-0073 • Rev.00");Text("Versão do aplicativo: $APP_VERSION")}}
+ Card(colors=CardDefaults.cardColors(containerColor=Color(0xFFEAF6FC)),modifier=Modifier.fillMaxWidth(),shape=RoundedCornerShape(20.dp)){Column(Modifier.fillMaxWidth().padding(20.dp),horizontalAlignment=Alignment.CenterHorizontally,verticalArrangement=Arrangement.spacedBy(12.dp)){val logoBitmap=remember { assets.open(LOGO_ASSET).use { BitmapFactory.decodeStream(it) } };Image(bitmap=logoBitmap.asImageBitmap(),contentDescription="Logo Salum Construções",modifier=Modifier.fillMaxWidth().height(132.dp),contentScale=ContentScale.Fit);Text("REGISTRO DE INSPEÇÃO DE SSMA",style=MaterialTheme.typography.titleLarge,color=Color(0xFF252D87));Text("F-SSMA-0073 • Rev.00",style=MaterialTheme.typography.bodyMedium);Text("Versão do aplicativo: $APP_VERSION",style=MaterialTheme.typography.labelMedium)}}
  Button(onClick={startForm(null)},modifier=Modifier.fillMaxWidth().height(60.dp)){Text("NOVO REGISTRO")}
  OutlinedButton(onClick={screen="history"},modifier=Modifier.fillMaxWidth().height(60.dp)){Text("CONSULTAR INSPEÇÕES")}
  }
