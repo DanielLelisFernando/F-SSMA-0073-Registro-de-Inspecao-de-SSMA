@@ -71,4 +71,4 @@ Não considerar item concluído por existir apenas no checklist, documentação,
 - [ ] Exclusão de desvio com confirmação, sem afetar outros desvios ou inspeções salvas.
 - [ ] PDF gerado com nome Inspeção_SCL_data_local.pdf, com normalização de espaços/acentos/caracteres inválidos.
 - [ ] PDF segue as duas páginas do formulário, incluindo participantes/assinaturas, severidade, desvios, prazos e assinatura/matrícula final.
-- [ ] Testes: criar duas inspeções, fechar/reabrir app, conferir sequência; editar e excluir desvio; validar botão Voltar e insets; exportar/abrir PDF e checar nome, logo e paginação.
+- [ ] Testes funcionais: criar duas inspeções, fechar/reabrir app, conferir sequência; editar e excluir desvio; validar botão Voltar e insets; exportar/abrir PDF e checar nome, logo e paginação.\n- [x] Build debug verificada via GitHub Actions: job `build` e etapa `Build APK` concluídos com sucesso. Artifact `ssma-inspecoes-debug-apk` publicado (run #28; validade até 25/12/2026).
