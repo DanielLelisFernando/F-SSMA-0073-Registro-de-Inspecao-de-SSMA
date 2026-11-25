@@ -175,7 +175,7 @@ class MainActivity:ComponentActivity(){
  var pendingCameraFile by remember{mutableStateOf<File?>(null)}
  val camera=rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()){success->val f=pendingCameraFile;if(success&&f!=null&&photoIndex in findings.indices){findings=findings.toMutableList().also{list->list[photoIndex]=list[photoIndex].copy(photo=Uri.fromFile(f).toString())}}else f?.delete();pendingCameraFile=null}
  
- var filterStart by remember{mutableStateOf("")};var filterEnd by remember{mutableStateOf("")};var filterText by remember{mutableStateOf("")};var selected by remember{mutableStateOf(setOf<Int>())}
+ var filterStart by remember{mutableStateOf("")};var filterEnd by remember{mutableStateOf("")};var filterText by remember{mutableStateOf("")};var selected by remember{mutableStateOf(setOf<Int>())};var filterStartDialog by remember{mutableStateOf(false)};var filterEndDialog by remember{mutableStateOf(false)}
  fun startForm(ins:Inspection?){editing=ins;responsible=ins?.responsible?: "";number=ins?.number?:db.nextNumber();date=ins?.date?: "";location=ins?.location?: "";findings=ins?.findings?:listOf(Finding());participants=ins?.participants?:listOf(Participant());inspectorSignature=ins?.inspectorSignature?: "";registration=ins?.registration?: "";screen="form"}
  fun resumeDraft(){
   val raw=draftPrefs.getString("inspectionDraft",null)?:return
@@ -205,6 +205,8 @@ class MainActivity:ComponentActivity(){
  BackHandler(enabled=screen!="home"){screen="home"}
  if(dateDialog){val state=rememberDatePickerState(initialSelectedDateMillis=dateTextToPickerMillis(date));DatePickerDialog(onDismissRequest={dateDialog=false},confirmButton={TextButton(onClick={state.selectedDateMillis?.let{ms->date=datePickerMillisToText(ms)};dateDialog=false}){Text("Confirmar")}},dismissButton={TextButton(onClick={dateDialog=false}){Text("Cancelar")}}){DatePicker(state)}}
  if(deadlineDialogIndex>=0){val idx=deadlineDialogIndex;val current=findings.getOrNull(idx)?.deadline?: "";val initialMillis=try{dateTextToPickerMillis(current)}catch(_:Exception){null};val state=rememberDatePickerState(initialSelectedDateMillis=initialMillis);DatePickerDialog(onDismissRequest={deadlineDialogIndex=-1},confirmButton={TextButton(onClick={state.selectedDateMillis?.let{ms->findings=findings.toMutableList().also{list->list[idx]=list[idx].copy(deadline=datePickerMillisToText(ms))} };deadlineDialogIndex=-1}){Text("Confirmar")}},dismissButton={TextButton(onClick={deadlineDialogIndex=-1}){Text("Cancelar")}}){DatePicker(state)}}
+ if(filterStartDialog){val state=rememberDatePickerState(initialSelectedDateMillis=dateTextToPickerMillis(filterStart));DatePickerDialog(onDismissRequest={filterStartDialog=false},confirmButton={TextButton(onClick={state.selectedDateMillis?.let{filterStart=datePickerMillisToText(it)};filterStartDialog=false}){Text("Confirmar")}},dismissButton={TextButton(onClick={filterStartDialog=false}){Text("Cancelar")}}){DatePicker(state)}}
+ if(filterEndDialog){val state=rememberDatePickerState(initialSelectedDateMillis=dateTextToPickerMillis(filterEnd));DatePickerDialog(onDismissRequest={filterEndDialog=false},confirmButton={TextButton(onClick={state.selectedDateMillis?.let{filterEnd=datePickerMillisToText(it)};filterEndDialog=false}){Text("Confirmar")}},dismissButton={TextButton(onClick={filterEndDialog=false}){Text("Cancelar")}}){DatePicker(state)}}
  Column(Modifier.fillMaxSize().imePadding().navigationBarsPadding().padding(16.dp),verticalArrangement=Arrangement.spacedBy(12.dp)){
  when(screen){
  "home"->Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(18.dp)){
@@ -234,17 +236,19 @@ class MainActivity:ComponentActivity(){
  }
  "history"->Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(10.dp)){
  Row{TextButton(onClick={screen="home"}){Text("← Início")};Text("Inspeções realizadas",style=MaterialTheme.typography.titleLarge)}
- OutlinedTextField(filterText,{filterText=it},label={Text("Buscar número, local ou responsável")},modifier=Modifier.fillMaxWidth());OutlinedTextField(filterStart,{filterStart=it},label={Text("Data inicial (dd/mm/aaaa)")},modifier=Modifier.fillMaxWidth());OutlinedTextField(filterEnd,{filterEnd=it},label={Text("Data final (dd/mm/aaaa)")},modifier=Modifier.fillMaxWidth())
- fun dateKey(raw:String):Long { return try { val parts=raw.trim().split("/"); if(parts.size!=3) 0L else (parts[2].toInt()*10000L+parts[1].toInt()*100L+parts[0].toInt()) } catch(_:Exception){0L} }
+ OutlinedTextField(filterText,{filterText=it},label={Text("Buscar número, local ou responsável")},modifier=Modifier.fillMaxWidth());OutlinedTextField(filterStart,{filterStart=it},label={Text("Data inicial (dd/mm/aaaa)")},modifier=Modifier.fillMaxWidth(),readOnly=true,trailingIcon={IconButton(onClick={filterStartDialog=true}){Text("📅")}});OutlinedTextField(filterEnd,{filterEnd=it},label={Text("Data final (dd/mm/aaaa)")},modifier=Modifier.fillMaxWidth(),readOnly=true,trailingIcon={IconButton(onClick={filterEndDialog=true}){Text("📅")}});Row{TextButton(onClick={filterStart=""){Text("Limpar início")};TextButton(onClick={filterEnd=""){Text("Limpar fim")}}}
+ fun dateKey(raw:String):Long { return try { if(!raw.matches(Regex("\\d{2}/\\d{2}/\\d{4}"))||dateTextToPickerMillis(raw)==null)0L else { val parts=raw.trim().split("/"); (parts[2].toInt()*10000L+parts[1].toInt()*100L+parts[0].toInt()) } } catch(_:Exception){0L} }
  val startKey=if(filterStart.isBlank())0L else dateKey(filterStart);val endKey=if(filterEnd.isBlank())Long.MAX_VALUE else dateKey(filterEnd)
- val query=filterText.trim().lowercase();val records=db.list().filter{val k=dateKey(it.date);(filterStart.isBlank()||k>=startKey)&&(filterEnd.isBlank()||k<=endKey)&&(query.isBlank()||it.number.lowercase().contains(query)||it.location.lowercase().contains(query)||it.responsible.lowercase().contains(query))}.sortedByDescending{dateKey(it.date)}
+ val invalidStart=filterStart.isNotBlank()&&startKey==0L;val invalidEnd=filterEnd.isNotBlank()&&endKey==0L;val invalidOrder=!invalidStart&&!invalidEnd&&filterStart.isNotBlank()&&filterEnd.isNotBlank()&&startKey>endKey
+ if(invalidStart||invalidEnd||invalidOrder)Text(if(invalidOrder)"A data inicial não pode ser posterior à data final." else "Selecione datas válidas no calendário.",color=MaterialTheme.colorScheme.error)
+ val query=filterText.trim().lowercase();val records=if(invalidStart||invalidEnd||invalidOrder)emptyList() else db.list().filter{val k=dateKey(it.date);(filterStart.isBlank()||k>=startKey)&&(filterEnd.isBlank()||k<=endKey)&&(query.isBlank()||it.number.lowercase().contains(query)||it.location.lowercase().contains(query)||it.responsible.lowercase().contains(query))}.sortedByDescending{dateKey(it.date)}
  Row{Checkbox(checked=records.isNotEmpty()&&records.all{it.id in selected},onCheckedChange={selected=if(it)selected+records.map{r->r.id}else selected-records.map{r->r.id}});Text("Selecionar todas")}
  if(selected.isNotEmpty())Button(onClick={
-  val chosen=records.filter{it.id in selected}
+  val chosen=db.list().filter{it.id in selected}
   val z=File(cacheDir,"Inspecoes_${System.currentTimeMillis()}.zip")
   ZipOutputStream(FileOutputStream(z)).use{zip->
    chosen.forEach{r->
-    val base=safeFilePart(r.number.ifBlank{r.id.toString()})
+    val base=safeFilePart("${r.number.ifBlank{r.id.toString()}}_ID_${r.id}")
     val pdfFile=File(r.pdf).takeIf{it.exists()}?:pdf(r)
     zip.putNextEntry(ZipEntry("$base/Inspecao.pdf"));pdfFile.inputStream().use{it.copyTo(zip)};zip.closeEntry()
     fun addUri(raw:String,name:String){
