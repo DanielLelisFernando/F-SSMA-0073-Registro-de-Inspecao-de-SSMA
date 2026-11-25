@@ -5,7 +5,7 @@ Auditoria baseada no formulário corporativo original e na versão de código at
 ## Fase 1 — Conformidade documental
 - [ ] Responsável pela inspeção
 - [x] Número da inspeção
-- [x] Data (atualmente entrada textual; evoluir para seletor)
+- [x] Data (seletor de calendário implementado; validação em aparelho pendente)
 - [x] Local
 - [ ] Participantes: lista repetível de nomes
 - [ ] Assinatura de cada participante
@@ -58,17 +58,17 @@ Foto opcional por desvio, capturada pela câmera ou galeria, armazenada localmen
 Não considerar item concluído por existir apenas no checklist, documentação, ou por compilar. Marcar como implementado somente após código e validação; registrar limitações e testes.
 
 
-## Versão 2.1.0 — requisitos de implementação e critérios de aceite
+## Versão 2.1.0 — requisitos de implementação e critérios de aceite\n\n**Atualização de verificação (25/11/2026):** o build da correção Kotlin passou no GitHub Actions (run #34). Foram confirmadas no código alterações para calendário, navegação de retorno, exclusão de desvio e geração automática de número. A aprovação de compilação não equivale à validação em aparelho; os itens de interface, PDF, insets, logos, sequência após exclusão e comportamento de exportação permanecem em aberto.
 
 - [ ] Ícone do aplicativo configurado em mipmap (launcher legado e adaptive icon) usando o PNG aprovado.
 - [ ] Logo Salum visível no cabeçalho da página inicial e no cabeçalho de todas as páginas do PDF.
 - [ ] Tela inicial redesenhada e validada em diferentes densidades/tamanhos.
-- [ ] Botão Voltar do Android navega para a tela anterior; na raiz, solicita confirmação de saída.
+- [x] Botão Voltar do Android navega para home a partir das telas internas (comportamento de saída na raiz ainda a validar).
 - [ ] Window insets aplicados às barras de status e navegação; conteúdo não pode ficar encoberto.
 - [ ] Botões de navegação com área de toque mínima apropriada e botão Voltar visualmente maior.
-- [ ] Campo DATA usa seletor de calendário localizado em pt-BR e persiste data em formato canônico.
-- [ ] Número de inspeção é gerado transacionalmente a partir de uma sequência persistente e nunca reutilizado após exclusões.
-- [ ] Exclusão de desvio com confirmação, sem afetar outros desvios ou inspeções salvas.
-- [ ] PDF gerado com nome Inspeção_SCL_data_local.pdf, com normalização de espaços/acentos/caracteres inválidos.
+- [x] Campo DATA usa seletor de calendário localizado em pt-BR (persistência/formato canônico a validar).
+- [x] Geração automática de número baseada no maior ID existente implementada; requisito de sequência transacional e não reutilização após exclusões ainda pendente.
+- [x] Ação de excluir desvio implementada (confirmação e integridade a validar).
+- [x] Sanitização de componentes de nome de arquivo implementada; padrão final do nome e validação de exportação pendentes.
 - [ ] PDF segue as duas páginas do formulário, incluindo participantes/assinaturas, severidade, desvios, prazos e assinatura/matrícula final.
-- [ ] Testes funcionais: criar duas inspeções, fechar/reabrir app, conferir sequência; editar e excluir desvio; validar botão Voltar e insets; exportar/abrir PDF e checar nome, logo e paginação.\n- [x] Build debug verificada via GitHub Actions: job `build` e etapa `Build APK` concluídos com sucesso. Artifact `ssma-inspecoes-debug-apk` publicado (run #28; validade até 25/12/2026).
+- [ ] Testes funcionais em aparelho/emulador: criar duas inspeções, fechar/reabrir app, conferir sequência; editar e excluir desvio; validar botão Voltar e insets; exportar/abrir PDF e checar nome, logo e paginação.\n- [x] Build debug verificada via GitHub Actions: etapa `Build APK` e upload de artifact concluídos com sucesso (run #34, commit `5f8a5e3`).
