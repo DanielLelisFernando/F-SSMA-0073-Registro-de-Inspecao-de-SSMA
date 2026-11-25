@@ -168,12 +168,40 @@ class MainActivity:ComponentActivity(){
  }
  var photoIndex by remember{mutableIntStateOf(-1)}
  var responsible by remember{mutableStateOf("")};var number by remember{mutableStateOf("")};var date by remember{mutableStateOf("")};var location by remember{mutableStateOf("")};var findings by remember{mutableStateOf(listOf(Finding()))};var participants by remember{mutableStateOf(listOf(Participant()))};var inspectorSignature by remember{mutableStateOf("")};var registration by remember{mutableStateOf("")};var signatureTarget by remember{mutableStateOf<String?>(null)}
+ val draftPrefs=remember{getSharedPreferences("ssma_draft",MODE_PRIVATE)}
+ var draftExists by remember{mutableStateOf(draftPrefs.getString("inspectionDraft",null)!=null)}
+ var showNewFormConfirm by remember{mutableStateOf(false)}
  val gallery=rememberLauncherForActivityResult(ActivityResultContracts.GetContent()){uri->if(uri!=null&&photoIndex>=0&&photoIndex<findings.size){try{val stored=File(filesDir,"photo_gallery_${System.currentTimeMillis()}.jpg");contentResolver.openInputStream(uri)?.use{input->FileOutputStream(stored).use{output->input.copyTo(output)}};findings=findings.toMutableList().also{list->list[photoIndex]=list[photoIndex].copy(photo=Uri.fromFile(stored).toString())}}catch(e:Exception){toast("Falha ao salvar foto: ${e.message}")}}}
  var pendingCameraFile by remember{mutableStateOf<File?>(null)}
  val camera=rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()){success->val f=pendingCameraFile;if(success&&f!=null&&photoIndex in findings.indices){findings=findings.toMutableList().also{list->list[photoIndex]=list[photoIndex].copy(photo=Uri.fromFile(f).toString())}}else f?.delete();pendingCameraFile=null}
  
  var filterStart by remember{mutableStateOf("")};var filterEnd by remember{mutableStateOf("")};var filterText by remember{mutableStateOf("")};var selected by remember{mutableStateOf(setOf<Int>())}
  fun startForm(ins:Inspection?){editing=ins;responsible=ins?.responsible?: "";number=ins?.number?:db.nextNumber();date=ins?.date?: "";location=ins?.location?: "";findings=ins?.findings?:listOf(Finding());participants=ins?.participants?:listOf(Participant());inspectorSignature=ins?.inspectorSignature?: "";registration=ins?.registration?: "";screen="form"}
+ fun resumeDraft(){
+  val raw=draftPrefs.getString("inspectionDraft",null)?:return
+  try{
+   val obj=JSONObject(raw)
+   val draftId=obj.optInt("id",0)
+   editing=if(draftId>0)db.list().firstOrNull{it.id==draftId}else null
+   responsible=obj.optString("responsible")
+   number=obj.optString("number")
+   date=obj.optString("date")
+   location=obj.optString("location")
+   findings=db.decode(obj.optString("findings","[]"))
+   participants=db.decodeParticipants(obj.optString("participants","[]"))
+   inspectorSignature=obj.optString("inspectorSignature")
+   registration=obj.optString("registration")
+   signatureTarget=null
+   screen="form"
+  }catch(e:Exception){toast("Não foi possível recuperar o rascunho: ${e.message}")}
+ }
+ LaunchedEffect(screen,responsible,number,date,location,findings,participants,inspectorSignature,registration,editing?.id){
+  if(screen=="form"){
+   val draft=JSONObject().put("id",editing?.id?:0).put("responsible",responsible).put("number",number).put("date",date).put("location",location).put("findings",db.encode(findings)).put("participants",db.encodeParticipants(participants)).put("inspectorSignature",inspectorSignature).put("registration",registration)
+   draftPrefs.edit().putString("inspectionDraft",draft.toString()).apply()
+   draftExists=true
+  }
+ }
  BackHandler(enabled=screen!="home"){screen="home"}
  if(dateDialog){val state=rememberDatePickerState();DatePickerDialog(onDismissRequest={dateDialog=false},confirmButton={TextButton(onClick={state.selectedDateMillis?.let{ms->date=java.text.SimpleDateFormat("dd/MM/yyyy",java.util.Locale("pt","BR")).format(java.util.Date(ms))};dateDialog=false}){Text("Confirmar")}},dismissButton={TextButton(onClick={dateDialog=false}){Text("Cancelar")}}){DatePicker(state)}}
  if(deadlineDialogIndex>=0){val idx=deadlineDialogIndex;val current=findings.getOrNull(idx)?.deadline?: "";val initialMillis=try{java.text.SimpleDateFormat("dd/MM/yyyy",java.util.Locale("pt","BR")).parse(current)?.time}catch(_:Exception){null};val state=rememberDatePickerState(initialSelectedDateMillis=initialMillis);DatePickerDialog(onDismissRequest={deadlineDialogIndex=-1},confirmButton={TextButton(onClick={state.selectedDateMillis?.let{ms->findings=findings.toMutableList().also{list->list[idx]=list[idx].copy(deadline=java.text.SimpleDateFormat("dd/MM/yyyy",java.util.Locale("pt","BR")).format(java.util.Date(ms)))} };deadlineDialogIndex=-1}){Text("Confirmar")}},dismissButton={TextButton(onClick={deadlineDialogIndex=-1}){Text("Cancelar")}}){DatePicker(state)}}
@@ -181,7 +209,8 @@ class MainActivity:ComponentActivity(){
  when(screen){
  "home"->Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(18.dp)){
  Card(colors=CardDefaults.cardColors(containerColor=Color(0xFFEAF6FC)),modifier=Modifier.fillMaxWidth(),shape=RoundedCornerShape(20.dp)){Column(Modifier.fillMaxWidth().padding(20.dp),horizontalAlignment=Alignment.CenterHorizontally,verticalArrangement=Arrangement.spacedBy(12.dp)){val logoBitmap=remember { assets.open(LOGO_ASSET).use { BitmapFactory.decodeStream(it) } };Image(bitmap=logoBitmap.asImageBitmap(),contentDescription="Logo Salum Construções",modifier=Modifier.fillMaxWidth().height(132.dp),contentScale=ContentScale.Fit);Text("REGISTRO DE INSPEÇÃO DE SSMA",style=MaterialTheme.typography.titleLarge,color=Color(0xFF252D87),textAlign=androidx.compose.ui.text.style.TextAlign.Center,modifier=Modifier.fillMaxWidth());Text("F-SSMA-0073 • Rev.00",style=MaterialTheme.typography.bodyMedium);Text("Versão do aplicativo: $APP_VERSION",style=MaterialTheme.typography.labelMedium)}}
- Button(onClick={startForm(null)},modifier=Modifier.fillMaxWidth().height(60.dp)){Text("NOVO REGISTRO")}
+ Button(onClick={if(draftExists)showNewFormConfirm=true else startForm(null)},modifier=Modifier.fillMaxWidth().height(60.dp)){Text("NOVO REGISTRO")}
+ if(draftExists)OutlinedButton(onClick={resumeDraft},modifier=Modifier.fillMaxWidth().height(60.dp)){Text("RETOMAR RASCUNHO")}
  OutlinedButton(onClick={screen="history"},modifier=Modifier.fillMaxWidth().height(60.dp)){Text("CONSULTAR INSPEÇÕES")}
  }
  "form"->Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(bottom=24.dp),verticalArrangement=Arrangement.spacedBy(12.dp)){
@@ -198,8 +227,9 @@ class MainActivity:ComponentActivity(){
  if(inspectorSignature.isNotBlank()){loadBitmap(this@MainActivity,Uri.parse(inspectorSignature))?.let{Image(it.asImageBitmap(),null,Modifier.fillMaxWidth().height(100.dp))}}
  findings.forEachIndexed{idx,f->Card{Column(Modifier.padding(12.dp),verticalArrangement=Arrangement.spacedBy(8.dp)){Row(verticalAlignment= androidx.compose.ui.Alignment.CenterVertically){Text("Desvio #${idx+1}",style=MaterialTheme.typography.titleMedium);Spacer(Modifier.weight(1f));if(findings.size>1)TextButton(onClick={findings=findings.filterIndexed{j,_->j!=idx};toast("Desvio excluído")}){Text("Excluir")}};OutlinedTextField(f.desc,{value->findings=findings.toMutableList().also{list->list[idx]=f.copy(desc=value)}},label={Text("Descrição (obrigatória)")},modifier=Modifier.fillMaxWidth(),minLines=2);var expanded by remember{mutableStateOf(false)};Box{OutlinedButton(onClick={expanded=true}){Text("Severidade: ${f.severity}")};DropdownMenu(expanded,{expanded=false}){listOf("LEVE","MODERADA","GRAVE","CRÍTICO").forEach{s->DropdownMenuItem(text={Text(s)},onClick={findings=findings.toMutableList().also{it[idx]=f.copy(severity=s)};expanded=false})}}};Text(severityDescription(f.severity),style=MaterialTheme.typography.bodySmall,color=MaterialTheme.colorScheme.onSurfaceVariant);OutlinedTextField(f.action,{value->findings=findings.toMutableList().also{list->list[idx]=f.copy(action=value)}},label={Text("Ação para adequação/correção")},modifier=Modifier.fillMaxWidth());OutlinedTextField(f.deadline,{value->findings=findings.toMutableList().also{list->list[idx]=f.copy(deadline=value)}},label={Text("Prazo de execução")},placeholder={if(f.deadline.isBlank())Text("Clique no calendário para inserir a data")},modifier=Modifier.fillMaxWidth(),readOnly=true,trailingIcon={IconButton(onClick={deadlineDialogIndex=idx}){Text("📅")}});OutlinedTextField(f.owner,{value->findings=findings.toMutableList().also{list->list[idx]=f.copy(owner=value)}},label={Text("Responsável")},modifier=Modifier.fillMaxWidth());Row{Button(onClick={photoIndex=idx;gallery.launch("image/*")}){Text("Galeria")};Button(onClick={photoIndex=idx;val file=File(filesDir,"photo_camera_${System.currentTimeMillis()}.jpg");val uri=FileProvider.getUriForFile(this@MainActivity,"br.com.ssma.inspecoes.fileprovider",file);pendingCameraFile=file;camera.launch(uri)}){Text("Câmera")};TextButton(onClick={findings=findings.toMutableList().also{it[idx]=f.copy(photo="")}}){Text("Remover foto")}};if(f.photo.isNotBlank()){val bm=remember(f.photo){loadBitmap(this@MainActivity, Uri.parse(f.photo))};bm?.let{Image(it.asImageBitmap(),null,Modifier.fillMaxWidth().height(160.dp))}}}}}
  Button(onClick={findings=findings+Finding()},modifier=Modifier.fillMaxWidth()){Text("Adicionar desvio")}
+ if(showNewFormConfirm){AlertDialog(onDismissRequest={showNewFormConfirm=false},title={Text("Novo registro")},text={Text("Existe um rascunho salvo. Iniciar uma nova inspeção descartará o rascunho atual.")},confirmButton={TextButton(onClick={draftPrefs.edit().remove("inspectionDraft").apply();draftExists=false;showNewFormConfirm=false;startForm(null)}){Text("Descartar e iniciar")}},dismissButton={TextButton(onClick={showNewFormConfirm=false}){Text("Cancelar")}})}
  if(signatureTarget!=null){SignaturePadDialog(onDismiss={signatureTarget=null},onSave={path->val target=signatureTarget;if(target=="inspector")inspectorSignature=path else if(target?.startsWith("participant:")==true){val idx=target.substringAfter(":").toIntOrNull();if(idx!=null&&idx in participants.indices)participants=participants.toMutableList().also{it[idx]=it[idx].copy(signature=path)} };signatureTarget=null})}
- Button(onClick={if(findings.any{it.desc.isBlank()}){toast("Preencha a descrição de todos os desvios")}else{val record=Inspection(editing?.id?:0,responsible,number,date,location,findings,participants=participants,inspectorSignature=inspectorSignature,registration=registration);val file=pdf(record);val saved=record.copy(pdf=file.absolutePath);if(editing==null)db.save(saved) else db.update(saved);toast("Registro salvo");refresh++;shareFiles(listOf(file));screen="home"}},modifier=Modifier.fillMaxWidth()){Text("Salvar e exportar PDF")}
+ Button(onClick={if(findings.any{it.desc.isBlank()}){toast("Preencha a descrição de todos os desvios")}else{val record=Inspection(editing?.id?:0,responsible,number,date,location,findings,participants=participants,inspectorSignature=inspectorSignature,registration=registration);val file=pdf(record);val saved=record.copy(pdf=file.absolutePath);if(editing==null)db.save(saved) else db.update(saved);toast("Registro salvo");draftPrefs.edit().remove("inspectionDraft").apply();draftExists=false;refresh++;shareFiles(listOf(file));screen="home"}},modifier=Modifier.fillMaxWidth()){Text("Salvar e exportar PDF")}
  }
  "history"->Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(10.dp)){
  Row{TextButton(onClick={screen="home"}){Text("← Início")};Text("Inspeções realizadas",style=MaterialTheme.typography.titleLarge)}
