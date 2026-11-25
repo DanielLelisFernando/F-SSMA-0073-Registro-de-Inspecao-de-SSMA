@@ -1,0 +1,16 @@
+# Histórico de alterações
+
+## 2.2.2 — em validação
+- Galeria: copia imagens para armazenamento interno privado, reduzindo dependência de permissões temporárias de URI.
+- Câmera: captura usando URI/FileProvider para arquivo local, substituindo captura de preview de baixa resolução.
+- PDF: quebra de texto, cabeçalho e rodapé em páginas adicionais, descrição oficial das severidades, participantes e assinaturas.
+- Evidências fotográficas identificadas como extensão digital adicional e vinculadas ao desvio no PDF.
+- ZIP: inclui PDFs e fotos/assinaturas associadas.
+- Histórico: busca por número, local ou responsável, mantendo filtro por datas.
+- Versão de aplicativo atualizada para 2.2.2.
+- Build e teste em aparelho desta versão: pendentes.
+
+## 2.2.1 — baseline
+- Build debug CI run #58, commit `271b9861c0ea00521b9a1c5682452d1b375a65ff`, concluído com sucesso.
+- Participantes, assinaturas, matrícula, logo Salum, calendário, filtros de data e PDF básico integrados.
+- APK artifact publicado no GitHub Actions.
