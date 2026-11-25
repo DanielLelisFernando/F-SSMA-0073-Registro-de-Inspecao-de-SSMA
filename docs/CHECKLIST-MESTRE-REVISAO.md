@@ -71,4 +71,4 @@ Não considerar item concluído por existir apenas no checklist, documentação,
 - [x] Ação de excluir desvio implementada (confirmação e integridade a validar).
 - [x] Sanitização de componentes de nome de arquivo implementada; padrão final do nome e validação de exportação pendentes.
 - [ ] PDF segue as duas páginas do formulário, incluindo participantes/assinaturas, severidade, desvios, prazos e assinatura/matrícula final.
-- [ ] Testes funcionais em aparelho/emulador: criar duas inspeções, fechar/reabrir app, conferir sequência; editar e excluir desvio; validar botão Voltar e insets; exportar/abrir PDF e checar nome, logo e paginação.\n- [x] Build debug verificada via GitHub Actions: etapa `Build APK` e upload de artifact concluídos com sucesso (run #34, commit `5f8a5e3`).
+- [ ] Testes funcionais em aparelho/emulador: criar duas inspeções, fechar/reabrir app, conferir sequência; editar e excluir desvio; validar botão Voltar e insets; exportar/abrir PDF e checar nome, logo e paginação.\n- [x] Build debug verificada via GitHub Actions: etapa `Build APK` e upload de artifact concluídos com sucesso (run #36, commit `1b38ecb`).
