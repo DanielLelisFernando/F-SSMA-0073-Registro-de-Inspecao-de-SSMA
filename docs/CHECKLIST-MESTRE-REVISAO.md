@@ -1,6 +1,6 @@
 # Checklist mestre — F-SSMA-0073 Rev.00
 
-Atualizado para o código da versão **2.2.2**. Os itens marcados como implementados indicam presença no código; os testes de uso real continuam separados.
+Atualizado para o código da versão **2.2.4**. Build #74 confirma a versão 2.2.3; a 2.2.4 está em validação. Os itens marcados como implementados indicam presença no código; os testes de uso real continuam separados.
 
 ## Implementado no código
 - [x] Identificação: responsável, número automático, data por calendário e local.
@@ -23,7 +23,8 @@ Atualizado para o código da versão **2.2.2**. Os itens marcados como implement
 ## Validação técnica
 - [x] Build debug CI da baseline 2.2.1: run #58, commit `271b9861`, sucesso; APK publicado.
 - [x] Build debug versão 2.2.2: run #71, commit `1476b4cf`, sucesso; artifact publicado.
-- [ ] Build debug versão 2.2.3 após correção de conversão UTC nos seletores de data.
+- [x] Build debug versão 2.2.3: run #74, commit `f3b1aa2f`, sucesso; APK artifact publicado.
+- [ ] Build debug versão 2.2.4 (compartilhamento de ZIP e preseleção de data).
 - [ ] Testes em aparelho/emulador.
 - [ ] Teste offline integral.
 - [ ] Criar inspeção com múltiplos desvios e fotos, fechar e reabrir.
@@ -34,7 +35,8 @@ Atualizado para o código da versão **2.2.2**. Os itens marcados como implement
 
 ## Pendências conhecidas
 - [x] Recuperação de rascunho offline: autosave durante o preenchimento, retomada na home e confirmação antes de descartar ao iniciar novo registro.
-- [x] Conversão de datas dos DatePicker usando UTC para evitar deslocamento de dia no fuso local; implementação em 2.2.3, build ainda pendente.
+- [x] Conversão UTC dos DatePicker: validada no build #74.
+- [x] Calendário de data da inspeção preseleciona o valor atual do registro (2.2.4; build pendente).
 - [ ] Testes de lifecycle/permissões e em diferentes tamanhos de tela.
 - [ ] Validar layout do PDF visualmente contra o formulário original (o conteúdo está representado, mas a tabela ainda não é uma reprodução gráfica exata).
 - [ ] Confirmar no aparelho a captura de câmera, assinaturas e exportações.
