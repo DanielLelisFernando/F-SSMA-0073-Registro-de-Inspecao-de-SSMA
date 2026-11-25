@@ -14,7 +14,7 @@ Aplicativo Android nativo (Kotlin/Jetpack Compose) para registro digital offline
 - PDF com cabeçalho/paginação, quebra de texto, classificação de severidade, fotos e assinaturas.
 - Exportação ZIP contendo PDFs e evidências.
 - Compartilhamento via FileProvider.
-- Operação offline.
+- Recuperação automática de rascunho local durante o preenchimento (retomada pela home).\n- Operação offline.
 
 ## Build
 O workflow GitHub Actions executa `gradle assembleDebug` e publica o APK debug como artifact.
