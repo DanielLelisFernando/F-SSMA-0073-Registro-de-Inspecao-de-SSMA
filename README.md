@@ -9,19 +9,19 @@ Aplicativo Android nativo em Kotlin/Jetpack Compose para digitalização do form
 - [ ] Ícone do APK: usar `icone apk Inspeções.png` como ícone adaptativo e legado.
 - [ ] Inserir o logo Salum no cabeçalho da tela inicial.
 - [ ] Redesenhar a tela inicial com padrão visual institucional.
-- [ ] Interceptar o botão Voltar do Android para navegar pela pilha interna de telas.
+- [x] Interceptar o botão Voltar do Android para retornar à home a partir de telas internas (comportamento na raiz pendente de validação).
 - [x] Ajuste de janela com `adjustResize` para evitar sobreposição em cenários com teclado.
 - [ ] Corrigir insetos de barras de status/navegação e validar em diferentes versões de Android.
 - [ ] Aumentar área de toque e dimensão do botão Voltar.
-- [ ] Substituir entrada textual de data por seletor de data localizado.
-- [ ] Gerar número sequencial de inspeção a partir da sequência persistida no banco.
-- [ ] Implementar exclusão individual de desvio.
+- [x] Substituir entrada textual de data por seletor de calendário pt-BR (teste em aparelho pendente).
+- [x] Implementar geração automática de número com base no maior ID existente (sequência robusta após exclusão ainda pendente).
+- [x] Implementar exclusão individual de desvio (testes de integridade pendentes).
 - [ ] Nomear PDFs como `Inspeção_SCL_data_local.pdf` (com sanitização dos caracteres inválidos).
 - [ ] Inserir logo Salum no cabeçalho de todas as páginas do PDF.
 
-## Estado técnico e ressalvas
+- [x] Build APK debug: GitHub Actions run #34, commit `5f8a5e3`, concluído com sucesso e artifact publicado. [Abrir execução](https://github.com/DanielLelisFernando/F-SSMA-0073-Registro-de-Inspecao-de-SSMA/actions/runs/45685891058).\n\n## Estado técnico e ressalvas
 
-Apenas a versão do aplicativo/build foi atualizada e o manifesto recebeu `adjustResize`. Os demais itens ainda não devem ser considerados concluídos. A aplicação precisa de implementação e validação funcional em emulador/aparelho Android.
+A versão 2.1.0 contém alterações de código para navegação de retorno, seletor de data, exclusão de desvio e numeração automática. O build debug foi validado em CI; logo, iconografia, logos, redesenho da home, insets, PDF e testes funcionais em aparelho continuam pendentes.
 
 O projeto atual tem uma `MainActivity.kt` centralizada, armazenamento SQLite e geração de PDF com `PdfDocument`. O formulário corporativo original possui duas páginas: identificação (responsável, número, data, local e participantes), classificação de severidade (LEVE, MODERADA, GRAVE e CRÍTICO), tabela de desvios com ação, prazo e responsável, e assinatura/matrícula final do responsável. Essas áreas devem continuar representadas no PDF final.
 
