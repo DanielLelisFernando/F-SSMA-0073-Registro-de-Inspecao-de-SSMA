@@ -24,7 +24,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.dp\nimport androidx.compose.ui.graphics.Color\nimport androidx.compose.foundation.background\nimport androidx.compose.foundation.shape.RoundedCornerShape\nimport androidx.compose.ui.text.font.FontWeight
 import java.io.File
 import java.io.FileOutputStream
 
@@ -37,7 +37,7 @@ class DB(ctx:Activity):SQLiteOpenHelper(ctx,"ssma.db",null,1){
 class MainActivity:ComponentActivity(){
  private lateinit var db:DB
  override fun onCreate(savedInstanceState:Bundle?){super.onCreate(savedInstanceState);db=DB(this)
- setContent { MaterialTheme {
+ setContent { MaterialTheme(colorScheme = lightColorScheme(primary = Color(0xFF252D87), secondary = Color(0xFF20A9D2), background = Color(0xFFF4F8FC), surface = Color.White, surfaceVariant = Color(0xFFEAF6FC))) {
  var resp by remember { mutableStateOf("") }; var num by remember { mutableStateOf("") }; var date by remember { mutableStateOf("") }; var local by remember { mutableStateOf("") }
  var items by remember { mutableStateOf(listOf(Finding())) }
  var photoTarget by remember { mutableIntStateOf(0) }
@@ -52,7 +52,7 @@ class MainActivity:ComponentActivity(){
  OutlinedTextField(local,{local=it},label={Text("Local")},modifier=Modifier.fillMaxWidth())
  Text("Condições / desvios",style=MaterialTheme.typography.titleMedium)
  items.forEachIndexed { idx, f ->
- Card(Modifier.fillMaxWidth()) {Column(Modifier.padding(12.dp),verticalArrangement=Arrangement.spacedBy(8.dp)){
+ Card(Modifier.fillMaxWidth(),shape=RoundedCornerShape(18.dp),colors=CardDefaults.cardColors(containerColor=Color.White)) {Column(Modifier.padding(16.dp),verticalArrangement=Arrangement.spacedBy(10.dp)){
  Text("Desvio #${idx+1}",style=MaterialTheme.typography.titleSmall)
  OutlinedTextField(f.desc,{v->items=items.toMutableList().also{it[idx]=it[idx].copy(desc=v)}},label={Text("Descrição do desvio (obrigatória)")},modifier=Modifier.fillMaxWidth(),minLines=3)
  var expanded by remember(idx){mutableStateOf(false)}
