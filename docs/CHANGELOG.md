@@ -1,5 +1,11 @@
 # Histórico de alterações
 
+## 2.2.3 — em validação
+- Corrige conversão entre `selectedDateMillis` (UTC) e datas exibidas em `dd/MM/yyyy` nos seletores de inspeção e prazo, evitando deslocamento de dia em fusos negativos.
+- Incrementa versionCode para 8 e versionName para 2.2.3.
+- Build CI pendente.
+
+
 ## 2.2.2 — em validação
 - Galeria: copia imagens para armazenamento interno privado, reduzindo dependência de permissões temporárias de URI.
 - Câmera: captura usando URI/FileProvider para arquivo local, substituindo captura de preview de baixa resolução.
