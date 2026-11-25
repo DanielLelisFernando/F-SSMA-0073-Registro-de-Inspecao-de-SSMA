@@ -1,12 +1,12 @@
 # F-SSMA-0073 — Aplicativo de Registro de Inspeções de SSMA
 
-**Versão do projeto: 1.0.1 — Atualização documental de escopo**
+**Versão do projeto: 1.0.2 — Atualização documental**
 
 Aplicativo Android offline planejado para digitalizar o formulário corporativo **F-SSMA-0073 — Registro de Inspeção de SSMA** (Rev.00 - 31/08/2022).
 
 ## Situação atual
 
-A baseline **1.0.0** formalizou a análise do documento-base, o inventário campo a campo, o modelo lógico inicial e o mapeamento do PDF. Na atualização **1.0.1**, foi aprovada a descrição obrigatória do desvio e foto opcional por ocorrência (galeria ou câmera), sem que isso altere o formulário impresso Rev.00. A implementação ainda não começou; não há APK ou build funcional nesta versão.
+A baseline **1.0.0** formalizou a análise do documento-base, o inventário campo a campo, o modelo lógico inicial e o mapeamento do PDF. Na atualização **1.0.1**, foi aprovada a descrição obrigatória e foto opcional por ocorrência (galeria ou câmera). Na **1.0.2**, foi confirmado o limite de uma foto por desvio, e sua inclusão no PDF exportado, sem alterar o formulário impresso Rev.00. A implementação ainda não começou; não há APK ou build funcional nesta versão.
 
 ## Análise oficial do formulário
 
