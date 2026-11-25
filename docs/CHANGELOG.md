@@ -6,7 +6,7 @@
 - PDF: quebra de texto, cabeçalho e rodapé em páginas adicionais, descrição oficial das severidades, participantes e assinaturas.
 - Evidências fotográficas identificadas como extensão digital adicional e vinculadas ao desvio no PDF.
 - ZIP: inclui PDFs e fotos/assinaturas associadas.
-- Histórico: busca por número, local ou responsável, mantendo filtro por datas.
+- Histórico: busca por número, local ou responsável, mantendo filtro por datas.\n- Rascunho: autosave offline e retomada pela home; ao iniciar novo registro com rascunho, confirmação para descartá-lo.
 - Versão de aplicativo atualizada para 2.2.2.
 - Build e teste em aparelho desta versão: pendentes.
 
