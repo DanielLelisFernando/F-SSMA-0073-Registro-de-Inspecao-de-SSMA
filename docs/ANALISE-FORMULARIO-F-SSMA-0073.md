@@ -57,7 +57,7 @@ Linha de assinatura com a legenda **Assinatura / Matrícula do Responsável pela
 
 Além do formulário impresso, o usuário autorizou uma extensão digital para cada registro de condição/desvio: **foto opcional**, selecionável da galeria ou capturada pela câmera do aparelho. O campo textual **CONDIÇÃO DE RISCO/ NÃO CONFORME** (R02) permanece **obrigatório** na implementação, conforme decisão explícita do usuário. Essa regra de obrigatoriedade é uma regra de produto aprovada, não uma exigência que conste do formulário Rev.00. A fotografia é opcional e não deve impedir a conclusão quando ausente.
 
-A interface deverá permitir: (a) selecionar imagem existente usando seletor de fotos/galeria do Android; (b) capturar uma foto pela câmera durante o preenchimento; (c) visualizar a imagem selecionada/capturada e remover ou substituir antes de concluir. O armazenamento deverá ser local e offline. No PDF, incluir a imagem associada à ocorrência, se houver, com tamanho/layout adaptativo, sem truncar o texto de descrição obrigatório. Essa extensão deve ser identificada no app e no PDF como recurso digital adicional, sem alterar ou alegar que o formulário corporativo original Rev.00 contém campo de fotografia.
+A interface deverá permitir **no máximo uma foto por desvio**: (a) selecionar uma imagem existente usando o seletor de fotos/galeria do Android; ou (b) capturar uma foto pela câmera durante o preenchimento. Permitir visualizar e substituir/remover a foto antes de concluir. O armazenamento deverá ser local e offline. A foto, quando presente, deverá ser incorporada também ao PDF exportado/gerado, junto ao desvio correspondente, com layout adaptativo e sem truncar o texto obrigatório. Essa extensão deve ser identificada no app e no PDF como recurso digital adicional, sem alterar ou alegar que o formulário corporativo original Rev.00 contém campo de fotografia.
 
 
 | ID | Seção/página | Nome original | Finalidade | Tipo/componente futuro | Obrigatoriedade | Opções/regras observadas | Repetição |
@@ -78,7 +78,7 @@ A interface deverá permitir: (a) selecionar imagem existente usando seletor de 
 | S04 | Severidade, 1 | CRÍTICO | Classificar severidade da condição | Opção de seleção única | Não indicada | Descrição oficial CRÍTICO | Por condição |
 | R01 | Condições/ações, 1–2 | Nº | Numerar ocorrência | Índice numérico automático | Não indicada | Sequência dos registros; regra de renumeração não definida | Sim |
 | R02 | Condições/ações, 1–2 | CONDIÇÃO DE RISCO/ NÃO CONFORME | Descrever condição identificada | Campo descritivo multilinha | **Obrigatória no aplicativo (decisão aprovada)** | Sem categoria ou limite definido; não é marcada como obrigatória no formulário impresso | Sim |
-| R07 | Extensão digital aprovada | Foto do desvio (campo digital adicional) | Evidência visual opcional da condição | Seleção de imagem da galeria ou captura pela câmera; preview e remover/substituir | **Opcional** | Imagem local/offline; não consta do formulário Rev.00; incluir no PDF da ocorrência quando presente | Sim, associada a cada ocorrência
+| R07 | Extensão digital aprovada | Foto do desvio (campo digital adicional) | Evidência visual opcional da condição | Seleção de uma imagem da galeria ou captura pela câmera; preview e remover/substituir | **Opcional; máximo de 1 foto por desvio** | Imagem local/offline; não consta do formulário Rev.00; incluir no PDF exportado quando presente | Sim, uma foto por ocorrência
 | R03 | Condições/ações, 1–2 | SEVERIDADE | Classificar a condição | Seleção única | Não indicada | LEVE, MODERADA, GRAVE ou CRÍTICO | Sim |
 | R04 | Condições/ações, 1–2 | AÇÃO PARA ADEQUAÇÃO/CORREÇÃO | Registrar ação | Campo descritivo multilinha | Não indicada | Sem opções predefinidas | Sim |
 | R05 | Condições/ações, 1–2 | PRAZO DE EXECUÇÃO | Registrar prazo para a ação | Data ou texto de prazo | Não indicada | O formulário não define formato; manter flexível até confirmação | Sim |
@@ -175,13 +175,13 @@ Até confirmação, manter entrada flexível e não implementar validações de 
 - Versionamento Git e migrações locais não destrutivas.
 - Preservação da revisão do formulário e da versão do app em cada registro.
 
-## 8. Estado da versão 1.0.1 — alteração de escopo aprovada
+## 8. Estado da versão 1.0.2 — limite de foto confirmado\n\n- **Versão do projeto:** 1.0.2 — atualização documental.\n- **Decisão:** máximo de uma foto por desvio, escolhida da galeria ou capturada pela câmera; foto opcional; incluir no PDF exportado.\n- **Implementação e testes:** ainda pendentes.\n\n## 9. Estado da versão 1.0.1 — alteração de escopo aprovada
 
 - **Versão do projeto:** 1.0.1 — atualização documental de escopo.
 - **Alteração:** descrição do desvio R02 passa a ser obrigatória no app; fotografia por ocorrência é opcional, via galeria ou câmera, e pode ser incluída no PDF.
 - **Nota:** 1.0.1 não é build Android; é atualização documental de requisito.
 
-## 9. Estado da baseline 1.0.0
+## 10. Estado da baseline 1.0.0
 
 - **Versão do projeto:** 1.0.0 — baseline documental.
 - **Análise do formulário:** inventário e mapeamentos documentados.
@@ -190,4 +190,4 @@ Até confirmação, manter entrada flexível e não implementar validações de 
 - **Testes funcionais:** não executados.
 - **Pendências:** seção 6.
 
-A baseline 1.0.0 e a atualização documental 1.0.1 não representam APK funcional nem versão de produção.
+As atualizações documentais 1.0.1 e 1.0.2 e a baseline 1.0.0 não representam APK funcional nem versão de produção.
