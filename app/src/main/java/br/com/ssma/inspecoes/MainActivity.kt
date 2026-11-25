@@ -51,6 +51,7 @@ class DB(ctx:android.content.Context):SQLiteOpenHelper(ctx,"ssma.db",null,2){
  fun list():List<Inspection>{val c=readableDatabase.rawQuery("SELECT id,responsible,number,date,location,findings,pdf FROM inspections ORDER BY id DESC",null);val l=mutableListOf<Inspection>();while(c.moveToNext()){l+=Inspection(c.getInt(0),c.getString(1)?: "",c.getString(2)?: "",c.getString(3)?: "",c.getString(4)?: "",decode(c.getString(5)?: ""),c.getString(6)?: "")};c.close();return l}
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 class MainActivity:ComponentActivity(){
  private lateinit var db:DB
  override fun onCreate(savedInstanceState:Bundle?){super.onCreate(savedInstanceState);db=DB(this)
@@ -105,7 +106,7 @@ class MainActivity:ComponentActivity(){
  }
  }
  }
- private fun safeFilePart(raw:String):String = raw.trim().replace(Regex("[^A-Za-z0-9_-]"),"_").trim("_").ifBlank{"sem_dado"}
+ private fun safeFilePart(raw:String):String = raw.trim().replace(Regex("[^A-Za-z0-9_-]"),"_").trim('_').ifBlank{"sem_dado"}
 private fun loadBitmap(context:android.content.Context, uri:Uri):Bitmap? {
   return try {
    if(uri.scheme=="file") { BitmapFactory.decodeFile(uri.path) }
