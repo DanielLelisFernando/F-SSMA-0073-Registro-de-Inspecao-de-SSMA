@@ -27,7 +27,7 @@ O projeto atual tem uma `MainActivity.kt` centralizada, armazenamento SQLite e g
 
 ## Build e validação
 
-O workflow GitHub Actions em `.github/workflows/android.yml` executa `gradle assembleDebug` e publica o APK debug como artifact. A existência de workflow não significa que a build da versão 2.1.0 tenha passado; verificar a execução da Actions depois dos commits.
+O workflow GitHub Actions em `.github/workflows/android.yml` executa `gradle assembleDebug` e publica o APK debug como artifact. **Build verificada:** GitHub Actions executou `Build APK` com sucesso na branch `2.1.0` (run #28, commit `360a6bfa`). Artifact `ssma-inspecoes-debug-apk` foi publicado e está disponível até 25/12/2026. [Abrir execução](https://github.com/DanielLelisFernando/F-SSMA-0073-Registro-de-Inspecao-de-SSMA/actions/runs/45684522510).
 
 ## Histórico de desenvolvimento
 
