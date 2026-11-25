@@ -128,7 +128,6 @@ class MainActivity:ComponentActivity(){
  }
  }
  }
- if(signatureTarget!=null){SignaturePadDialog(onDismiss={signatureTarget=null},onSave={path->val target=signatureTarget;if(target=="inspector")inspectorSignature=path else if(target?.startsWith("participant:")==true){val idx=target.substringAfter(":").toIntOrNull();if(idx!=null&&idx in participants.indices)participants=participants.toMutableList().also{it[idx]=it[idx].copy(signature=path)} };signatureTarget=null})}
  }
  }
  }
