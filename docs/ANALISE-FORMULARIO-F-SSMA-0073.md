@@ -53,6 +53,13 @@ Linha de assinatura com a legenda **Assinatura / Matrícula do Responsável pela
 
 ## 2. Inventário campo a campo e componente futuro
 
+### Extensão aprovada pelo usuário — foto opcional do desvio
+
+Além do formulário impresso, o usuário autorizou uma extensão digital para cada registro de condição/desvio: **foto opcional**, selecionável da galeria ou capturada pela câmera do aparelho. O campo textual **CONDIÇÃO DE RISCO/ NÃO CONFORME** (R02) permanece **obrigatório** na implementação, conforme decisão explícita do usuário. Essa regra de obrigatoriedade é uma regra de produto aprovada, não uma exigência que conste do formulário Rev.00. A fotografia é opcional e não deve impedir a conclusão quando ausente.
+
+A interface deverá permitir: (a) selecionar imagem existente usando seletor de fotos/galeria do Android; (b) capturar uma foto pela câmera durante o preenchimento; (c) visualizar a imagem selecionada/capturada e remover ou substituir antes de concluir. O armazenamento deverá ser local e offline. No PDF, incluir a imagem associada à ocorrência, se houver, com tamanho/layout adaptativo, sem truncar o texto de descrição obrigatório. Essa extensão deve ser identificada no app e no PDF como recurso digital adicional, sem alterar ou alegar que o formulário corporativo original Rev.00 contém campo de fotografia.
+
+
 | ID | Seção/página | Nome original | Finalidade | Tipo/componente futuro | Obrigatoriedade | Opções/regras observadas | Repetição |
 |---|---|---|---|---|---|---|---|
 | H01 | Cabeçalho, 1–2 | F-SSMA-0073 | Identificar o formulário | Texto fixo | N/A | Código impresso | Não |
@@ -70,7 +77,8 @@ Linha de assinatura com a legenda **Assinatura / Matrícula do Responsável pela
 | S03 | Severidade, 1 | GRAVE | Classificar severidade da condição | Opção de seleção única | Não indicada | Descrição oficial GRAVE | Por condição |
 | S04 | Severidade, 1 | CRÍTICO | Classificar severidade da condição | Opção de seleção única | Não indicada | Descrição oficial CRÍTICO | Por condição |
 | R01 | Condições/ações, 1–2 | Nº | Numerar ocorrência | Índice numérico automático | Não indicada | Sequência dos registros; regra de renumeração não definida | Sim |
-| R02 | Condições/ações, 1–2 | CONDIÇÃO DE RISCO/ NÃO CONFORME | Descrever condição identificada | Campo descritivo multilinha | Não indicada | Sem categoria ou limite definido | Sim |
+| R02 | Condições/ações, 1–2 | CONDIÇÃO DE RISCO/ NÃO CONFORME | Descrever condição identificada | Campo descritivo multilinha | **Obrigatória no aplicativo (decisão aprovada)** | Sem categoria ou limite definido; não é marcada como obrigatória no formulário impresso | Sim |
+| R07 | Extensão digital aprovada | Foto do desvio (campo digital adicional) | Evidência visual opcional da condição | Seleção de imagem da galeria ou captura pela câmera; preview e remover/substituir | **Opcional** | Imagem local/offline; não consta do formulário Rev.00; incluir no PDF da ocorrência quando presente | Sim, associada a cada ocorrência
 | R03 | Condições/ações, 1–2 | SEVERIDADE | Classificar a condição | Seleção única | Não indicada | LEVE, MODERADA, GRAVE ou CRÍTICO | Sim |
 | R04 | Condições/ações, 1–2 | AÇÃO PARA ADEQUAÇÃO/CORREÇÃO | Registrar ação | Campo descritivo multilinha | Não indicada | Sem opções predefinidas | Sim |
 | R05 | Condições/ações, 1–2 | PRAZO DE EXECUÇÃO | Registrar prazo para a ação | Data ou texto de prazo | Não indicada | O formulário não define formato; manter flexível até confirmação | Sim |
@@ -108,7 +116,7 @@ Relação: uma inspeção para vários participantes.
 - `id`
 - `inspection_id` (FK)
 - `sequence_number` (R01)
-- `risk_condition_nonconformity` (R02)
+- `risk_condition_nonconformity` (R02; **obrigatório no app**, regra aprovada pelo usuário, não impressa no formulário original)\n- `photo_uri` ou referência ao arquivo local de foto (R07; opcional, associada à ocorrência; origem galeria ou câmera; guardar arquivo local e referência no banco)
 - `severity` (R03; valores: LEVE, MODERADA, GRAVE, CRÍTICO)
 - `corrective_action` (R04)
 - `execution_deadline` (R05; manter representação compatível com a entrada definida)
@@ -127,7 +135,7 @@ Catálogo versionado contendo código/revisão, nomenclatura, campos, descriçõ
 | Identificação na primeira página | I01–I04 |
 | Tabela de participantes | P01–P02, uma linha por participante |
 | Classificação da Severidade | LEVE, MODERADA, GRAVE, CRÍTICO e respectivas descrições oficiais |
-| Tabela de condições e ações | Uma linha por ocorrência, R01–R06 |
+| Tabela de condições e ações | Uma linha por ocorrência, R01–R06; R02 é obrigatório no app; R07 é foto opcional e, se presente, pode ser incorporada como evidência adicional ao PDF |
 | Continuação em páginas adicionais | Novas linhas com o mesmo cabeçalho e colunas originais |
 | Fecho da última página | A01 — Assinatura / Matrícula do Responsável pela Inspeção |
 
@@ -138,7 +146,7 @@ O PDF não poderá truncar texto nem omitir ocorrências. A quantidade de linhas
 1. **Identificação:** Responsável inspeção, Nº Inspeção, Data e Local.
 2. **Participantes:** lista dinâmica de Nome dos participantes e Assinatura.
 3. **Classificação de severidade:** seletor entre as quatro classes oficiais, com descrições visíveis.
-4. **Condições e ações:** lista dinâmica com Nº, CONDIÇÃO DE RISCO/ NÃO CONFORME, SEVERIDADE, AÇÃO PARA ADEQUAÇÃO/CORREÇÃO, PRAZO DE EXECUÇÃO e RESPONSÁVEL.
+4. **Condições e ações:** lista dinâmica com Nº, CONDIÇÃO DE RISCO/ NÃO CONFORME (**descrição obrigatória no app**), SEVERIDADE, AÇÃO PARA ADEQUAÇÃO/CORREÇÃO, PRAZO DE EXECUÇÃO e RESPONSÁVEL; foto opcional da ocorrência via galeria ou câmera.
 5. **Assinatura final:** captura de assinatura e matrícula do responsável, mantendo a legenda original.
 
 ## 6. Pendências de confirmação — não presumir
@@ -156,6 +164,9 @@ Até confirmação, manter entrada flexível e não implementar validações de 
 
 ## 7. Escopo técnico previsto
 
+- Captura/seleção de fotografia opcional por ocorrência: galeria e câmera Android; armazenar imagem local e incluir no PDF quando disponível. Usar mecanismos de acesso a mídia/câmera apropriados ao Android, solicitando permissões apenas quando necessárias.
+- Descrição R02 obrigatória no app, regra de produto aprovada, com validação objetiva para não permitir concluir uma ocorrência sem texto.
+
 - Aplicativo Android com persistência local SQLite.
 - Operação offline para criar, editar rascunhos, consultar e gerar PDF.
 - PDF local com páginas adicionais para registros repetitivos.
@@ -164,7 +175,13 @@ Até confirmação, manter entrada flexível e não implementar validações de 
 - Versionamento Git e migrações locais não destrutivas.
 - Preservação da revisão do formulário e da versão do app em cada registro.
 
-## 8. Estado da versão 1.0.0
+## 8. Estado da versão 1.0.1 — alteração de escopo aprovada
+
+- **Versão do projeto:** 1.0.1 — atualização documental de escopo.
+- **Alteração:** descrição do desvio R02 passa a ser obrigatória no app; fotografia por ocorrência é opcional, via galeria ou câmera, e pode ser incluída no PDF.
+- **Nota:** 1.0.1 não é build Android; é atualização documental de requisito.
+
+## 9. Estado da baseline 1.0.0
 
 - **Versão do projeto:** 1.0.0 — baseline documental.
 - **Análise do formulário:** inventário e mapeamentos documentados.
@@ -173,4 +190,4 @@ Até confirmação, manter entrada flexível e não implementar validações de 
 - **Testes funcionais:** não executados.
 - **Pendências:** seção 6.
 
-A versão 1.0.0 representa a baseline documental, não um APK funcional nem uma versão de produção.
+A baseline 1.0.0 e a atualização documental 1.0.1 não representam APK funcional nem versão de produção.
