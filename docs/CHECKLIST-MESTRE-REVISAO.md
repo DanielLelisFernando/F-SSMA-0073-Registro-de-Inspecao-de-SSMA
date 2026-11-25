@@ -1,74 +1,45 @@
-# Revisão geral e checklist mestre — F-SSMA-0073 Rev.00
+# Checklist mestre — F-SSMA-0073 Rev.00
 
-Auditoria baseada no formulário corporativo original e na versão de código atualmente existente no repositório. Este checklist acompanha a implementação; caixas marcadas indicam implementação e não apenas planejamento.
+Atualizado para o código da versão **2.2.2**. Os itens marcados como implementados indicam presença no código; os testes de uso real continuam separados.
 
-## Fase 1 — Conformidade documental
-- [ ] Responsável pela inspeção
-- [x] Número da inspeção
-- [x] Data (seletor de calendário implementado; validação em aparelho pendente)
-- [x] Local
-- [ ] Participantes: lista repetível de nomes
-- [ ] Assinatura de cada participante
-- [x] Condições/desvios repetíveis
-- [x] Descrição da condição (regra de produto: obrigatória)
-- [x] Severidade: LEVE, MODERADA, GRAVE, CRÍTICO
-- [x] Ação de adequação/correção
-- [x] Prazo
-- [x] Responsável pelo item
-- [ ] Assinatura e matrícula do responsável pela inspeção
+## Implementado no código
+- [x] Identificação: responsável, número automático, data por calendário e local.
+- [x] Lista repetível de participantes e captura de assinatura individual.
+- [x] Matrícula e assinatura do responsável pela inspeção.
+- [x] Desvios repetíveis, descrição obrigatória, severidade, ação, prazo e responsável.
+- [x] Descrição oficial das quatro severidades exibida no formulário e no PDF.
+- [x] Câmera com captura para arquivo privado local.
+- [x] Galeria com cópia da foto para armazenamento privado do app.
+- [x] Visualizar, substituir e remover foto por desvio.
+- [x] SQLite para inspeções e conteúdo estruturado em JSON para desvios/participantes.
+- [x] Consulta, edição, filtro por data e pesquisa por número/local/responsável.
+- [x] PDF com cabeçalho institucional repetido, paginação, rodapé e quebra de texto.
+- [x] PDF inclui identificação, participantes/assinaturas, legenda de severidades, desvios, fotos, matrícula e assinatura final.
+- [x] Compartilhamento individual por FileProvider.
+- [x] ZIP com PDF e evidências (fotos e assinaturas).
+- [x] Logo Salum na home e no PDF.
+- [x] Ícone launcher vetorial com lupa.
 
-## Fase 2 — Interface e fluxo
-- [ ] Cabeçalho institucional com logo
-- [ ] Agrupar identificação em cartão
-- [ ] Home com iniciar inspeção, histórico e exportações
-- [ ] UX consistente, acessibilidade e feedback
-- [ ] Validar visualmente em diferentes tamanhos de tela
+## Validação técnica
+- [x] Build debug CI da baseline 2.2.1: run #58, commit `271b9861`, sucesso; APK publicado.
+- [ ] Build debug da versão 2.2.2 após estas alterações.
+- [ ] Testes em aparelho/emulador.
+- [ ] Teste offline integral.
+- [ ] Criar inspeção com múltiplos desvios e fotos, fechar e reabrir.
+- [ ] Conferir edição, substituição/removação de fotos, filtros e número automático.
+- [ ] Conferir PDF em leitor externo (paginação, textos e imagens).
+- [ ] Conferir ZIP (PDF, fotos e assinaturas) e compartilhamento.
+- [ ] Testar atualização sobre banco já existente.
 
-## Fase 3 — Robustez e persistência
-- [ ] Persistência estruturada dos itens (não concatenar descrições)
-- [ ] Salvar fotos em armazenamento persistente privado
-- [ ] Garantir edição/substituição/removação de foto
-- [ ] Recuperação de rascunho
-- [ ] Compartilhamento seguro de arquivos via FileProvider/content URI (remover Uri.fromFile)
-- [ ] Verificar permissões, lifecycle e falhas
+## Pendências conhecidas
+- [ ] Recuperação automática de rascunho após encerramento inesperado.
+- [ ] Testes de lifecycle/permissões e em diferentes tamanhos de tela.
+- [ ] Validar layout do PDF visualmente contra o formulário original (o conteúdo está representado, mas a tabela ainda não é uma reprodução gráfica exata).
+- [ ] Confirmar no aparelho a captura de câmera, assinaturas e exportações.
 
-## Fase 4 — Gestão
-- [ ] Histórico de inspeções
-- [ ] Pesquisa e filtros
-- [ ] Abrir/editar inspeção salva
-- [ ] Exportar PDF individual
-- [ ] Exportar pacote ZIP com PDF e evidências
-- [ ] Compartilhamento e exportação testados
-
-## Fase 5 — PDF e validação
-- [ ] Layout fiel ao formulário F-SSMA-0073 Rev.00
-- [ ] Logo e identificação corporativa
-- [ ] Participantes e assinaturas
-- [ ] Fotos com legenda/associação ao desvio
-- [ ] Paginação, cabeçalho repetido e rodapé
-- [ ] Não truncar texto nem evidências
-- [ ] Testes em aparelho/emulador
-- [ ] Teste integral offline
-- [ ] Teste de persistência, exportação e compartilhamento
-
-## Extensão digital aprovada
-Foto opcional por desvio, capturada pela câmera ou galeria, armazenada localmente e incorporada ao PDF. Essa extensão não consta no formulário Rev.00 original e deve ser identificada como recurso digital adicional.
-
-## Regra de rastreabilidade
-Não considerar item concluído por existir apenas no checklist, documentação, ou por compilar. Marcar como implementado somente após código e validação; registrar limitações e testes.
-
-
-## Versão 2.1.0 — requisitos de implementação e critérios de aceite\n\n**Atualização de implementação:** logo Salum inserido na home e no cabeçalho de cada página do PDF, usando imagem de proporção quadrada ajustada sem distorção. O arquivo de origem mede 483 × 475 px. Insets de barras do sistema com configuração de cores adicionados. O build precisa ser confirmado pelo Actions após este commit; testes visuais em aparelho permanecem pendentes.
-
-- [ ] Ícone do aplicativo configurado em mipmap (launcher legado e adaptive icon) usando o PNG aprovado.
-- [x] Logo Salum incluído no cabeçalho da home e no cabeçalho de cada página do PDF (validação visual pendente).
-- [ ] Tela inicial redesenhada e validada em diferentes densidades/tamanhos.
-- [x] Botão Voltar do Android navega para home a partir das telas internas (comportamento de saída na raiz ainda a validar).
-- [x] Cores das barras de status e navegação configuradas; aplicação completa de WindowInsets e validação em aparelho ainda pendentes.
-- [ ] Botões de navegação com área de toque mínima apropriada e botão Voltar visualmente maior.
-- [x] Campo DATA usa seletor de calendário localizado em pt-BR (persistência/formato canônico a validar).
-- [x] Geração automática de número baseada no maior ID existente implementada; requisito de sequência transacional e não reutilização após exclusões ainda pendente.
-- [x] Ação de excluir desvio implementada (confirmação e integridade a validar).
-- [x] Sanitização de componentes de nome de arquivo implementada; padrão final do nome e validação de exportação pendentes.
-- [ ] PDF segue as duas páginas do formulário, incluindo participantes/assinaturas, severidade, desvios, prazos e assinatura/matrícula final.
-- [ ] Testes funcionais em aparelho/emulador: criar duas inspeções, fechar/reabrir app, conferir sequência; editar e excluir desvio; validar botão Voltar e insets; exportar/abrir PDF e checar nome, logo e paginação.\n- [ ] Novo build após integração do logo e ajustes de UI: aguardando execução do Actions.
+## Regras
+- Operação offline.
+- Descrição do desvio obrigatória por decisão de produto.
+- Foto opcional, máximo de uma por desvio.
+- Formulário de referência: F-SSMA-0073 Rev.00, 31/08/2022.
+- Não marcar validação de dispositivo como concluída apenas porque o build compila.
