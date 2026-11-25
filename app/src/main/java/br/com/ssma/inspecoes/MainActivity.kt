@@ -11,6 +11,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -70,6 +71,7 @@ class MainActivity:ComponentActivity(){
  var filterStart by remember{mutableStateOf("")};var filterEnd by remember{mutableStateOf("")};var selected by remember{mutableStateOf(setOf<Int>())}
  fun startForm(ins:Inspection?){editing=ins;responsible=ins?.responsible?: "";number=ins?.number?:db.nextNumber();date=ins?.date?: "";location=ins?.location?: "";findings=ins?.findings?:listOf(Finding());screen="form"}
  BackHandler(enabled=screen!="home"){screen="home"}
+ if(dateDialog){val state=rememberDatePickerState();DatePickerDialog(onDismissRequest={dateDialog=false},confirmButton={TextButton(onClick={state.selectedDateMillis?.let{ms->date=java.text.SimpleDateFormat("dd/MM/yyyy",java.util.Locale("pt","BR")).format(java.util.Date(ms))};dateDialog=false}){Text("Confirmar")}},dismissButton={TextButton(onClick={dateDialog=false}){Text("Cancelar")}}){DatePicker(state)}}
  Column(Modifier.fillMaxSize().imePadding().padding(16.dp),verticalArrangement=Arrangement.spacedBy(12.dp)){
  when(screen){
  "home"->Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(18.dp)){
