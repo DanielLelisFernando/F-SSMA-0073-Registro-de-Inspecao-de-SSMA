@@ -1,26 +1,9 @@
-# F-SSMA-0073 — Aplicativo de Registro de Inspeções de SSMA
+# Inspeções SSMA Android
 
-**Versão do projeto: 1.0.2 — Atualização documental**
+**Versão de desenvolvimento 1.0.2 (MVP em implementação).**
 
-Aplicativo Android offline planejado para digitalizar o formulário corporativo **F-SSMA-0073 — Registro de Inspeção de SSMA** (Rev.00 - 31/08/2022).
+APK debug é construído por GitHub Actions. MVP inclui identificação da inspeção, desvios repetitivos, descrição obrigatória, severidade, ação, prazo, responsável, foto opcional (máximo de uma por desvio) via galeria/câmera, geração de PDF e compartilhamento.
 
-## Situação atual
+> Limitações do protótipo: fluxo e validação funcional ainda precisam de testes; assinatura, participantes, pesquisa/histórico, exportação ZIP, PDF com layout fiel ao formulário corporativo e teste em dispositivos ainda não implementados/validados.
 
-A baseline **1.0.0** formalizou a análise do documento-base, o inventário campo a campo, o modelo lógico inicial e o mapeamento do PDF. Na atualização **1.0.1**, foi aprovada a descrição obrigatória e foto opcional por ocorrência (galeria ou câmera). Na **1.0.2**, foi confirmado o limite de uma foto por desvio, e sua inclusão no PDF exportado, sem alterar o formulário impresso Rev.00. A implementação ainda não começou; não há APK ou build funcional nesta versão.
-
-## Análise oficial do formulário
-
-Consulte [docs/ANALISE-FORMULARIO-F-SSMA-0073.md](docs/ANALISE-FORMULARIO-F-SSMA-0073.md).
-
-## Regra de desenvolvimento
-
-O formulário corporativo é a fonte oficial. Não adicionar campos, classificações, obrigatoriedades ou validações sem evidência documental ou aprovação explícita do proprietário do processo. Ambiguidades devem permanecer registradas como pendências.
-
-## Próximas etapas
-
-1. Validar as pendências do inventário com o responsável pelo processo SSMA.
-2. Definir arquitetura Android e esquema SQLite versionado.
-3. Implementar telas e fluxo de inspeção.
-4. Implementar PDF fiel ao formulário, exportação ZIP e compartilhamento.
-5. Executar testes funcionais, offline, de integridade e compatibilidade.
-6. Gerar APK e registrar a release após validação.
+Workflow: GitHub Actions → Android APK → artifact `ssma-inspecoes-debug-apk`.
