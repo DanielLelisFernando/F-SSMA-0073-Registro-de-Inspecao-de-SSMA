@@ -47,7 +47,7 @@ import java.io.FileOutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-private const val APP_VERSION = "2.2.3"
+private const val APP_VERSION = "2.2.4"
 private const val LOGO_ASSET = "salum_logo.jpg"
 data class Finding(val desc:String="",val severity:String="LEVE",val action:String="",val deadline:String="",val owner:String="",val photo:String="")
 data class Participant(val name:String="",val signature:String="")
@@ -73,7 +73,7 @@ class MainActivity:ComponentActivity(){
  window.statusBarColor = android.graphics.Color.rgb(37,45,135); window.navigationBarColor = android.graphics.Color.rgb(244,248,252); if (android.os.Build.VERSION.SDK_INT >= 29) window.isNavigationBarContrastEnforced = false; setContent { MaterialTheme(colorScheme=lightColorScheme(primary=Color(0xFF252D87),secondary=Color(0xFF20A9D2),background=Color(0xFFF4F8FC),surface=Color.White)){
  var screen by remember{mutableStateOf("home")};var editing by remember{mutableStateOf<Inspection?>(null)};var refresh by remember{mutableIntStateOf(0)};var dateDialog by remember{mutableStateOf(false)};var deadlineDialogIndex by remember{mutableIntStateOf(-1)}
  fun toast(s:String)=Toast.makeText(this@MainActivity,s,Toast.LENGTH_SHORT).show()
- fun shareFiles(files:List<File>,zip:Boolean=false){try{val uris=files.map{FileProvider.getUriForFile(this@MainActivity,"br.com.ssma.inspecoes.fileprovider",it)};val intent=if(uris.size==1&&!zip)Intent(Intent.ACTION_SEND).apply{type="application/pdf";putExtra(Intent.EXTRA_STREAM,uris[0])}else Intent(Intent.ACTION_SEND_MULTIPLE).apply{type=if(zip)"application/zip" else "application/pdf";putParcelableArrayListExtra(Intent.EXTRA_STREAM,ArrayList(uris))};intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);startActivity(Intent.createChooser(intent,"Compartilhar exportação"))}catch(e:Exception){toast("Falha ao compartilhar: ${e.message}")}}
+ fun shareFiles(files:List<File>,zip:Boolean=false){try{val uris=files.map{FileProvider.getUriForFile(this@MainActivity,"br.com.ssma.inspecoes.fileprovider",it)};val intent=if(uris.size==1)Intent(Intent.ACTION_SEND).apply{type=if(zip)"application/zip" else "application/pdf";putExtra(Intent.EXTRA_STREAM,uris[0])}else Intent(Intent.ACTION_SEND_MULTIPLE).apply{type=if(zip)"application/zip" else "application/pdf";putParcelableArrayListExtra(Intent.EXTRA_STREAM,ArrayList(uris))};intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);startActivity(Intent.createChooser(intent,"Compartilhar exportação"))}catch(e:Exception){toast("Falha ao compartilhar: ${e.message}")}}
  fun pdf(i:Inspection):File {
   val logo=assets.open(LOGO_ASSET).use{BitmapFactory.decodeStream(it)}
   val doc=PdfDocument()
@@ -203,7 +203,7 @@ class MainActivity:ComponentActivity(){
   }
  }
  BackHandler(enabled=screen!="home"){screen="home"}
- if(dateDialog){val state=rememberDatePickerState();DatePickerDialog(onDismissRequest={dateDialog=false},confirmButton={TextButton(onClick={state.selectedDateMillis?.let{ms->date=datePickerMillisToText(ms)};dateDialog=false}){Text("Confirmar")}},dismissButton={TextButton(onClick={dateDialog=false}){Text("Cancelar")}}){DatePicker(state)}}
+ if(dateDialog){val state=rememberDatePickerState(initialSelectedDateMillis=dateTextToPickerMillis(date));DatePickerDialog(onDismissRequest={dateDialog=false},confirmButton={TextButton(onClick={state.selectedDateMillis?.let{ms->date=datePickerMillisToText(ms)};dateDialog=false}){Text("Confirmar")}},dismissButton={TextButton(onClick={dateDialog=false}){Text("Cancelar")}}){DatePicker(state)}}
  if(deadlineDialogIndex>=0){val idx=deadlineDialogIndex;val current=findings.getOrNull(idx)?.deadline?: "";val initialMillis=try{dateTextToPickerMillis(current)}catch(_:Exception){null};val state=rememberDatePickerState(initialSelectedDateMillis=initialMillis);DatePickerDialog(onDismissRequest={deadlineDialogIndex=-1},confirmButton={TextButton(onClick={state.selectedDateMillis?.let{ms->findings=findings.toMutableList().also{list->list[idx]=list[idx].copy(deadline=datePickerMillisToText(ms))} };deadlineDialogIndex=-1}){Text("Confirmar")}},dismissButton={TextButton(onClick={deadlineDialogIndex=-1}){Text("Cancelar")}}){DatePicker(state)}}
  Column(Modifier.fillMaxSize().imePadding().navigationBarsPadding().padding(16.dp),verticalArrangement=Arrangement.spacedBy(12.dp)){
  when(screen){
