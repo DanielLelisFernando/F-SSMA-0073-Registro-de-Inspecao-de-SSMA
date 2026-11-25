@@ -122,8 +122,6 @@ class MainActivity:ComponentActivity(){
  }
  }
  }
- }
- }
  private fun loadBitmap(context:android.content.Context, uri:Uri):Bitmap? {
   return try {
    if(uri.scheme=="file") { BitmapFactory.decodeFile(uri.path) }
