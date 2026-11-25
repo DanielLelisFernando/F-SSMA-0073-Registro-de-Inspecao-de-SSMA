@@ -203,8 +203,8 @@ class MainActivity:ComponentActivity(){
   }
  }
  BackHandler(enabled=screen!="home"){screen="home"}
- if(dateDialog){val state=rememberDatePickerState();DatePickerDialog(onDismissRequest={dateDialog=false},confirmButton={TextButton(onClick={state.selectedDateMillis?.let{ms->date=java.text.SimpleDateFormat("dd/MM/yyyy",java.util.Locale("pt","BR")).format(java.util.Date(ms))};dateDialog=false}){Text("Confirmar")}},dismissButton={TextButton(onClick={dateDialog=false}){Text("Cancelar")}}){DatePicker(state)}}
- if(deadlineDialogIndex>=0){val idx=deadlineDialogIndex;val current=findings.getOrNull(idx)?.deadline?: "";val initialMillis=try{java.text.SimpleDateFormat("dd/MM/yyyy",java.util.Locale("pt","BR")).parse(current)?.time}catch(_:Exception){null};val state=rememberDatePickerState(initialSelectedDateMillis=initialMillis);DatePickerDialog(onDismissRequest={deadlineDialogIndex=-1},confirmButton={TextButton(onClick={state.selectedDateMillis?.let{ms->findings=findings.toMutableList().also{list->list[idx]=list[idx].copy(deadline=java.text.SimpleDateFormat("dd/MM/yyyy",java.util.Locale("pt","BR")).format(java.util.Date(ms)))} };deadlineDialogIndex=-1}){Text("Confirmar")}},dismissButton={TextButton(onClick={deadlineDialogIndex=-1}){Text("Cancelar")}}){DatePicker(state)}}
+ if(dateDialog){val state=rememberDatePickerState();DatePickerDialog(onDismissRequest={dateDialog=false},confirmButton={TextButton(onClick={state.selectedDateMillis?.let{ms->date=datePickerMillisToText(ms)};dateDialog=false}){Text("Confirmar")}},dismissButton={TextButton(onClick={dateDialog=false}){Text("Cancelar")}}){DatePicker(state)}}
+ if(deadlineDialogIndex>=0){val idx=deadlineDialogIndex;val current=findings.getOrNull(idx)?.deadline?: "";val initialMillis=try{dateTextToPickerMillis(current)}catch(_:Exception){null};val state=rememberDatePickerState(initialSelectedDateMillis=initialMillis);DatePickerDialog(onDismissRequest={deadlineDialogIndex=-1},confirmButton={TextButton(onClick={state.selectedDateMillis?.let{ms->findings=findings.toMutableList().also{list->list[idx]=list[idx].copy(deadline=datePickerMillisToText(ms))} };deadlineDialogIndex=-1}){Text("Confirmar")}},dismissButton={TextButton(onClick={deadlineDialogIndex=-1}){Text("Cancelar")}}){DatePicker(state)}}
  Column(Modifier.fillMaxSize().imePadding().navigationBarsPadding().padding(16.dp),verticalArrangement=Arrangement.spacedBy(12.dp)){
  when(screen){
  "home"->Column(Modifier.fillMaxWidth().verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(18.dp)){
@@ -265,7 +265,9 @@ class MainActivity:ComponentActivity(){
  }
  }
  }
- private fun severityDescription(value:String):String=when(value){
+ private fun datePickerMillisToText(ms:Long):String = java.text.SimpleDateFormat("dd/MM/yyyy",java.util.Locale("pt","BR")).apply{timeZone=java.util.TimeZone.getTimeZone("UTC")}.format(java.util.Date(ms))
+private fun dateTextToPickerMillis(raw:String):Long? = try{java.text.SimpleDateFormat("dd/MM/yyyy",java.util.Locale("pt","BR")).apply{timeZone=java.util.TimeZone.getTimeZone("UTC");isLenient=false}.parse(raw)?.time}catch(_:Exception){null}
+private fun severityDescription(value:String):String=when(value){
  "LEVE"->"Condição de risco/desvio que não gera transtornos à saúde e ocasiona acidentes que demandam somente primeiros socorros ou impacto ambiental não significativo."
  "MODERADA"->"Condição de risco/desvio que gera transtornos à saúde e ocasiona acidentes sem afastamento (com restrição médica) ou impacto ambiental que afeta ecossistemas comuns."
  "GRAVE"->"Condição de risco/desvio que gera transtornos à saúde e ocasiona acidentes com afastamento ou até uma fatalidade; impacto ambiental que afeta ecossistemas com espécies raras e afeta a comunidade."
