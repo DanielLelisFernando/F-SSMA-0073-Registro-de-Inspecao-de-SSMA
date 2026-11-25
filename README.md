@@ -19,7 +19,7 @@ Aplicativo Android nativo em Kotlin/Jetpack Compose para digitalização do form
 - [ ] Nomear PDFs como `Inspeção_SCL_data_local.pdf` (com sanitização dos caracteres inválidos).
 - [ ] Inserir logo Salum no cabeçalho de todas as páginas do PDF.
 
-- [x] Build APK debug: GitHub Actions run #34, commit `5f8a5e3`, concluído com sucesso e artifact publicado. [Abrir execução](https://github.com/DanielLelisFernando/F-SSMA-0073-Registro-de-Inspecao-de-SSMA/actions/runs/45685891058).\n\n## Estado técnico e ressalvas
+- [x] Build APK debug: GitHub Actions run #36, commit `1b38ecb`, concluído com sucesso e artifact publicado. [Abrir execução](https://github.com/DanielLelisFernando/F-SSMA-0073-Registro-de-Inspecao-de-SSMA/actions/runs/45686349825).\n\n## Estado técnico e ressalvas
 
 A versão 2.1.0 contém alterações de código para navegação de retorno, seletor de data, exclusão de desvio e numeração automática. O build debug foi validado em CI; logo, iconografia, logos, redesenho da home, insets, PDF e testes funcionais em aparelho continuam pendentes.
 
@@ -29,6 +29,6 @@ O projeto atual tem uma `MainActivity.kt` centralizada, armazenamento SQLite e g
 
 O workflow GitHub Actions em `.github/workflows/android.yml` executa `gradle assembleDebug` e publica o APK debug como artifact. **Build verificada:** GitHub Actions executou `Build APK` com sucesso na branch `2.1.0` (run #28, commit `360a6bfa`). Artifact `ssma-inspecoes-debug-apk` foi publicado e está disponível até 25/12/2026. [Abrir execução](https://github.com/DanielLelisFernando/F-SSMA-0073-Registro-de-Inspecao-de-SSMA/actions/runs/45684522510).
 
-## Histórico de desenvolvimento
+## Alterações verificadas\n\n- [x] CI: GitHub Actions run #36 concluído com sucesso; `Build APK` e publicação do artifact aprovados.\n- [x] Código: calendário pt-BR, retorno via botão Android, numeração automática baseada no ID e exclusão individual de desvio.\n- [ ] Interface, logos/ícone, insets, PDF e testes funcionais em dispositivo permanecem pendentes.\n\n## Histórico de desenvolvimento
 
 - `2.1.0`: branch aberta para as adequações solicitadas.
