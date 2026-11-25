@@ -1,5 +1,5 @@
 name: Android APK
-on: [push, workflow_dispatch]
+on:\n  push:\n    paths:\n      - app/**\n      - build.gradle.kts\n      - settings.gradle.kts\n      - gradle.properties\n      - .github/workflows/android.yml\n  workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
