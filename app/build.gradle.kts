@@ -2,7 +2,7 @@ plugins { id("com.android.application"); id("org.jetbrains.kotlin.android"); id(
 android {
     namespace = "br.com.ssma.inspecoes"
     compileSdk = 35
-    defaultConfig { applicationId = "br.com.ssma.inspecoes"; minSdk = 26; targetSdk = 35; versionCode = 5; versionName = "2.1.0" }
+    defaultConfig { applicationId = "br.com.ssma.inspecoes"; minSdk = 26; targetSdk = 35; versionCode = 6; versionName = "2.2.1" }
     buildFeatures { compose = true }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
     kotlinOptions { jvmTarget = "17" }
