@@ -1,17 +1,26 @@
 # Inspeções SSMA Android
 
-**Versão de desenvolvimento 1.0.2 (MVP em implementação).**
+**Versão 1.0.2 — protótipo em desenvolvimento.**
 
-APK debug é construído por GitHub Actions. MVP inclui identificação da inspeção, desvios repetitivos, descrição obrigatória, severidade, ação, prazo, responsável, foto opcional (máximo de uma por desvio) via galeria/câmera, geração de PDF e compartilhamento.
+O aplicativo Android tem como objetivo digitalizar o formulário corporativo F-SSMA-0073 Rev.00, com operação offline.
 
-> Limitações do protótipo: fluxo e validação funcional ainda precisam de testes; assinatura, participantes, pesquisa/histórico, exportação ZIP, PDF com layout fiel ao formulário corporativo e teste em dispositivos ainda não implementados/validados.
+## Funcionalidades atualmente presentes no código
+- Identificação básica (responsável, número, data em texto e local).
+- Desvios repetíveis com descrição, severidade, ação, prazo e responsável.
+- Descrição do desvio obrigatória (regra de produto).
+- Foto opcional por desvio, escolha pela galeria ou captura simples pela câmera, visualização e remoção.
+- Geração básica de PDF e tentativa de compartilhamento.
+- Banco SQLite simplificado.
 
-Workflow: GitHub Actions → Android APK → artifact `ssma-inspecoes-debug-apk`.
+## Limitações conhecidas
+Participantes e suas assinaturas, assinatura/matrícula final do responsável, histórico/pesquisa/edição, armazenamento durável de fotos, persistência estruturada de cada desvio, ZIP, FileProvider para compartilhamento, layout corporativo fiel, paginação robusta, logo e validação completa em dispositivo ainda não estão concluídos ou validados.
 
+## Diretriz visual
+Paleta temática configurada no código: azul institucional `#252D87`, ciano `#20A9D2`, azul claro `#EAF6FC`, branco e fundo `#F4F8FC`. A aplicação ainda não implementa integralmente o cabeçalho/cartões corporativos nem o layout final.
 
-## Diretriz visual (implementada no MVP)
+## Controle de revisão
+Consulte [Checklist Mestre](docs/CHECKLIST-MESTRE-REVISAO.md) para o plano de conformidade e lacunas, baseado no formulário corporativo original. O checklist não representa, por si só, funcionalidade implementada ou testada.
 
-- Identidade visual inspirada na marca SCL/Salum Construções.
-- Paleta: azul institucional `#252D87`, ciano `#20A9D2`, azul claro `#EAF6FC`, branco e fundo claro `#F4F8FC`.
-- Cabeçalho institucional destacado, cartões arredondados, campos agrupados, botões de ação evidentes e fluxo mobile.
-- Esta atualização é visual; a validação final dos campos e do PDF com o formulário oficial F-SSMA-0073 permanece necessária.
+## Build
+GitHub Actions é usado para compilar o APK debug e disponibilizar o artifact quando a execução conclui com sucesso. A compilação não substitui testes funcionais no aparelho.
+
