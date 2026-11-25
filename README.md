@@ -2,7 +2,7 @@
 
 Aplicativo Android nativo (Kotlin/Jetpack Compose) para registro digital offline de inspeções de SSMA da Salum Construções.
 
-**Versão de desenvolvimento do código: 2.2.3.**
+**Versão de desenvolvimento do código: 2.2.4.**
 
 ## Funcionalidades
 - Identificação da inspeção e numeração automática.
@@ -21,7 +21,7 @@ O workflow GitHub Actions executa `gradle assembleDebug` e publica o APK debug c
 
 **Baseline anterior validada:** versão 2.2.1, run #58, commit `271b9861c0ea00521b9a1c5682452d1b375a65ff` — build e publicação do APK com sucesso.
 
-A versão 2.2.2 foi validada no run #71 (commit `1476b4cf`). A versão 2.2.3 está em validação de build. Testes em aparelho/emulador não foram executados por CI e permanecem pendentes.
+A versão 2.2.2 foi validada no run #71 (commit `1476b4cf`) e a 2.2.3 no run #74 (commit `f3b1aa2f`). A versão 2.2.4 está em validação de build. Testes em aparelho/emulador não foram executados por CI e permanecem pendentes.
 
 ## Documentação
 - [Checklist mestre](docs/CHECKLIST-MESTRE-REVISAO.md)
