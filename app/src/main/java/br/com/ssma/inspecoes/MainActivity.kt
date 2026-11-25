@@ -47,7 +47,7 @@ import java.io.FileOutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-private const val APP_VERSION = "2.2.1"
+private const val APP_VERSION = "2.2.2"
 private const val LOGO_ASSET = "salum_logo.jpg"
 data class Finding(val desc:String="",val severity:String="LEVE",val action:String="",val deadline:String="",val owner:String="",val photo:String="")
 data class Participant(val name:String="",val signature:String="")
@@ -74,19 +74,105 @@ class MainActivity:ComponentActivity(){
  var screen by remember{mutableStateOf("home")};var editing by remember{mutableStateOf<Inspection?>(null)};var refresh by remember{mutableIntStateOf(0)};var dateDialog by remember{mutableStateOf(false)};var deadlineDialogIndex by remember{mutableIntStateOf(-1)}
  fun toast(s:String)=Toast.makeText(this@MainActivity,s,Toast.LENGTH_SHORT).show()
  fun shareFiles(files:List<File>,zip:Boolean=false){try{val uris=files.map{FileProvider.getUriForFile(this@MainActivity,"br.com.ssma.inspecoes.fileprovider",it)};val intent=if(uris.size==1&&!zip)Intent(Intent.ACTION_SEND).apply{type="application/pdf";putExtra(Intent.EXTRA_STREAM,uris[0])}else Intent(Intent.ACTION_SEND_MULTIPLE).apply{type=if(zip)"application/zip" else "application/pdf";putParcelableArrayListExtra(Intent.EXTRA_STREAM,ArrayList(uris))};intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);startActivity(Intent.createChooser(intent,"Compartilhar exportação"))}catch(e:Exception){toast("Falha ao compartilhar: ${e.message}")}}
- fun pdf(i:Inspection):File{val logo=assets.open(LOGO_ASSET).use{BitmapFactory.decodeStream(it)};val doc=PdfDocument();var page=doc.startPage(PdfDocument.PageInfo.Builder(595,842,1).create());var canvas=page.canvas;val p=android.graphics.Paint().apply{textSize=12f};val h=android.graphics.Paint().apply{textSize=16f;isFakeBoldText=true};var y=45
- fun header(){val paint=android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);canvas.drawBitmap(logo,null,android.graphics.RectF(40f,24f,112f,96f),paint);canvas.drawText("F-SSMA-0073 • REGISTRO DE INSPEÇÃO DE SSMA",128f,58f,h);canvas.drawText("SALUM CONSTRUÇÕES",128f,80f,p)}
- fun newPage(){doc.finishPage(page);page=doc.startPage(PdfDocument.PageInfo.Builder(595,842,doc.pages.size+1).create());canvas=page.canvas;y=120;header()}
- fun line(t:String){if(y>780)newPage();canvas.drawText(t.take(100),40f,y.toFloat(),p);y+=20}
- header();y=125;line("Responsável: ${i.responsible}");line("Nº: ${i.number} | Data: ${i.date} | Local: ${i.location}");y+=12
- i.findings.forEachIndexed{n,f->canvas.drawText("DESVIO ${n+1}",40f,y.toFloat(),h);y+=25;line("Descrição: ${f.desc}");line("Severidade: ${f.severity}");line("Ação: ${f.action}");line("Prazo: ${f.deadline}");line("Responsável: ${f.owner}");if(f.photo.isNotBlank()){try{val b=loadBitmap(this@MainActivity, Uri.parse(f.photo));if(b!=null){if(y+200>780){doc.finishPage(page);page=doc.startPage(PdfDocument.PageInfo.Builder(595,842,doc.pages.size+1).create());canvas=page.canvas;y=45};val scaled=Bitmap.createScaledBitmap(b, minOf(b.width,300),minOf(b.height,200),true);canvas.drawBitmap(scaled,40f,y.toFloat(),null);y+=scaled.height+10;b.recycle()}}catch(_:Exception){}};y+=15}
-  line("PARTICIPANTES");i.participants.forEachIndexed{n,participant->line("${n+1}. ${participant.name}");if(participant.signature.isNotBlank()){val sig=loadBitmap(this@MainActivity,Uri.parse(participant.signature));if(sig!=null){if(y+100>780){doc.finishPage(page);page=doc.startPage(PdfDocument.PageInfo.Builder(595,842,doc.pages.size+1).create());canvas=page.canvas;y=45};val sc=minOf(180f/sig.width,70f/sig.height,1f);val scaled=Bitmap.createScaledBitmap(sig,(sig.width*sc).toInt().coerceAtLeast(1),(sig.height*sc).toInt().coerceAtLeast(1),true);canvas.drawBitmap(scaled,40f,y.toFloat(),null);y+=scaled.height+8;sig.recycle()}}};line("Matrícula do responsável: ${i.registration}");if(i.inspectorSignature.isNotBlank()){line("Assinatura do responsável pela inspeção:");val sig=loadBitmap(this@MainActivity,Uri.parse(i.inspectorSignature));if(sig!=null){if(y+100>780){doc.finishPage(page);page=doc.startPage(PdfDocument.PageInfo.Builder(595,842,doc.pages.size+1).create());canvas=page.canvas;y=45};val sc=minOf(220f/sig.width,80f/sig.height,1f);val scaled=Bitmap.createScaledBitmap(sig,(sig.width*sc).toInt().coerceAtLeast(1),(sig.height*sc).toInt().coerceAtLeast(1),true);canvas.drawBitmap(scaled,40f,y.toFloat(),null);y+=scaled.height+10;sig.recycle()}};doc.finishPage(page);val f=File(filesDir,"Inspeção_${safeFilePart(i.number)}_${safeFilePart(i.date)}_${safeFilePart(i.location)}.pdf");FileOutputStream(f).use{doc.writeTo(it)};doc.close();logo.recycle();return f}
+ fun pdf(i:Inspection):File {
+  val logo=assets.open(LOGO_ASSET).use{BitmapFactory.decodeStream(it)}
+  val doc=PdfDocument()
+  val p=android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply{textSize=11f}
+  val h=android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply{textSize=15f;isFakeBoldText=true}
+  var pageNo=1
+  var page=doc.startPage(PdfDocument.PageInfo.Builder(595,842,pageNo).create())
+  var canvas=page.canvas
+  var y=120f
+  fun header(){
+   val paint=android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG)
+   canvas.drawBitmap(logo,null,android.graphics.RectF(40f,24f,112f,96f),paint)
+   canvas.drawText("F-SSMA-0073 • REGISTRO DE INSPEÇÃO DE SSMA",128f,58f,h)
+   canvas.drawText("SALUM CONSTRUÇÕES • Rev.00 • 31/08/2022",128f,80f,p)
+   canvas.drawLine(40f,105f,555f,105f,paint)
+  }
+  fun finishCurrent(){
+   val footer=android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply{textSize=9f;color=android.graphics.Color.GRAY}
+   canvas.drawText("F-SSMA-0073 Rev.00 • Página $pageNo",40f,815f,footer)
+   doc.finishPage(page)
+  }
+  fun newPage(){
+   finishCurrent()
+   pageNo++
+   page=doc.startPage(PdfDocument.PageInfo.Builder(595,842,pageNo).create())
+   canvas=page.canvas
+   y=120f
+   header()
+  }
+  fun ensureSpace(height:Float){if(y+height>790f)newPage()}
+  fun line(text:String,paint:android.graphics.Paint=p){
+   var remaining=text
+   if(remaining.isEmpty()){ensureSpace(18f);y+=18f;return}
+   while(remaining.isNotEmpty()){
+    ensureSpace(18f)
+    val count=paint.breakText(remaining,true,515f,null).coerceAtLeast(1)
+    val chunk=remaining.substring(0,count)
+    canvas.drawText(chunk,40f,y,paint)
+    remaining=remaining.substring(count).trimStart()
+    y+=18f
+   }
+  }
+  fun image(raw:String,maxWidth:Float,maxHeight:Float){
+   try{
+    val original=loadBitmap(this@MainActivity,Uri.parse(raw))
+    if(original!=null){
+     ensureSpace(maxHeight+24f)
+     val scale=minOf(maxWidth/original.width,maxHeight/original.height,1f)
+     val w=(original.width*scale).toInt().coerceAtLeast(1)
+     val hh=(original.height*scale).toInt().coerceAtLeast(1)
+     val scaled=Bitmap.createScaledBitmap(original,w,hh,true)
+     canvas.drawBitmap(scaled,40f,y,null)
+     y+=hh+12f
+     if(scaled!==original)scaled.recycle()
+     original.recycle()
+    }
+   }catch(_:Exception){}
+  }
+  header()
+  line("IDENTIFICAÇÃO DA INSPEÇÃO",h)
+  line("Responsável: ${i.responsible}")
+  line("Nº: ${i.number} • Data: ${i.date} • Local: ${i.location}")
+  y+=8f
+  line("PARTICIPANTES",h)
+  i.participants.forEachIndexed{n,participant->
+   line("${n+1}. ${participant.name}")
+   if(participant.signature.isNotBlank()){line("Assinatura do participante:");image(participant.signature,220f,80f)}
+  }
+  y+=8f
+  line("CLASSIFICAÇÃO DE SEVERIDADE",h)
+  listOf("LEVE","MODERADA","GRAVE","CRÍTICO").forEach{line("$it — ${severityDescription(it)}")}
+  y+=8f
+  i.findings.forEachIndexed{n,f->
+   line("DESVIO ${n+1}",h)
+   line("Descrição: ${f.desc}")
+   line("Severidade: ${f.severity} — ${severityDescription(f.severity)}")
+   line("Ação para adequação/correção: ${f.action}")
+   line("Prazo de execução: ${f.deadline}")
+   line("Responsável: ${f.owner}")
+   if(f.photo.isNotBlank()){line("Evidência fotográfica (recurso digital adicional):");image(f.photo,360f,250f)}
+   y+=10f
+  }
+  line("VALIDAÇÃO DO RESPONSÁVEL PELA INSPEÇÃO",h)
+  line("Matrícula: ${i.registration}")
+  if(i.inspectorSignature.isNotBlank()){line("Assinatura / Matrícula do Responsável pela Inspeção:");image(i.inspectorSignature,260f,100f)}
+  finishCurrent()
+  val f=File(filesDir,"Inspecao_${safeFilePart(i.number)}_${safeFilePart(i.date)}_${safeFilePart(i.location)}.pdf")
+  FileOutputStream(f).use{doc.writeTo(it)}
+  doc.close()
+  logo.recycle()
+  return f
+ }
  var photoIndex by remember{mutableIntStateOf(-1)}
  var responsible by remember{mutableStateOf("")};var number by remember{mutableStateOf("")};var date by remember{mutableStateOf("")};var location by remember{mutableStateOf("")};var findings by remember{mutableStateOf(listOf(Finding()))};var participants by remember{mutableStateOf(listOf(Participant()))};var inspectorSignature by remember{mutableStateOf("")};var registration by remember{mutableStateOf("")};var signatureTarget by remember{mutableStateOf<String?>(null)}
- val gallery=rememberLauncherForActivityResult(ActivityResultContracts.GetContent()){uri->if(uri!=null&&photoIndex>=0&&photoIndex<findings.size)findings=findings.toMutableList().also{list->list[photoIndex]=list[photoIndex].copy(photo=uri.toString())}}
- val camera=rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()){b->if(b!=null&&photoIndex in findings.indices){val f=File(filesDir,"photo_${System.currentTimeMillis()}.jpg");FileOutputStream(f).use{b.compress(Bitmap.CompressFormat.JPEG,85,it)};findings=findings.toMutableList().also{list->list[photoIndex]=list[photoIndex].copy(photo=Uri.fromFile(f).toString())}}}
+ val gallery=rememberLauncherForActivityResult(ActivityResultContracts.GetContent()){uri->if(uri!=null&&photoIndex>=0&&photoIndex<findings.size){try{val stored=File(filesDir,"photo_gallery_${System.currentTimeMillis()}.jpg");contentResolver.openInputStream(uri)?.use{input->FileOutputStream(stored).use{output->input.copyTo(output)}};findings=findings.toMutableList().also{list->list[photoIndex]=list[photoIndex].copy(photo=Uri.fromFile(stored).toString())}}catch(e:Exception){toast("Falha ao salvar foto: ${e.message}")}}}
+ var pendingCameraFile by remember{mutableStateOf<File?>(null)}
+ val camera=rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()){success->val f=pendingCameraFile;if(success&&f!=null&&photoIndex in findings.indices){findings=findings.toMutableList().also{list->list[photoIndex]=list[photoIndex].copy(photo=Uri.fromFile(f).toString())}}else f?.delete();pendingCameraFile=null}
  
- var filterStart by remember{mutableStateOf("")};var filterEnd by remember{mutableStateOf("")};var selected by remember{mutableStateOf(setOf<Int>())}
+ var filterStart by remember{mutableStateOf("")};var filterEnd by remember{mutableStateOf("")};var filterText by remember{mutableStateOf("")};var selected by remember{mutableStateOf(setOf<Int>())}
  fun startForm(ins:Inspection?){editing=ins;responsible=ins?.responsible?: "";number=ins?.number?:db.nextNumber();date=ins?.date?: "";location=ins?.location?: "";findings=ins?.findings?:listOf(Finding());participants=ins?.participants?:listOf(Participant());inspectorSignature=ins?.inspectorSignature?: "";registration=ins?.registration?: "";screen="form"}
  BackHandler(enabled=screen!="home"){screen="home"}
  if(dateDialog){val state=rememberDatePickerState();DatePickerDialog(onDismissRequest={dateDialog=false},confirmButton={TextButton(onClick={state.selectedDateMillis?.let{ms->date=java.text.SimpleDateFormat("dd/MM/yyyy",java.util.Locale("pt","BR")).format(java.util.Date(ms))};dateDialog=false}){Text("Confirmar")}},dismissButton={TextButton(onClick={dateDialog=false}){Text("Cancelar")}}){DatePicker(state)}}
@@ -110,19 +196,36 @@ class MainActivity:ComponentActivity(){
  OutlinedTextField(registration,{registration=it},label={Text("Matrícula do responsável pela inspeção")},modifier=Modifier.fillMaxWidth())
  Row{Button(onClick={signatureTarget="inspector"}){Text(if(inspectorSignature.isBlank())"Assinatura do responsável" else "Refazer assinatura")};TextButton(onClick={inspectorSignature=""}){Text("Limpar")}}
  if(inspectorSignature.isNotBlank()){loadBitmap(this@MainActivity,Uri.parse(inspectorSignature))?.let{Image(it.asImageBitmap(),null,Modifier.fillMaxWidth().height(100.dp))}}
- findings.forEachIndexed{idx,f->Card{Column(Modifier.padding(12.dp),verticalArrangement=Arrangement.spacedBy(8.dp)){Row(verticalAlignment= androidx.compose.ui.Alignment.CenterVertically){Text("Desvio #${idx+1}",style=MaterialTheme.typography.titleMedium);Spacer(Modifier.weight(1f));if(findings.size>1)TextButton(onClick={findings=findings.filterIndexed{j,_->j!=idx};toast("Desvio excluído")}){Text("Excluir")}};OutlinedTextField(f.desc,{value->findings=findings.toMutableList().also{list->list[idx]=f.copy(desc=value)}},label={Text("Descrição (obrigatória)")},modifier=Modifier.fillMaxWidth(),minLines=2);var expanded by remember{mutableStateOf(false)};Box{OutlinedButton(onClick={expanded=true}){Text("Severidade: ${f.severity}")};DropdownMenu(expanded,{expanded=false}){listOf("LEVE","MODERADA","GRAVE","CRÍTICO").forEach{s->DropdownMenuItem(text={Text(s)},onClick={findings=findings.toMutableList().also{it[idx]=f.copy(severity=s)};expanded=false})}}};OutlinedTextField(f.action,{value->findings=findings.toMutableList().also{list->list[idx]=f.copy(action=value)}},label={Text("Ação para adequação/correção")},modifier=Modifier.fillMaxWidth());OutlinedTextField(f.deadline,{value->findings=findings.toMutableList().also{list->list[idx]=f.copy(deadline=value)}},label={Text("Prazo de execução")},placeholder={if(f.deadline.isBlank())Text("Clique no calendário para inserir a data")},modifier=Modifier.fillMaxWidth(),readOnly=true,trailingIcon={IconButton(onClick={deadlineDialogIndex=idx}){Text("📅")}});OutlinedTextField(f.owner,{value->findings=findings.toMutableList().also{list->list[idx]=f.copy(owner=value)}},label={Text("Responsável")},modifier=Modifier.fillMaxWidth());Row{Button(onClick={photoIndex=idx;gallery.launch("image/*")}){Text("Galeria")};Button(onClick={photoIndex=idx;camera.launch(null)}){Text("Câmera")};TextButton(onClick={findings=findings.toMutableList().also{it[idx]=f.copy(photo="")}}){Text("Remover foto")}};if(f.photo.isNotBlank()){val bm=remember(f.photo){loadBitmap(this@MainActivity, Uri.parse(f.photo))};bm?.let{Image(it.asImageBitmap(),null,Modifier.fillMaxWidth().height(160.dp))}}}}}
+ findings.forEachIndexed{idx,f->Card{Column(Modifier.padding(12.dp),verticalArrangement=Arrangement.spacedBy(8.dp)){Row(verticalAlignment= androidx.compose.ui.Alignment.CenterVertically){Text("Desvio #${idx+1}",style=MaterialTheme.typography.titleMedium);Spacer(Modifier.weight(1f));if(findings.size>1)TextButton(onClick={findings=findings.filterIndexed{j,_->j!=idx};toast("Desvio excluído")}){Text("Excluir")}};OutlinedTextField(f.desc,{value->findings=findings.toMutableList().also{list->list[idx]=f.copy(desc=value)}},label={Text("Descrição (obrigatória)")},modifier=Modifier.fillMaxWidth(),minLines=2);var expanded by remember{mutableStateOf(false)};Box{OutlinedButton(onClick={expanded=true}){Text("Severidade: ${f.severity}")};DropdownMenu(expanded,{expanded=false}){listOf("LEVE","MODERADA","GRAVE","CRÍTICO").forEach{s->DropdownMenuItem(text={Text(s)},onClick={findings=findings.toMutableList().also{it[idx]=f.copy(severity=s)};expanded=false})}}};Text(severityDescription(f.severity),style=MaterialTheme.typography.bodySmall,color=MaterialTheme.colorScheme.onSurfaceVariant);OutlinedTextField(f.action,{value->findings=findings.toMutableList().also{list->list[idx]=f.copy(action=value)}},label={Text("Ação para adequação/correção")},modifier=Modifier.fillMaxWidth());OutlinedTextField(f.deadline,{value->findings=findings.toMutableList().also{list->list[idx]=f.copy(deadline=value)}},label={Text("Prazo de execução")},placeholder={if(f.deadline.isBlank())Text("Clique no calendário para inserir a data")},modifier=Modifier.fillMaxWidth(),readOnly=true,trailingIcon={IconButton(onClick={deadlineDialogIndex=idx}){Text("📅")}});OutlinedTextField(f.owner,{value->findings=findings.toMutableList().also{list->list[idx]=f.copy(owner=value)}},label={Text("Responsável")},modifier=Modifier.fillMaxWidth());Row{Button(onClick={photoIndex=idx;gallery.launch("image/*")}){Text("Galeria")};Button(onClick={photoIndex=idx;val file=File(filesDir,"photo_camera_${System.currentTimeMillis()}.jpg");val uri=FileProvider.getUriForFile(this@MainActivity,"br.com.ssma.inspecoes.fileprovider",file);pendingCameraFile=file;camera.launch(uri)}){Text("Câmera")};TextButton(onClick={findings=findings.toMutableList().also{it[idx]=f.copy(photo="")}}){Text("Remover foto")}};if(f.photo.isNotBlank()){val bm=remember(f.photo){loadBitmap(this@MainActivity, Uri.parse(f.photo))};bm?.let{Image(it.asImageBitmap(),null,Modifier.fillMaxWidth().height(160.dp))}}}}}
  Button(onClick={findings=findings+Finding()},modifier=Modifier.fillMaxWidth()){Text("Adicionar desvio")}
  if(signatureTarget!=null){SignaturePadDialog(onDismiss={signatureTarget=null},onSave={path->val target=signatureTarget;if(target=="inspector")inspectorSignature=path else if(target?.startsWith("participant:")==true){val idx=target.substringAfter(":").toIntOrNull();if(idx!=null&&idx in participants.indices)participants=participants.toMutableList().also{it[idx]=it[idx].copy(signature=path)} };signatureTarget=null})}
  Button(onClick={if(findings.any{it.desc.isBlank()}){toast("Preencha a descrição de todos os desvios")}else{val record=Inspection(editing?.id?:0,responsible,number,date,location,findings,participants=participants,inspectorSignature=inspectorSignature,registration=registration);val file=pdf(record);val saved=record.copy(pdf=file.absolutePath);if(editing==null)db.save(saved) else db.update(saved);toast("Registro salvo");refresh++;shareFiles(listOf(file));screen="home"}},modifier=Modifier.fillMaxWidth()){Text("Salvar e exportar PDF")}
  }
  "history"->Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(10.dp)){
  Row{TextButton(onClick={screen="home"}){Text("← Início")};Text("Inspeções realizadas",style=MaterialTheme.typography.titleLarge)}
- OutlinedTextField(filterStart,{filterStart=it},label={Text("Data inicial (dd/mm/aaaa)")},modifier=Modifier.fillMaxWidth());OutlinedTextField(filterEnd,{filterEnd=it},label={Text("Data final (dd/mm/aaaa)")},modifier=Modifier.fillMaxWidth())
+ OutlinedTextField(filterText,{filterText=it},label={Text("Buscar número, local ou responsável")},modifier=Modifier.fillMaxWidth());OutlinedTextField(filterStart,{filterStart=it},label={Text("Data inicial (dd/mm/aaaa)")},modifier=Modifier.fillMaxWidth());OutlinedTextField(filterEnd,{filterEnd=it},label={Text("Data final (dd/mm/aaaa)")},modifier=Modifier.fillMaxWidth())
  fun dateKey(raw:String):Long { return try { val parts=raw.trim().split("/"); if(parts.size!=3) 0L else (parts[2].toInt()*10000L+parts[1].toInt()*100L+parts[0].toInt()) } catch(_:Exception){0L} }
  val startKey=if(filterStart.isBlank())0L else dateKey(filterStart);val endKey=if(filterEnd.isBlank())Long.MAX_VALUE else dateKey(filterEnd)
- val records=db.list().filter{val k=dateKey(it.date);(filterStart.isBlank()||k>=startKey)&&(filterEnd.isBlank()||k<=endKey)}.sortedByDescending{dateKey(it.date)}
+ val query=filterText.trim().lowercase();val records=db.list().filter{val k=dateKey(it.date);(filterStart.isBlank()||k>=startKey)&&(filterEnd.isBlank()||k<=endKey)&&(query.isBlank()||it.number.lowercase().contains(query)||it.location.lowercase().contains(query)||it.responsible.lowercase().contains(query))}.sortedByDescending{dateKey(it.date)}
  Row{Checkbox(checked=records.isNotEmpty()&&records.all{it.id in selected},onCheckedChange={selected=if(it)selected+records.map{r->r.id}else selected-records.map{r->r.id}});Text("Selecionar todas")}
- if(selected.isNotEmpty())Button(onClick={val chosen=records.filter{it.id in selected};val z=File(cacheDir,"Inspecoes_${System.currentTimeMillis()}.zip");ZipOutputStream(FileOutputStream(z)).use{zip->chosen.forEach{r->val f=File(r.pdf);val pdfFile=if(f.exists())f else pdf(r);zip.putNextEntry(ZipEntry("Inspecao_${r.number.ifBlank{r.id.toString()}}.pdf"));pdfFile.inputStream().use{it.copyTo(zip)};zip.closeEntry()}};shareFiles(listOf(z),true);selected=setOf()},modifier=Modifier.fillMaxWidth()){Text("Exportar selecionadas em ZIP")}
+ if(selected.isNotEmpty())Button(onClick={
+  val chosen=records.filter{it.id in selected}
+  val z=File(cacheDir,"Inspecoes_${System.currentTimeMillis()}.zip")
+  ZipOutputStream(FileOutputStream(z)).use{zip->
+   chosen.forEach{r->
+    val base=safeFilePart(r.number.ifBlank{r.id.toString()})
+    val pdfFile=File(r.pdf).takeIf{it.exists()}?:pdf(r)
+    zip.putNextEntry(ZipEntry("$base/Inspecao.pdf"));pdfFile.inputStream().use{it.copyTo(zip)};zip.closeEntry()
+    fun addUri(raw:String,name:String){
+     try{val uri=Uri.parse(raw);val input=if(uri.scheme=="file")File(uri.path?:return).inputStream() else contentResolver.openInputStream(uri);input?.use{zip.putNextEntry(ZipEntry("$base/$name"));it.copyTo(zip);zip.closeEntry()}}catch(_:Exception){}
+    }
+    r.findings.forEachIndexed{idx,f->if(f.photo.isNotBlank())addUri(f.photo,"Foto_Desvio_${idx+1}.jpg")}
+    r.participants.forEachIndexed{idx,part->if(part.signature.isNotBlank())addUri(part.signature,"Assinatura_Participante_${idx+1}.png")}
+    if(r.inspectorSignature.isNotBlank())addUri(r.inspectorSignature,"Assinatura_Responsavel.png")
+   }
+  }
+  shareFiles(listOf(z),true);selected=setOf()
+ },modifier=Modifier.fillMaxWidth()){Text("Exportar selecionadas em ZIP (PDF + evidências)")}
  records.forEach{r->Card(Modifier.fillMaxWidth()){Column(Modifier.padding(12.dp),verticalArrangement=Arrangement.spacedBy(6.dp)){Row{Checkbox(checked=r.id in selected,onCheckedChange={selected=if(it)selected+r.id else selected-r.id});Column{Text("Inspeção ${r.number.ifBlank{"#${r.id}"}}",style=MaterialTheme.typography.titleMedium);Text("${r.date} • ${r.location}");Text("${r.responsible}")}};Row{Button(onClick={startForm(r)}){Text("Editar")};Button(onClick={val f=File(r.pdf);shareFiles(listOf(if(f.exists())f else pdf(r)))}){Text("PDF")}}}}}
  }
  }
@@ -131,7 +234,14 @@ class MainActivity:ComponentActivity(){
  }
  }
  }
- private fun safeFilePart(raw:String):String = raw.trim().replace(Regex("[^A-Za-z0-9_-]"),"_").trim('_').ifBlank{"sem_dado"}
+ private fun severityDescription(value:String):String=when(value){
+ "LEVE"->"Condição de risco/desvio que não gera transtornos à saúde e ocasiona acidentes que demandam somente primeiros socorros ou impacto ambiental não significativo."
+ "MODERADA"->"Condição de risco/desvio que gera transtornos à saúde e ocasiona acidentes sem afastamento (com restrição médica) ou impacto ambiental que afeta ecossistemas comuns."
+ "GRAVE"->"Condição de risco/desvio que gera transtornos à saúde e ocasiona acidentes com afastamento ou até uma fatalidade; impacto ambiental que afeta ecossistemas com espécies raras e afeta a comunidade."
+ "CRÍTICO"->"Evento não planejado com liberação de energia que poderia resultar em mais de uma fatalidade ou lesão incapacitante permanente, dada ligeira mudança no tempo, posição ou atuação dos controles."
+ else->"Descrição não disponível."
+}
+private fun safeFilePart(raw:String):String = raw.trim().replace(Regex("[^A-Za-z0-9_-]"),"_").trim('_').ifBlank{"sem_dado"}
 private fun loadBitmap(context:android.content.Context, uri:Uri):Bitmap? {
   return try {
    if(uri.scheme=="file") { BitmapFactory.decodeFile(uri.path) }
