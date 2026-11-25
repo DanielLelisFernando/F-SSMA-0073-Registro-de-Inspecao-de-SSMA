@@ -45,7 +45,22 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
 private const val APP_VERSION = "2.0.0"
-data and DB
+data class Finding(val desc:String="",val severity:String="LEVE",val action:String="",val deadline:String="",val owner:String="",val photo:String="")
+data class Participant(val name:String="",val signature:String="")
+data class Inspection(val id:Int,val responsible:String,val number:String,val date:String,val location:String,val findings:List<Finding>,val pdf:String="",val participants:List<Participant> = emptyList(),val inspectorSignature:String="",val registration:String="")
+
+class DB(ctx:android.content.Context):SQLiteOpenHelper(ctx,"ssma.db",null,3){
+ override fun onCreate(db:SQLiteDatabase){db.execSQL("CREATE TABLE inspections(id INTEGER PRIMARY KEY AUTOINCREMENT,responsible TEXT,number TEXT,date TEXT,location TEXT,findings TEXT,pdf TEXT,participants TEXT DEFAULT '[]',responsible_signature TEXT DEFAULT '',registration TEXT DEFAULT '')")}
+ override fun onUpgrade(db:SQLiteDatabase,old:Int,new:Int){if(old<2){try{db.execSQL("ALTER TABLE inspections ADD COLUMN findings TEXT")}catch(_:Exception){}};if(old<3){listOf("participants TEXT DEFAULT '[]'","responsible_signature TEXT DEFAULT ''","registration TEXT DEFAULT ''").forEach{col->try{db.execSQL("ALTER TABLE inspections ADD COLUMN $col")}catch(_:Exception){}}}}
+ fun encode(fs:List<Finding>):String=JSONArray().apply{fs.forEach{put(JSONObject().put("desc",it.desc).put("severity",it.severity).put("action",it.action).put("deadline",it.deadline).put("owner",it.owner).put("photo",it.photo))}}.toString()
+ fun decode(s:String):List<Finding>{try{val a=JSONArray(s);return (0 until a.length()).map{val o=a.getJSONObject(it);Finding(o.optString("desc"),o.optString("severity","LEVE"),o.optString("action"),o.optString("deadline"),o.optString("owner"),o.optString("photo"))}}catch(_:Exception){return if(s.isBlank()) emptyList() else listOf(Finding(desc=s))}}
+ fun encodeParticipants(ps:List<Participant>):String=JSONArray().apply{ps.forEach{put(JSONObject().put("name",it.name).put("signature",it.signature))}}.toString()
+ fun decodeParticipants(s:String):List<Participant>{try{val a=JSONArray(s);return (0 until a.length()).map{val o=a.getJSONObject(it);Participant(o.optString("name"),o.optString("signature"))}}catch(_:Exception){return emptyList()}}
+ fun save(i:Inspection):Int{val v=ContentValues().apply{put("responsible",i.responsible);put("number",i.number);put("date",i.date);put("location",i.location);put("findings",encode(i.findings));put("pdf",i.pdf);put("participants",encodeParticipants(i.participants));put("responsible_signature",i.inspectorSignature);put("registration",i.registration)};return writableDatabase.insert("inspections",null,v).toInt()}
+ fun update(i:Inspection){val v=ContentValues().apply{put("responsible",i.responsible);put("number",i.number);put("date",i.date);put("location",i.location);put("findings",encode(i.findings));put("pdf",i.pdf);put("participants",encodeParticipants(i.participants));put("responsible_signature",i.inspectorSignature);put("registration",i.registration)};writableDatabase.update("inspections",v,"id=?",arrayOf(i.id.toString()))}
+ fun list():List<Inspection>{val c=readableDatabase.rawQuery("SELECT id,responsible,number,date,location,findings,pdf,participants,responsible_signature,registration FROM inspections ORDER BY id DESC",null);val l=mutableListOf<Inspection>();while(c.moveToNext()){l+=Inspection(c.getInt(0),c.getString(1)?: "",c.getString(2)?: "",c.getString(3)?: "",c.getString(4)?: "",decode(c.getString(5)?: ""),c.getString(6)?: "",decodeParticipants(c.getString(7)?: "[]"),c.getString(8)?: "",c.getString(9)?: "")};c.close();return l}
+}
+
 class MainActivity:ComponentActivity(){
  private lateinit var db:DB
  override fun onCreate(savedInstanceState:Bundle?){super.onCreate(savedInstanceState);db=DB(this)
