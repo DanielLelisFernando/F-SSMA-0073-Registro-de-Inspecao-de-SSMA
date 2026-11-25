@@ -61,9 +61,9 @@ class MainActivity:ComponentActivity(){
  canvas.drawText("F-SSMA-0073 • REGISTRO DE INSPEÇÃO DE SSMA",40f,y.toFloat(),h);y+=30;line("Responsável: ${i.responsible}");line("Nº: ${i.number} | Data: ${i.date} | Local: ${i.location}");y+=12
  i.findings.forEachIndexed{n,f->canvas.drawText("DESVIO ${n+1}",40f,y.toFloat(),h);y+=25;line("Descrição: ${f.desc}");line("Severidade: ${f.severity}");line("Ação: ${f.action}");line("Prazo: ${f.deadline}");line("Responsável: ${f.owner}");if(f.photo.isNotBlank()){try{val b=loadBitmap(Uri.parse(f.photo));if(b!=null){if(y+200>780){doc.finishPage(page);page=doc.startPage(PdfDocument.PageInfo.Builder(595,842,doc.pages.size+1).create());canvas=page.canvas;y=45};val scaled=Bitmap.createScaledBitmap(b, minOf(b.width,300),minOf(b.height,200),true);canvas.drawBitmap(scaled,40f,y.toFloat(),null);y+=scaled.height+10;b.recycle()}}catch(_:Exception){}};y+=15}
  doc.finishPage(page);val f=File(filesDir,"Inspecao_${i.number.ifBlank{System.currentTimeMillis().toString()}}.pdf");FileOutputStream(f).use{doc.writeTo(it)};doc.close();return f}
- val gallery=rememberLauncherForActivityResult(ActivityResultContracts.GetContent()){uri->if(uri!=null&&photoIndex>=0&&photoIndex<findings.size)findings=findings.toMutableList().also{list->list[photoIndex]=list[photoIndex].copy(photo=uri.toString())}}
  var photoIndex by remember{mutableIntStateOf(-1)}
  var responsible by remember{mutableStateOf("")};var number by remember{mutableStateOf("")};var date by remember{mutableStateOf("")};var location by remember{mutableStateOf("")};var findings by remember{mutableStateOf(listOf(Finding()))}
+ val gallery=rememberLauncherForActivityResult(ActivityResultContracts.GetContent()){uri->if(uri!=null&&photoIndex>=0&&photoIndex<findings.size)findings=findings.toMutableList().also{list->list[photoIndex]=list[photoIndex].copy(photo=uri.toString())}}
  val camera=rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()){b->if(b!=null&&photoIndex in findings.indices){val f=File(filesDir,"photo_${System.currentTimeMillis()}.jpg");FileOutputStream(f).use{b.compress(Bitmap.CompressFormat.JPEG,85,it)};findings=findings.toMutableList().also{list->list[photoIndex]=list[photoIndex].copy(photo=Uri.fromFile(f).toString())}}}
  
  var filterStart by remember{mutableStateOf("")};var filterEnd by remember{mutableStateOf("")};var selected by remember{mutableStateOf(setOf<Int>())}
@@ -101,5 +101,10 @@ class MainActivity:ComponentActivity(){
  }
  }
  }
- private fun loadBitmap(uri:Uri):Bitmap?=try{if(uri.scheme=="file")uri.path?.let(BitmapFactory::decodeFile) else contentResolver.openInputStream(uri)?.use(BitmapFactory::decodeStream)}catch(_:Exception){null}
+ private fun loadBitmap(uri:Uri):Bitmap? {
+  return try {
+   if(uri.scheme=="file") { BitmapFactory.decodeFile(uri.path) }
+   else { val stream=contentResolver.openInputStream(uri); stream?.use { input -> BitmapFactory.decodeStream(input) } }
+  } catch(_:Exception) { null }
+ }
 }
