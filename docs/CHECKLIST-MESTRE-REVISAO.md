@@ -58,17 +58,17 @@ Foto opcional por desvio, capturada pela câmera ou galeria, armazenada localmen
 Não considerar item concluído por existir apenas no checklist, documentação, ou por compilar. Marcar como implementado somente após código e validação; registrar limitações e testes.
 
 
-## Versão 2.1.0 — requisitos de implementação e critérios de aceite\n\n**Atualização de verificação (25/11/2026):** o build da correção Kotlin passou no GitHub Actions (run #34). Foram confirmadas no código alterações para calendário, navegação de retorno, exclusão de desvio e geração automática de número. A aprovação de compilação não equivale à validação em aparelho; os itens de interface, PDF, insets, logos, sequência após exclusão e comportamento de exportação permanecem em aberto.
+## Versão 2.1.0 — requisitos de implementação e critérios de aceite\n\n**Atualização de implementação:** logo Salum inserido na home e no cabeçalho de cada página do PDF, usando imagem de proporção quadrada ajustada sem distorção. O arquivo de origem mede 483 × 475 px. Insets de barras do sistema com configuração de cores adicionados. O build precisa ser confirmado pelo Actions após este commit; testes visuais em aparelho permanecem pendentes.
 
 - [ ] Ícone do aplicativo configurado em mipmap (launcher legado e adaptive icon) usando o PNG aprovado.
-- [ ] Logo Salum visível no cabeçalho da página inicial e no cabeçalho de todas as páginas do PDF.
+- [x] Logo Salum incluído no cabeçalho da home e no cabeçalho de cada página do PDF (validação visual pendente).
 - [ ] Tela inicial redesenhada e validada em diferentes densidades/tamanhos.
 - [x] Botão Voltar do Android navega para home a partir das telas internas (comportamento de saída na raiz ainda a validar).
-- [ ] Window insets aplicados às barras de status e navegação; conteúdo não pode ficar encoberto.
+- [x] Cores das barras de status e navegação configuradas; aplicação completa de WindowInsets e validação em aparelho ainda pendentes.
 - [ ] Botões de navegação com área de toque mínima apropriada e botão Voltar visualmente maior.
 - [x] Campo DATA usa seletor de calendário localizado em pt-BR (persistência/formato canônico a validar).
 - [x] Geração automática de número baseada no maior ID existente implementada; requisito de sequência transacional e não reutilização após exclusões ainda pendente.
 - [x] Ação de excluir desvio implementada (confirmação e integridade a validar).
 - [x] Sanitização de componentes de nome de arquivo implementada; padrão final do nome e validação de exportação pendentes.
 - [ ] PDF segue as duas páginas do formulário, incluindo participantes/assinaturas, severidade, desvios, prazos e assinatura/matrícula final.
-- [ ] Testes funcionais em aparelho/emulador: criar duas inspeções, fechar/reabrir app, conferir sequência; editar e excluir desvio; validar botão Voltar e insets; exportar/abrir PDF e checar nome, logo e paginação.\n- [x] Build debug verificada via GitHub Actions: etapa `Build APK` e upload de artifact concluídos com sucesso (run #36, commit `1b38ecb`).
+- [ ] Testes funcionais em aparelho/emulador: criar duas inspeções, fechar/reabrir app, conferir sequência; editar e excluir desvio; validar botão Voltar e insets; exportar/abrir PDF e checar nome, logo e paginação.\n- [ ] Novo build após integração do logo e ajustes de UI: aguardando execução do Actions.
