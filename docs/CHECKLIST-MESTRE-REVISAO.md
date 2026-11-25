@@ -22,7 +22,8 @@ Atualizado para o código da versão **2.2.2**. Os itens marcados como implement
 
 ## Validação técnica
 - [x] Build debug CI da baseline 2.2.1: run #58, commit `271b9861`, sucesso; APK publicado.
-- [ ] Build debug da versão 2.2.2 após estas alterações.
+- [x] Build debug versão 2.2.2: run #71, commit `1476b4cf`, sucesso; artifact publicado.
+- [ ] Build debug versão 2.2.3 após correção de conversão UTC nos seletores de data.
 - [ ] Testes em aparelho/emulador.
 - [ ] Teste offline integral.
 - [ ] Criar inspeção com múltiplos desvios e fotos, fechar e reabrir.
@@ -33,6 +34,7 @@ Atualizado para o código da versão **2.2.2**. Os itens marcados como implement
 
 ## Pendências conhecidas
 - [x] Recuperação de rascunho offline: autosave durante o preenchimento, retomada na home e confirmação antes de descartar ao iniciar novo registro.
+- [x] Conversão de datas dos DatePicker usando UTC para evitar deslocamento de dia no fuso local; implementação em 2.2.3, build ainda pendente.
 - [ ] Testes de lifecycle/permissões e em diferentes tamanhos de tela.
 - [ ] Validar layout do PDF visualmente contra o formulário original (o conteúdo está representado, mas a tabela ainda não é uma reprodução gráfica exata).
 - [ ] Confirmar no aparelho a captura de câmera, assinaturas e exportações.
