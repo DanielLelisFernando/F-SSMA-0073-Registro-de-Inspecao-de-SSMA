@@ -1,5 +1,15 @@
 # Histórico de alterações
 
+## 2.2.4 — em validação
+- Compartilhamento de arquivo único usa `ACTION_SEND` e MIME específico (PDF/ZIP), evitando encaminhar ZIP como lista de múltiplos anexos.
+- Ao editar uma inspeção, o calendário de data abre com a data já registrada selecionada.
+- versionCode 9 / versionName 2.2.4.
+- Build CI pendente.
+
+## 2.2.3 — validada (build #74)
+- Corrige conversão entre `selectedDateMillis` (UTC) e datas exibidas em `dd/MM/yyyy` nos seletores de inspeção e prazo.
+- Build debug CI #74, commit `f3b1aa2f`, concluído com sucesso; APK artifact publicado.
+
 ## 2.2.3 — em validação
 - Corrige conversão entre `selectedDateMillis` (UTC) e datas exibidas em `dd/MM/yyyy` nos seletores de inspeção e prazo, evitando deslocamento de dia em fusos negativos.
 - Incrementa versionCode para 8 e versionName para 2.2.3.
