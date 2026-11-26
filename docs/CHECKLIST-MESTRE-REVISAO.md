@@ -50,7 +50,7 @@ Atualizado para a versão **2.2.13**. A versão 2.2.12 foi validada nos runs #98
 - [ ] Testes de lifecycle, permissões e tamanhos de tela.
 - [x] PDF 2.2.11: tabela paginada para condições, severidade, ação, prazo e responsável, com cabeçalho de tabela repetido ao continuar entre páginas (runs #96/#97 aprovados).
 - [x] PDF 2.2.12: altura do cabeçalho tabular ajustada e espaço reservado para manter rótulos de assinaturas/evidências junto às imagens; builds #98/#99 aprovadas.
-- [ ] Compartilhamento 2.2.13 via ClipData: CI pendente; validar transferência de PDFs/ZIPs em aparelho.
+- [ ] Compartilhamento 2.2.13 via ClipData: build #100 identificou erro de sintaxe por junção de funções; separação corrigida, CI reacionado. Validar transferência de PDFs/ZIPs em aparelho.
 - [ ] Validar layout do PDF contra o formulário original em leitor externo/aparelho.
 - [ ] Confirmar captura de câmera, assinaturas e exportações no aparelho.
 

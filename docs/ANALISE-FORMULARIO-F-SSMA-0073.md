@@ -206,7 +206,7 @@ As atualizações documentais 1.0.1 e 1.0.2 e a baseline 1.0.0 não representam 
 ## Atualização 2.2.13
 - Compartilhamento passa a usar ClipData junto ao EXTRA_STREAM, reforçando concessão de leitura para apps destinatários.
 - Filtra arquivos inexistentes antes do compartilhamento.
-- CI pendente; validação em aparelho não executada.
+- Build #100 falhou por junção de funções Kotlin; correção da quebra de linha registrada. CI reacionado; validação em aparelho não executada.
 
 ## Atualização 2.2.12
 - Cabeçalho da tabela PDF ampliado para acomodar o rótulo de ação em três linhas.

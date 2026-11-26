@@ -27,7 +27,7 @@ Testes em aparelho/emulador e validação funcional integral permanecem pendente
 ## Versão 2.2.13
 - Compartilhamento via `ClipData` para reforçar concessão de leitura de PDFs e ZIPs a apps destinatários.
 - Filtra arquivos inexistentes antes de iniciar o compartilhamento.
-- CI pendente.
+- Build #100 identificou erro de sintaxe Kotlin na separação entre funções; corrigido e CI reacionado.
 
 ## Versão 2.2.12
 - Cabeçalho tabular ampliado e reserva de espaço para assinaturas/evidências no PDF.
