@@ -3,10 +3,10 @@
 ## 2.2.10 — em validação
 - Protege rascunho existente ao abrir edição de inspeção pelo histórico: oferece retomar ou descartar e editar, evitando sobrescrita silenciosa.
 - versionCode 15 / versionName 2.2.10.
-- CI pendente.
+- Testes unitários e APK debug concluídos com sucesso no run #93; artifact publicado.
 
 
-## 2.2.9 — em validação
+## 2.2.9 — validada (build #93)
 - Corrige newline literal no arquivo Gradle Kotlin DSL que causava erro de sintaxe na build #92.
 - Corrige retorno antecipado na função local `openStream()` para corpo de função explícito, resolvendo erro Kotlin #91.
 - Mantém decodificação de imagens em resolução limitada e leitura de orientação EXIF.
