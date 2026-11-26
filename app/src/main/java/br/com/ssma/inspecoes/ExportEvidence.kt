@@ -7,10 +7,13 @@ data class ExportEvidenceItem(
 )
 
 fun photoEvidenceExtension(sourceUri: String): String {
-    val uri = android.net.Uri.parse(sourceUri)
-    val path = uri.path ?: uri.lastPathSegment.orEmpty()
+    val path = try {
+        java.net.URI(sourceUri).path ?: java.net.URI(sourceUri).rawPath.orEmpty()
+    } catch (_: Exception) {
+        sourceUri
+    }
     val extension = java.io.File(path).extension.lowercase()
-    return extension.takeIf { it.matches(Regex("[a-z0-9]{1,8}")) } ?: "jpg"
+    return extension.takeIf { it.matches(Regex("(?=.*[a-z])[a-z0-9]{1,8}")) } ?: "jpg"
 }
 
 data class ExportEvidenceStatus(
