@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.graphics.pdf.PdfDocument
 import android.net.Uri
 import android.os.Bundle
@@ -40,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
+import androidx.exifinterface.media.ExifInterface
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -47,7 +49,7 @@ import java.io.FileOutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-private const val APP_VERSION = "2.2.7"
+private const val APP_VERSION = "2.2.8"
 private const val LOGO_ASSET = "salum_logo.jpg"
 data class Finding(val desc:String="",val severity:String="LEVE",val action:String="",val deadline:String="",val owner:String="",val photo:String="")
 data class Participant(val name:String="",val signature:String="")
@@ -118,7 +120,7 @@ class MainActivity:ComponentActivity(){
   }
   fun image(raw:String,maxWidth:Float,maxHeight:Float){
    try{
-    val original=loadBitmap(this@MainActivity,Uri.parse(raw))
+    val original=loadBitmap(this@MainActivity,Uri.parse(raw),maxWidth.toInt().coerceAtLeast(1),maxHeight.toInt().coerceAtLeast(1))
     if(original!=null){
      ensureSpace(maxHeight+24f)
      val scale=minOf(maxWidth/original.width,maxHeight/original.height,1f)
@@ -278,11 +280,29 @@ private fun severityDescription(value:String):String=when(value){
  else->"Descrição não disponível."
 }
 private fun safeFilePart(raw:String):String = raw.trim().replace(Regex("[^A-Za-z0-9_-]"),"_").trim('_').ifBlank{"sem_dado"}
-private fun loadBitmap(context:android.content.Context, uri:Uri):Bitmap? {
+private fun loadBitmap(context:android.content.Context, uri:Uri, reqWidth:Int=1024, reqHeight:Int=1024):Bitmap? {
+  fun openStream():java.io.InputStream? = if(uri.scheme=="file") File(uri.path ?: return null).inputStream() else context.contentResolver.openInputStream(uri)
   return try {
-   if(uri.scheme=="file") { BitmapFactory.decodeFile(uri.path) }
-   else { val stream=context.contentResolver.openInputStream(uri); stream?.use { input -> BitmapFactory.decodeStream(input) } }
-  } catch(_:Exception) { null }
+   val bounds=BitmapFactory.Options().apply{inJustDecodeBounds=true}
+   openStream()?.use{BitmapFactory.decodeStream(it,null,bounds)}
+   if(bounds.outWidth<=0||bounds.outHeight<=0)return null
+   var sample=1
+   while(bounds.outWidth/sample>reqWidth.coerceAtLeast(1)||bounds.outHeight/sample>reqHeight.coerceAtLeast(1))sample*=2
+   val options=BitmapFactory.Options().apply{inSampleSize=sample}
+   val decoded=openStream()?.use{BitmapFactory.decodeStream(it,null,options)}?:return null
+   val orientation=try{openStream()?.use{ExifInterface(it).getAttributeInt(ExifInterface.TAG_ORIENTATION,ExifInterface.ORIENTATION_NORMAL)}?:ExifInterface.ORIENTATION_NORMAL}catch(_:Exception){ExifInterface.ORIENTATION_NORMAL}
+   val matrix=Matrix()
+   when(orientation){
+    ExifInterface.ORIENTATION_FLIP_HORIZONTAL->matrix.setScale(-1f,1f)
+    ExifInterface.ORIENTATION_ROTATE_180->matrix.setRotate(180f)
+    ExifInterface.ORIENTATION_FLIP_VERTICAL->matrix.setScale(1f,-1f)
+    ExifInterface.ORIENTATION_TRANSPOSE->{matrix.setRotate(90f);matrix.postScale(-1f,1f)}
+    ExifInterface.ORIENTATION_ROTATE_90->matrix.setRotate(90f)
+    ExifInterface.ORIENTATION_TRANSVERSE->{matrix.setRotate(-90f);matrix.postScale(-1f,1f)}
+    ExifInterface.ORIENTATION_ROTATE_270->matrix.setRotate(-90f)
+   }
+   if(matrix.isIdentity)decoded else Bitmap.createBitmap(decoded,0,0,decoded.width,decoded.height,matrix,true).also{if(it!==decoded)decoded.recycle()}
+  }catch(_:Exception){null}
  }
 
 @Composable
