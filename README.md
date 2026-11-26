@@ -2,7 +2,7 @@
 
 Aplicativo Android nativo (Kotlin/Jetpack Compose) para registro digital offline de inspeções da Salum Construções, conforme F-SSMA-0073 Rev.00.
 
-**Versão 2.2.11 — compilação em validação.**
+**Versão 2.2.12 — compilação em validação.**
 
 ## Funcionalidades
 - Identificação da inspeção, numeração local, data e local.
@@ -15,7 +15,7 @@ Aplicativo Android nativo (Kotlin/Jetpack Compose) para registro digital offline
 - Funcionamento offline.
 
 ## Validação
-Build debug 2.2.7 (run #90) e 2.2.9 (run #93) com testes unitários concluídos com sucesso; artifacts publicados. A 2.2.8 falhou nas builds #91/#92 por erros de Kotlin e sintaxe Gradle, corrigidos e validados na 2.2.9. A 2.2.10 protege rascunhos ao editar registros; testes unitários e APK debug concluídos com sucesso no run #95 (commit `7a07e771`).
+Build debug 2.2.11 (runs #96/#97) e versões anteriores com testes unitários concluídos com sucesso; artifacts publicados. A 2.2.8 falhou nas builds #91/#92 por erros de Kotlin e sintaxe Gradle, corrigidos e validados na 2.2.9. A 2.2.10 protege rascunhos ao editar registros; testes unitários e APK debug concluídos com sucesso no run #95 (commit `7a07e771`).
 
 Testes em aparelho/emulador e validação funcional integral permanecem pendentes.
 
@@ -24,6 +24,6 @@ Testes em aparelho/emulador e validação funcional integral permanecem pendente
 - [Análise do formulário](docs/ANALISE-FORMULARIO-F-SSMA-0073.md)
 - [Changelog](docs/CHANGELOG.md)
 
-## Versão 2.2.11
-- PDF reorganizado em tabela paginada com repetição do cabeçalho de tabela nas continuações.
+## Versão 2.2.12
+- Cabeçalho tabular ampliado e reserva de espaço para assinaturas/evidências no PDF.
 - Compilação CI pendente; validação visual em aparelho permanece pendente.

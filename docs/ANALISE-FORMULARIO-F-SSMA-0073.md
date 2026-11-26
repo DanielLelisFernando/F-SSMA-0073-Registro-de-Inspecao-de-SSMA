@@ -1,6 +1,6 @@
 # Projeto — Aplicativo de Registro de Inspeções de SSMA
 
-> **Estado atual (26/11/2026):** a versão 2.2.10 foi validada no run #95. A versão 2.2.11 reorganiza o PDF em tabela paginada de condições/ações, com repetição do cabeçalho nas páginas de continuação; CI está em validação. Testes em aparelho e validação funcional integral continuam pendentes. As seções históricas 8–10 registram a baseline documental inicial.
+**Estado atual (26/11/2026):** a versão 2.2.11 foi validada nos runs #96/#97. A versão 2.2.12 ajusta o espaço de cabeçalhos, assinaturas e evidências no PDF; CI está em validação. Testes em aparelho e validação funcional integral continuam pendentes. As seções históricas 8–10 registram a baseline documental inicial.
 
 
 ## Documento de referência
@@ -201,3 +201,9 @@ Até confirmação, manter entrada flexível e não implementar validações de 
 - **Pendências:** seção 6.
 
 As atualizações documentais 1.0.1 e 1.0.2 e a baseline 1.0.0 não representam APK funcional nem versão de produção.
+
+
+## Atualização 2.2.12
+- Cabeçalho da tabela PDF ampliado para acomodar o rótulo de ação em três linhas.
+- Espaço reservado antes das imagens de assinatura e evidência para reduzir separação de rótulos e imagens entre páginas.
+- Build CI pendente; conferência visual em aparelho não executada.

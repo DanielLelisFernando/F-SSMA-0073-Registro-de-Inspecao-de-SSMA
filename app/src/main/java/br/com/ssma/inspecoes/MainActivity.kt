@@ -49,7 +49,7 @@ import java.io.FileOutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-private const val APP_VERSION = "2.2.11"
+private const val APP_VERSION = "2.2.12"
 private const val LOGO_ASSET = "salum_logo.jpg"
 data class Finding(val desc:String="",val severity:String="LEVE",val action:String="",val deadline:String="",val owner:String="",val photo:String="")
 data class Participant(val name:String="",val signature:String="")
@@ -142,7 +142,7 @@ class MainActivity:ComponentActivity(){
   line("PARTICIPANTES",h)
   i.participants.forEachIndexed{n,participant->
    line("${n+1}. ${participant.name}")
-   if(participant.signature.isNotBlank()){line("Assinatura do participante:");image(participant.signature,220f,80f)}
+   if(participant.signature.isNotBlank()){ensureSpace(150f);line("Assinatura do participante:");image(participant.signature,220f,80f)}
   }
   y+=8f
   line("CLASSIFICAÇÃO DE SEVERIDADE",h)
@@ -156,17 +156,18 @@ class MainActivity:ComponentActivity(){
   val gridPaint=android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply{color=android.graphics.Color.rgb(130,140,150);strokeWidth=0.6f;style=android.graphics.Paint.Style.STROKE}
   val headerFill=android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply{color=android.graphics.Color.rgb(226,237,248);style=android.graphics.Paint.Style.FILL}
   val cellFill=android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply{color=android.graphics.Color.WHITE;style=android.graphics.Paint.Style.FILL}
+  val tableHeaderHeight=38f
   fun drawTableHeader(){
-   ensureSpace(32f)
+   ensureSpace(tableHeaderHeight)
    val top=y
    var x=40f
    tableWidths.forEachIndexed{idx,width->
-    canvas.drawRect(x,top,x+width,top+32f,headerFill)
-    canvas.drawRect(x,top,x+width,top+32f,gridPaint)
-    tableLabels[idx].forEachIndexed{li,label->canvas.drawText(label,x+4f,top+11f+li*10f,tableHeaderPaint)}
+    canvas.drawRect(x,top,x+width,top+tableHeaderHeight,headerFill)
+    canvas.drawRect(x,top,x+width,top+tableHeaderHeight,gridPaint)
+    tableLabels[idx].forEachIndexed{li,label->canvas.drawText(label,x+4f,top+12f+li*10f,tableHeaderPaint)}
     x+=width
    }
-   y=top+32f
+   y=top+tableHeaderHeight
   }
   fun wrapCell(raw:String,width:Float):List<String>{
    var remaining=raw.ifBlank{"—"}
@@ -204,12 +205,12 @@ class MainActivity:ComponentActivity(){
     lineIndex+=segmentLines
     if(lineIndex<maxLines){newPage();drawTableHeader()}
    }
-   if(f.photo.isNotBlank()){line("Evidência fotográfica (recurso digital adicional):");image(f.photo,360f,250f)}
+   if(f.photo.isNotBlank()){ensureSpace(300f);line("Evidência fotográfica (recurso digital adicional):");image(f.photo,360f,250f)}
    y+=8f
   }
   line("VALIDAÇÃO DO RESPONSÁVEL PELA INSPEÇÃO",h)
   line("Matrícula: ${i.registration}")
-  if(i.inspectorSignature.isNotBlank()){line("Assinatura / Matrícula do Responsável pela Inspeção:");image(i.inspectorSignature,260f,100f)}
+  if(i.inspectorSignature.isNotBlank()){ensureSpace(150f);line("Assinatura / Matrícula do Responsável pela Inspeção:");image(i.inspectorSignature,260f,100f)}
   finishCurrent()
   val f=File(filesDir,"Inspecao_${safeFilePart(i.number)}_${safeFilePart(i.date)}_${safeFilePart(i.location)}.pdf")
   FileOutputStream(f).use{doc.writeTo(it)}

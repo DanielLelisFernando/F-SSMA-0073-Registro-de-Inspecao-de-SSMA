@@ -1,6 +1,6 @@
 # Checklist mestre — F-SSMA-0073 Rev.00
 
-Atualizado para a versão **2.2.11**. A versão 2.2.7 foi validada no run #90. A 2.2.8 teve falhas de CI #91/#92 por erro na função local de abertura de streams e newline literal no Gradle. A 2.2.9 corrige esses pontos e mantém decodificação limitada/orientação EXIF. CI não substitui validação funcional em aparelho.
+Atualizado para a versão **2.2.12**. A versão 2.2.11 foi validada nos runs #96 e #97 (testes unitários e APK debug). A 2.2.12 ajusta altura do cabeçalho tabular e reserva espaço para assinaturas/evidências no PDF; validação CI pendente. A 2.2.8 teve falhas de CI #91/#92 por erro na função local de abertura de streams e newline literal no Gradle. A 2.2.9 corrige esses pontos e mantém decodificação limitada/orientação EXIF. CI não substitui validação funcional em aparelho.
 
 ## Implementado no código
 - [x] Identificação: responsável, número automático, data por calendário e local.
@@ -26,6 +26,7 @@ Atualizado para a versão **2.2.11**. A versão 2.2.7 foi validada no run #90. A
 - [x] Build debug 2.2.4: run #76, sucesso.
 - [x] Build debug 2.2.5: run #80, commit ff744c6c, sucesso; artifact publicado.
 - [x] Testes unitários e build debug 2.2.6: run #86, commit 87a1651c, sucesso; artifact publicado.
+- [x] Build debug 2.2.11: runs #96 e #97, sucesso; artifacts publicados.
 - [ ] Testes em aparelho/emulador.
 - [ ] Teste offline integral.
 - [ ] Criar inspeção com múltiplos desvios e fotos, fechar/reabrir.
@@ -46,7 +47,8 @@ Atualizado para a versão **2.2.11**. A versão 2.2.7 foi validada no run #90. A
 - [x] Validação de decodificação limitada e orientação EXIF de imagens (2.2.9, run #93, sucesso; artifact publicado).
 - [x] Proteção para edição de inspeção existente quando há rascunho ativo (2.2.10, run #95, sucesso; artifact publicado).
 - [ ] Testes de lifecycle, permissões e tamanhos de tela.
-- [x] PDF 2.2.11: tabela paginada para condições, severidade, ação, prazo e responsável, com cabeçalho de tabela repetido ao continuar entre páginas.
+- [x] PDF 2.2.11: tabela paginada para condições, severidade, ação, prazo e responsável, com cabeçalho de tabela repetido ao continuar entre páginas (runs #96/#97 aprovados).
+- [ ] PDF 2.2.12: altura do cabeçalho tabular ajustada e espaço reservado para manter rótulos de assinaturas/evidências junto às imagens; CI pendente.
 - [ ] Validar layout do PDF contra o formulário original em leitor externo/aparelho.
 - [ ] Confirmar captura de câmera, assinaturas e exportações no aparelho.
 

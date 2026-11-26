@@ -1,8 +1,14 @@
-## 2.2.11 — validação CI pendente
+## 2.2.12 — validação CI pendente
+- Aumenta a altura do cabeçalho tabular para acomodar três linhas do rótulo de ação sem corte.
+- Reserva espaço antes de blocos de assinatura e evidência fotográfica para reduzir rótulos órfãos entre páginas.
+- versionCode 17 / versionName 2.2.12.
+- CI acionado após commit; validação visual em aparelho permanece pendente.
+
+## 2.2.11 — validada (runs #96 e #97)
 - PDF reorganizado em tabela paginada com as seis colunas principais de condições e ações, repetindo o cabeçalho da tabela nas páginas de continuação.
 - Evidências fotográficas permanecem vinculadas ao desvio e são apresentadas após a linha correspondente.
 - versionCode 16 / versionName 2.2.11.
-- Build acionado; validação visual em aparelho ainda pendente.
+- Builds #96 e #97 executaram testes unitários e `assembleDebug` com sucesso; artifacts publicados. Validação visual em aparelho ainda pendente.
 
 # Histórico de alterações
 
