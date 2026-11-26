@@ -2,7 +2,7 @@ plugins { id("com.android.application"); id("org.jetbrains.kotlin.android"); id(
 android {
     namespace = "br.com.ssma.inspecoes"
     compileSdk = 35
-    defaultConfig { applicationId = "br.com.ssma.inspecoes"; minSdk = 26; targetSdk = 35; versionCode = 12; versionName = "2.2.7" }
+    defaultConfig { applicationId = "br.com.ssma.inspecoes"; minSdk = 26; targetSdk = 35; versionCode = 13; versionName = "2.2.8" }
     buildFeatures { compose = true }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
     kotlinOptions { jvmTarget = "17" }
@@ -15,5 +15,5 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
-    testImplementation("junit:junit:4.13.2")
+    implementation("androidx.exifinterface:exifinterface:1.3.7")\n    testImplementation("junit:junit:4.13.2")
 }
