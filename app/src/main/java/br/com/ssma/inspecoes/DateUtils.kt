@@ -28,3 +28,11 @@ fun dateTextToSortableKey(raw: String): Long? {
 }
 
 fun dateKey(raw: String): Long = dateTextToSortableKey(raw) ?: 0L
+
+fun validateInspectionFields(responsible: String, date: String, location: String, findings: List<Finding>): String? {
+    if (responsible.isBlank()) return "Informe o responsável pela inspeção."
+    if (dateTextToPickerMillis(date) == null) return "Selecione uma data válida para a inspeção."
+    if (location.isBlank()) return "Informe o local da inspeção."
+    if (findings.isEmpty() || findings.any { it.desc.isBlank() }) return "Preencha a descrição de todos os desvios."
+    return null
+}
