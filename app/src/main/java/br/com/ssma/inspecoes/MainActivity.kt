@@ -49,7 +49,7 @@ import java.io.FileOutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-private const val APP_VERSION = "2.2.10"
+private const val APP_VERSION = "2.2.11"
 private const val LOGO_ASSET = "salum_logo.jpg"
 data class Finding(val desc:String="",val severity:String="LEVE",val action:String="",val deadline:String="",val owner:String="",val photo:String="")
 data class Participant(val name:String="",val signature:String="")
@@ -148,15 +148,64 @@ class MainActivity:ComponentActivity(){
   line("CLASSIFICAÇÃO DE SEVERIDADE",h)
   listOf("LEVE","MODERADA","GRAVE","CRÍTICO").forEach{line("$it — ${severityDescription(it)}")}
   y+=8f
+  line("CONDIÇÕES DE RISCO E AÇÕES",h)
+  val tableWidths=floatArrayOf(30f,145f,65f,125f,75f,75f)
+  val tableLabels=listOf(listOf("Nº"),listOf("CONDIÇÃO DE RISCO/","NÃO CONFORME"),listOf("SEVERIDADE"),listOf("AÇÃO PARA","ADEQUAÇÃO/","CORREÇÃO"),listOf("PRAZO DE","EXECUÇÃO"),listOf("RESPONSÁVEL"))
+  val tableHeaderPaint=android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply{textSize=9f;isFakeBoldText=true;color=android.graphics.Color.rgb(37,45,135)}
+  val tableCellPaint=android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply{textSize=9.5f;color=android.graphics.Color.BLACK}
+  val gridPaint=android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply{color=android.graphics.Color.rgb(130,140,150);strokeWidth=0.6f;style=android.graphics.Paint.Style.STROKE}
+  val headerFill=android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply{color=android.graphics.Color.rgb(226,237,248);style=android.graphics.Paint.Style.FILL}
+  val cellFill=android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply{color=android.graphics.Color.WHITE;style=android.graphics.Paint.Style.FILL}
+  fun drawTableHeader(){
+   ensureSpace(32f)
+   val top=y
+   var x=40f
+   tableWidths.forEachIndexed{idx,width->
+    canvas.drawRect(x,top,x+width,top+32f,headerFill)
+    canvas.drawRect(x,top,x+width,top+32f,gridPaint)
+    tableLabels[idx].forEachIndexed{li,label->canvas.drawText(label,x+4f,top+11f+li*10f,tableHeaderPaint)}
+    x+=width
+   }
+   y=top+32f
+  }
+  fun wrapCell(raw:String,width:Float):List<String>{
+   var remaining=raw.ifBlank{"—"}
+   val result=mutableListOf<String>()
+   while(remaining.isNotEmpty()){
+    val count=tableCellPaint.breakText(remaining,true,(width-8f).coerceAtLeast(1f),null).coerceAtLeast(1)
+    result.add(remaining.substring(0,count))
+    remaining=remaining.substring(count).trimStart()
+   }
+   return result.ifEmpty{listOf("—")}
+  }
+  drawTableHeader()
   i.findings.forEachIndexed{n,f->
-   line("DESVIO ${n+1}",h)
-   line("Descrição: ${f.desc}")
-   line("Severidade: ${f.severity} — ${severityDescription(f.severity)}")
-   line("Ação para adequação/correção: ${f.action}")
-   line("Prazo de execução: ${f.deadline}")
-   line("Responsável: ${f.owner}")
+   val values=listOf((n+1).toString(),f.desc,f.severity,f.action,f.deadline,f.owner)
+   val wrapped=values.mapIndexed{idx,value->wrapCell(value,tableWidths[idx])}
+   val maxLines=wrapped.maxOf{it.size}
+   var lineIndex=0
+   while(lineIndex<maxLines){
+    var available=((790f-y-8f)/12f).toInt()
+    if(available<=0){newPage();drawTableHeader();available=((790f-y-8f)/12f).toInt()}
+    val segmentLines=minOf(available,maxLines-lineIndex).coerceAtLeast(1)
+    val rowHeight=segmentLines*12f+8f
+    val top=y
+    var x=40f
+    tableWidths.forEachIndexed{idx,width->
+     canvas.drawRect(x,top,x+width,top+rowHeight,cellFill)
+     canvas.drawRect(x,top,x+width,top+rowHeight,gridPaint)
+     for(li in 0 until segmentLines){
+      val text=wrapped[idx].getOrNull(lineIndex+li)?:if(idx==0&&lineIndex>0)"" else ""
+      if(text.isNotEmpty())canvas.drawText(text,x+4f,top+12f+li*12f,tableCellPaint)
+     }
+     x+=width
+    }
+    y=top+rowHeight
+    lineIndex+=segmentLines
+    if(lineIndex<maxLines){newPage();drawTableHeader()}
+   }
    if(f.photo.isNotBlank()){line("Evidência fotográfica (recurso digital adicional):");image(f.photo,360f,250f)}
-   y+=10f
+   y+=8f
   }
   line("VALIDAÇÃO DO RESPONSÁVEL PELA INSPEÇÃO",h)
   line("Matrícula: ${i.registration}")
