@@ -24,7 +24,13 @@ Testes em aparelho/emulador e validação funcional integral permanecem pendente
 - [Análise do formulário](docs/ANALISE-FORMULARIO-F-SSMA-0073.md)
 - [Changelog](docs/CHANGELOG.md)
 
-## Versão 2.2.14 — em validação\n- ZIP selecionado passa a incluir `Manifest_Evidencias.txt`, identificando evidências copiadas e ausentes por inspeção.\n- Exportação informa a contagem de evidências incluídas/ausentes.\n- Testes unitários para coleta de referências e manifesto.\n- CI pendente.\n\n## Versão 2.2.13
+## Versão 2.2.14 — em validação
+- ZIP selecionado passa a incluir `Manifest_Evidencias.txt`, identificando evidências copiadas e ausentes por inspeção.
+- Exportação informa a contagem de evidências incluídas/ausentes.
+- Testes unitários para coleta de referências e manifesto.
+- CI pendente.
+
+## Versão 2.2.13
 - Compartilhamento via `ClipData` para reforçar concessão de leitura de PDFs e ZIPs a apps destinatários.
 - Filtra arquivos inexistentes antes de iniciar o compartilhamento.
 - Build #100 falhou por junção de funções Kotlin; correção validada no run #101.

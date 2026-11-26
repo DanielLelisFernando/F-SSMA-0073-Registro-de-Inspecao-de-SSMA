@@ -1,6 +1,6 @@
 # Checklist mestre — F-SSMA-0073 Rev.00
 
-Atualizado para a versão **2.2.14**. A 2.2.13 foi validada no run #101. A 2.2.14 adiciona manifesto de evidências ao ZIP; CI pendente. A versão 2.2.12 foi validada nos runs #98 e #99 (testes unitários e APK debug). A 2.2.13 reforça a concessão de URI ao compartilhar PDF/ZIP via ClipData; CI pendente. A 2.2.8 teve falhas de CI #91/#92 por erro na função local de abertura de streams e newline literal no Gradle. A 2.2.9 corrige esses pontos e mantém decodificação limitada/orientação EXIF. CI não substitui validação funcional em aparelho.
+Atualizado para a versão **2.2.14**. A 2.2.13 foi validada no run #101. A 2.2.14 adiciona manifesto de evidências ao ZIP; CI pendente. A versão 2.2.12 foi validada nos runs #98 e #99. A 2.2.8 teve falhas de CI #91/#92 por erro na função local de abertura de streams e newline literal no Gradle; esses pontos foram corrigidos na 2.2.9. CI não substitui validação funcional em aparelho.
 
 ## Implementado no código
 - [x] Identificação: responsável, número automático, data por calendário e local.
@@ -51,7 +51,8 @@ Atualizado para a versão **2.2.14**. A 2.2.13 foi validada no run #101. A 2.2.1
 - [x] PDF 2.2.11: tabela paginada para condições, severidade, ação, prazo e responsável, com cabeçalho de tabela repetido ao continuar entre páginas (runs #96/#97 aprovados).
 - [x] PDF 2.2.12: altura do cabeçalho tabular ajustada e espaço reservado para manter rótulos de assinaturas/evidências junto às imagens; builds #98/#99 aprovadas.
 - [x] Compartilhamento 2.2.13 via ClipData: run #101, commit `abaf91b7`, testes unitários e APK debug aprovados.
-- [x] ZIP 2.2.14: manifesto de evidências e contagem de ausentes implementados no código; CI pendente.\n- [ ] Validar transferência de PDFs/ZIPs via ClipData em aparelho.
+- [x] ZIP 2.2.14: manifesto de evidências e contagem de ausentes implementados no código; CI pendente.
+- [ ] Validar transferência de PDFs/ZIPs via ClipData em aparelho.
 - [ ] Validar layout do PDF contra o formulário original em leitor externo/aparelho.
 - [ ] Confirmar captura de câmera, assinaturas e exportações no aparelho.
 
