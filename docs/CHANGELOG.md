@@ -1,3 +1,8 @@
+## 2.2.17 — CI em validação
+- Corrige separação de expressões Kotlin no fechamento do botão de exportação ZIP e no diálogo de rascunho do histórico.
+- versionCode 22 / versionName 2.2.17.
+- CI aguardando execução.
+
 ## 2.2.16 — CI em validação
 - Evidências do ZIP são copiadas para staging temporário antes da inclusão, reduzindo risco de entradas parciais por falha de leitura.
 - Manifesto registra tamanho em bytes e SHA-256 para evidências incluídas, além de identificar evidências ausentes.
