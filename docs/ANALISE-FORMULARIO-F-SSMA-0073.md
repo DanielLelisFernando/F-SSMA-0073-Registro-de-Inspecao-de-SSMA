@@ -252,7 +252,7 @@ As atualizações documentais 1.0.1 e 1.0.2 e a baseline 1.0.0 não representam 
 
 
 ## Atualização 2.2.20 — CI em validação
-- A captura da câmera valida a assinatura do arquivo de imagem (JPEG, PNG, WebP, GIF, BMP ou HEIF) antes de associar a URI ao desvio.
-- Arquivos ausentes, vazios ou com assinatura não reconhecida são removidos e não são vinculados ao desvio.
+- A captura da câmera valida a assinatura JPEG antes de associar a URI ao desvio.
+- Arquivos ausentes, vazios ou com assinatura não JPEG são removidos e não são vinculados ao desvio.
 - Testes unitários adicionados; CI e teste em aparelho pendentes.
 - versionCode 25 / versionName 2.2.20.
