@@ -1,5 +1,11 @@
 # Histórico de alterações
 
+## 2.2.10 — em validação
+- Protege rascunho existente ao abrir edição de inspeção pelo histórico: oferece retomar ou descartar e editar, evitando sobrescrita silenciosa.
+- versionCode 15 / versionName 2.2.10.
+- CI pendente.
+
+
 ## 2.2.9 — em validação
 - Corrige newline literal no arquivo Gradle Kotlin DSL que causava erro de sintaxe na build #92.
 - Corrige retorno antecipado na função local `openStream()` para corpo de função explícito, resolvendo erro Kotlin #91.
