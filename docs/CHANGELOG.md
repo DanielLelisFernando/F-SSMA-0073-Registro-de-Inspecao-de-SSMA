@@ -1,4 +1,5 @@
 ## 2.2.19 — CI em validação
+- Corrige o texto da versão exibida na tela inicial, alinhando APP_VERSION ao versionName do Gradle.
 - Normaliza a extensão de mídia da galeria e evita registrar foto quando a URI não pode ser aberta ou resulta em arquivo vazio; o arquivo parcial é removido.
 - Testes unitários para normalização da extensão MIME e fallback JPG.
 - versionCode 24 / versionName 2.2.19.
