@@ -1,6 +1,6 @@
 # Checklist mestre — F-SSMA-0073 Rev.00
 
-Atualizado para a versão **2.2.7**. A 2.2.6 foi validada no build #86 (testes unitários + APK). A 2.2.7 adiciona validação dos campos obrigatórios de identificação antes do salvamento. Build e testes de unidade não substituem validação funcional em aparelho.
+Atualizado para a versão **2.2.8**. A versão 2.2.7 foi validada no run #90 (testes unitários + APK). A 2.2.8 reduz a resolução de imagens na decodificação e aplica orientação EXIF para evitar consumo excessivo de memória e fotos giradas incorretamente. CI não substitui validação funcional em aparelho.
 
 ## Implementado no código
 - [x] Identificação: responsável, número automático, data por calendário e local.
@@ -40,7 +40,7 @@ Atualizado para a versão **2.2.7**. A 2.2.6 foi validada no build #86 (testes u
 - [x] Preseleção da data ao editar (build #76).
 - [x] Filtro de histórico por datas e exportação selecionada (build #80).
 - [x] Testes automatizados de parsing, UTC, ordenação e datas inválidas (build #86).
-- [ ] Validação de campos obrigatórios de responsável, data, local e descrição dos desvios (implementada em 2.2.7, aguardando CI).
+- [x] Validação de campos obrigatórios de responsável, data, local e descrição dos desvios (2.2.7, run #90).\n- [ ] Validação de decodificação limitada e orientação EXIF de imagens (2.2.8, aguardando CI).
 - [ ] Testes de lifecycle, permissões e tamanhos de tela.
 - [ ] Validar layout do PDF contra o formulário original; conteúdo representado, mas tabela não reproduz fielmente o desenho.
 - [ ] Confirmar captura de câmera, assinaturas e exportações no aparelho.
