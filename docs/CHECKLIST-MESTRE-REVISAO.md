@@ -42,7 +42,7 @@ Atualizado para a versão **2.2.10**. A versão 2.2.7 foi validada no run #90. A
 - [x] Preseleção da data ao editar (build #76).
 - [x] Filtro de histórico por datas e exportação selecionada (build #80).
 - [x] Testes automatizados de parsing, UTC, ordenação e datas inválidas (build #86).
-- [x] Validação de campos obrigatórios de responsável, data, local e descrição dos desvios (2.2.7, run #90).\n- [ ] Validação de decodificação limitada e orientação EXIF de imagens (2.2.9, aguardando CI).\n- [ ] Proteção para edição de inspeção existente quando há rascunho ativo (2.2.10, aguardando CI).
+- [x] Validação de campos obrigatórios de responsável, data, local e descrição dos desvios (2.2.7, run #90).\n- [x] Validação de decodificação limitada e orientação EXIF de imagens (2.2.9, run #93, sucesso; artifact publicado).\n- [ ] Proteção para edição de inspeção existente quando há rascunho ativo (2.2.10, aguardando CI).
 - [ ] Testes de lifecycle, permissões e tamanhos de tela.
 - [ ] Validar layout do PDF contra o formulário original; conteúdo representado, mas tabela não reproduz fielmente o desenho.
 - [ ] Confirmar captura de câmera, assinaturas e exportações no aparelho.
