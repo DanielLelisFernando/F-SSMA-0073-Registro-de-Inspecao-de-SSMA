@@ -2,7 +2,7 @@
 
 Aplicativo Android nativo (Kotlin/Jetpack Compose) para registro digital offline de inspeções da Salum Construções, conforme F-SSMA-0073 Rev.00.
 
-**Versão 2.2.14 — CI em validação.**
+**Versão 2.2.15 — CI em validação.**
 
 ## Funcionalidades
 - Identificação da inspeção, numeração local, data e local.
@@ -15,7 +15,7 @@ Aplicativo Android nativo (Kotlin/Jetpack Compose) para registro digital offline
 - Funcionamento offline.
 
 ## Validação
-Build debug 2.2.11 (runs #96/#97), 2.2.12 (#98/#99) e 2.2.13 (#101) com testes unitários e APK concluídos com sucesso; artifacts publicados. A 2.2.14 adiciona manifesto de integridade de evidências ao ZIP e aguarda CI. A 2.2.8 falhou nas builds #91/#92 por erros de Kotlin e sintaxe Gradle, corrigidos e validados na 2.2.9. A 2.2.10 protege rascunhos ao editar registros; testes unitários e APK debug concluídos com sucesso no run #95 (commit `7a07e771`).
+Build debug 2.2.11 (runs #96/#97), 2.2.12 (#98/#99) e 2.2.13 (#101) com testes unitários e APK concluídos com sucesso; artifacts publicados. A 2.2.14 adiciona manifesto de integridade de evidências ao ZIP, mas o run #102 falhou por erros Kotlin corrigidos na 2.2.15, que aguarda CI. A 2.2.8 falhou nas builds #91/#92 por erros de Kotlin e sintaxe Gradle, corrigidos e validados na 2.2.9. A 2.2.10 protege rascunhos ao editar registros; testes unitários e APK debug concluídos com sucesso no run #95 (commit `7a07e771`).
 
 Testes em aparelho/emulador e validação funcional integral permanecem pendentes.
 
@@ -24,7 +24,7 @@ Testes em aparelho/emulador e validação funcional integral permanecem pendente
 - [Análise do formulário](docs/ANALISE-FORMULARIO-F-SSMA-0073.md)
 - [Changelog](docs/CHANGELOG.md)
 
-## Versão 2.2.14 — em validação
+## Versão 2.2.14 — build #102 falhou
 - ZIP selecionado passa a incluir `Manifest_Evidencias.txt`, identificando evidências copiadas e ausentes por inspeção.
 - Exportação informa a contagem de evidências incluídas/ausentes.
 - Testes unitários para coleta de referências e manifesto.
@@ -38,3 +38,9 @@ Testes em aparelho/emulador e validação funcional integral permanecem pendente
 ## Versão 2.2.12
 - Cabeçalho tabular ampliado e reserva de espaço para assinaturas/evidências no PDF.
 - Builds #98/#99 aprovadas; validação visual em aparelho permanece pendente.
+
+
+## Versão 2.2.15 — CI em validação
+- Corrige o retorno da função local de cópia `addUri` no ZIP e o tipo `ExportEvidenceStatus`.
+- Atualiza `versionCode` 20 / `versionName` 2.2.15.
+- CI ainda pendente.
