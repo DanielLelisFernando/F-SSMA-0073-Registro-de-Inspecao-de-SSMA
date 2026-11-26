@@ -84,4 +84,11 @@ Testes em aparelho/emulador e validação funcional integral permanecem pendente
 
 ## Versão 2.2.21 — validada (build #125)
 - Removidos logs temporários de rastreamento da seleção de data e prazo.
+- Testes unitários e APK debug aprovados; artifact publicado.
 - versionCode 26 / versionName 2.2.21.
+
+
+## Versão 2.2.22 — CI em validação
+- O botão de salvar assinatura só habilita quando existe traço visível; ponto único ou movimento nulo não geram assinatura em branco.
+- Testes unitários para traços vazios, ponto único, estacionários e válidos.
+- versionCode 27 / versionName 2.2.22.
