@@ -75,4 +75,13 @@ class ExportEvidenceTest {
         assertEquals("jpg", photoEvidenceExtension("content://media/external/images/123"))
     }
 
+    @Test
+    fun mimeExtensionIsNormalizedAndUnknownValuesFallBackToJpg() {
+        assertEquals("webp", normalizedPhotoExtension(" WEBP "))
+        assertEquals("png", normalizedPhotoExtension("png"))
+        assertEquals("jpg", normalizedPhotoExtension(null))
+        assertEquals("jpg", normalizedPhotoExtension("1234"))
+        assertEquals("jpg", normalizedPhotoExtension("bad extension"))
+    }
+
 }
