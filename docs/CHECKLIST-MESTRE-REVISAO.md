@@ -69,3 +69,5 @@ Atualizado para a versão **2.2.17**. A 2.2.16 falhou no CI por separação de e
 
 - [x] 2.2.17: corrigida separação de expressões Kotlin no histórico após exportação ZIP; versionCode 22 / versionName 2.2.17.
 - [ ] CI 2.2.17: testes unitários e APK debug.
+
+- [x] 2.2.18: preserva a extensão MIME das fotos da galeria e o nome no ZIP; testes unitários adicionados. CI pendente.
