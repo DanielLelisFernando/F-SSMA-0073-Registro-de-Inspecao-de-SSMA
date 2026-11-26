@@ -1,6 +1,6 @@
 # Checklist mestre — F-SSMA-0073 Rev.00
 
-Atualizado para a versão **2.2.20**. A captura pela câmera agora valida a assinatura JPEG antes de vincular a evidência; arquivos vazios, inexistentes ou com assinatura desconhecida são descartados. Testes unitários adicionados; CI ainda aguardando confirmação. Corrigida a identificação exibida na home para refletir o versionName do Gradle (2.2.19). A 2.2.16 falhou no CI; a correção 2.2.17 e a preservação de extensão MIME da 2.2.18 foram registradas, mas não há confirmação CI disponível para essas versões neste acompanhamento. A 2.2.19 acrescenta validação da importação de fotos e testes unitários. CI não substitui validação funcional em aparelho.
+Atualizado para a versão **2.2.22**. A versão 2.2.20 foi aprovada no run #124 e a 2.2.21 no run #125. A 2.2.22 impede salvar assinatura sem traço visível e adiciona testes unitários; CI pendente. CI não substitui validação funcional em aparelho.
 
 ## Implementado no código
 - [x] Identificação: responsável, número automático, data por calendário e local.
@@ -87,4 +87,8 @@ Atualizado para a versão **2.2.20**. A captura pela câmera agora valida a assi
 
 
 - [x] 2.2.20: testes unitários e APK debug aprovados no run #124 (commit `a4f9b6e4`); artifact publicado.
-- [x] 2.2.21: removidos logs temporários `SSMA_DATE_TRACE` do fluxo de seleção de data e prazo; testes de datas existentes preservados. CI pendente.
+- [x] 2.2.21: removidos logs temporários `SSMA_DATE_TRACE` do fluxo de seleção de data e prazo; testes de datas existentes preservados. CI aprovado no run #125.
+
+
+- [x] 2.2.22: diálogo de assinatura exige traço visível (mais de um ponto e deslocamento); testes unitários adicionados.
+- [ ] CI 2.2.22: testes unitários e APK debug.
