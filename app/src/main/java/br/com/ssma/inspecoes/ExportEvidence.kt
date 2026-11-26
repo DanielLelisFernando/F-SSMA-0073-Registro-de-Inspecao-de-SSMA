@@ -6,6 +6,13 @@ data class ExportEvidenceItem(
     val sourceUri: String
 )
 
+fun photoEvidenceExtension(sourceUri: String): String {
+    val uri = android.net.Uri.parse(sourceUri)
+    val path = uri.path ?: uri.lastPathSegment.orEmpty()
+    val extension = java.io.File(path).extension.lowercase()
+    return extension.takeIf { it.matches(Regex("[a-z0-9]{1,8}")) } ?: "jpg"
+}
+
 data class ExportEvidenceStatus(
     val item: ExportEvidenceItem,
     val included: Boolean,
@@ -19,7 +26,7 @@ fun collectInspectionEvidence(inspection: Inspection): List<ExportEvidenceItem> 
         if (finding.photo.isNotBlank()) {
             items += ExportEvidenceItem(
                 displayName = "Foto do desvio #${index + 1}",
-                archiveFileName = "Foto_Desvio_${index + 1}.jpg",
+                archiveFileName = "Foto_Desvio_${index + 1}.${photoEvidenceExtension(finding.photo)}",
                 sourceUri = finding.photo
             )
         }
