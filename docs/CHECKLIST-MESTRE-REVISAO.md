@@ -1,6 +1,6 @@
 # Checklist mestre — F-SSMA-0073 Rev.00
 
-Atualizado para a versão **2.2.17**. A 2.2.16 falhou no CI por separação de expressões Kotlin no fechamento do botão de exportação; a correção 2.2.17 foi commitada e aguarda CI. CI não substitui validação funcional em aparelho. A versão 2.2.12 foi validada nos runs #98 e #99. A 2.2.8 teve falhas de CI #91/#92 por erro na função local de abertura de streams e newline literal no Gradle; esses pontos foram corrigidos na 2.2.9. CI não substitui validação funcional em aparelho.
+Atualizado para a versão **2.2.19**. A 2.2.16 falhou no CI; a correção 2.2.17 e a preservação de extensão MIME da 2.2.18 foram registradas, mas não há confirmação CI disponível para essas versões neste acompanhamento. A 2.2.19 acrescenta validação da importação de fotos e testes unitários. CI não substitui validação funcional em aparelho.
 
 ## Implementado no código
 - [x] Identificação: responsável, número automático, data por calendário e local.
@@ -74,3 +74,6 @@ Atualizado para a versão **2.2.17**. A 2.2.16 falhou no CI por separação de e
 
 
 - [x] 2.2.19: normalização da extensão MIME, importação de galeria rejeita URI sem stream/arquivo vazio e remove arquivo parcial; testes unitários adicionados. CI pendente.
+
+
+- [x] 2.2.18: preserva extensão MIME de fotos importadas e exportadas; testes adicionados. CI não confirmado.
