@@ -50,7 +50,7 @@ import java.security.MessageDigest
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-private const val APP_VERSION = "2.2.21"
+private const val APP_VERSION = "2.2.22"
 private const val LOGO_ASSET = "salum_logo.jpg"
 data class Finding(val desc:String="",val severity:String="LEVE",val action:String="",val deadline:String="",val owner:String="",val photo:String="")
 data class Participant(val name:String="",val signature:String="")
@@ -411,6 +411,8 @@ private fun SignaturePadDialog(onDismiss:()->Unit,onSave:(String)->Unit){
  var strokes by remember{mutableStateOf(listOf<List<Offset>>())}
  var active by remember{mutableStateOf(listOf<Offset>())}
  var canvasSize by remember{mutableStateOf(IntSize.Zero)}
+ val signatureStrokes=if(active.isNotEmpty())strokes+listOf(active) else strokes
+ val canSaveSignature=signatureHasDrawableStroke(signatureStrokes)&&canvasSize.width>0&&canvasSize.height>0
  AlertDialog(
   onDismissRequest=onDismiss,
   title={Text("Capturar assinatura")},
@@ -428,24 +430,25 @@ private fun SignaturePadDialog(onDismiss:()->Unit,onSave:(String)->Unit){
        )
       }
     ){
-     (strokes+listOf(active)).forEach{pts->
+     signatureStrokes.forEach{pts->
       if(pts.size>1){
        val path=Path().apply{moveTo(pts.first().x,pts.first().y);pts.drop(1).forEach{lineTo(it.x,it.y)}}
        drawPath(path,Color.Black,style=Stroke(width=4.dp.toPx()))
       }
      }
     }
+    if(!canSaveSignature)Text("Desenhe um traço para habilitar salvar.",style=MaterialTheme.typography.bodySmall,color=MaterialTheme.colorScheme.onSurfaceVariant)
     TextButton(onClick={strokes=emptyList();active=emptyList()}){Text("Limpar assinatura")}
    }
   },
   confirmButton={
    Button(onClick={
-    if(strokes.isNotEmpty()&&canvasSize.width>0&&canvasSize.height>0){
+    if(canSaveSignature){
      val bmp=Bitmap.createBitmap(1000,400,Bitmap.Config.ARGB_8888)
      val c=android.graphics.Canvas(bmp);c.drawColor(android.graphics.Color.WHITE)
      val paint=android.graphics.Paint().apply{color=android.graphics.Color.BLACK;strokeWidth=8f;style=android.graphics.Paint.Style.STROKE;strokeCap=android.graphics.Paint.Cap.ROUND;strokeJoin=android.graphics.Paint.Join.ROUND;isAntiAlias=true}
      val sx=1000f/canvasSize.width;val sy=400f/canvasSize.height
-     (strokes+listOf(active)).forEach{pts->
+     signatureStrokes.forEach{pts->
       if(pts.size>1){
        val path=android.graphics.Path().apply{moveTo(pts.first().x*sx,pts.first().y*sy);pts.drop(1).forEach{lineTo(it.x*sx,it.y*sy)}}
        c.drawPath(path,paint)
@@ -455,8 +458,8 @@ private fun SignaturePadDialog(onDismiss:()->Unit,onSave:(String)->Unit){
      FileOutputStream(file).use{bmp.compress(Bitmap.CompressFormat.PNG,100,it)}
      bmp.recycle()
      onSave(Uri.fromFile(file).toString())
-    }else onDismiss()
-   }){Text("Salvar")}
+    }
+   },enabled=canSaveSignature){Text("Salvar")}
   },
   dismissButton={TextButton(onClick=onDismiss){Text("Cancelar")}}
  )
