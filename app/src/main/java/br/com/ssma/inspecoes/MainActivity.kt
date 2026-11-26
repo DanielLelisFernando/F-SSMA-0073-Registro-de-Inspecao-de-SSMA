@@ -49,7 +49,7 @@ import java.io.FileOutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-private const val APP_VERSION = "2.2.9"
+private const val APP_VERSION = "2.2.10"
 private const val LOGO_ASSET = "salum_logo.jpg"
 data class Finding(val desc:String="",val severity:String="LEVE",val action:String="",val deadline:String="",val owner:String="",val photo:String="")
 data class Participant(val name:String="",val signature:String="")
@@ -172,7 +172,7 @@ class MainActivity:ComponentActivity(){
  var responsible by remember{mutableStateOf("")};var number by remember{mutableStateOf("")};var date by remember{mutableStateOf("")};var location by remember{mutableStateOf("")};var findings by remember{mutableStateOf(listOf(Finding()))};var participants by remember{mutableStateOf(listOf(Participant()))};var inspectorSignature by remember{mutableStateOf("")};var registration by remember{mutableStateOf("")};var signatureTarget by remember{mutableStateOf<String?>(null)}
  val draftPrefs=remember{getSharedPreferences("ssma_draft",MODE_PRIVATE)}
  var draftExists by remember{mutableStateOf(draftPrefs.getString("inspectionDraft",null)!=null)}
- var showNewFormConfirm by remember{mutableStateOf(false)}
+ var showNewFormConfirm by remember{mutableStateOf(false)};var pendingHistoryEdit by remember{mutableStateOf<Inspection?>(null)}
  val gallery=rememberLauncherForActivityResult(ActivityResultContracts.GetContent()){uri->if(uri!=null&&photoIndex>=0&&photoIndex<findings.size){try{val stored=File(filesDir,"photo_gallery_${System.currentTimeMillis()}.jpg");contentResolver.openInputStream(uri)?.use{input->FileOutputStream(stored).use{output->input.copyTo(output)}};findings=findings.toMutableList().also{list->list[photoIndex]=list[photoIndex].copy(photo=Uri.fromFile(stored).toString())}}catch(e:Exception){toast("Falha ao salvar foto: ${e.message}")}}}
  var pendingCameraFile by remember{mutableStateOf<File?>(null)}
  val camera=rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()){success->val f=pendingCameraFile;if(success&&f!=null&&photoIndex in findings.indices){findings=findings.toMutableList().also{list->list[photoIndex]=list[photoIndex].copy(photo=Uri.fromFile(f).toString())}}else f?.delete();pendingCameraFile=null}
@@ -263,7 +263,8 @@ class MainActivity:ComponentActivity(){
   }
   shareFiles(listOf(z),true);selected=setOf()
  },modifier=Modifier.fillMaxWidth()){Text("Exportar selecionadas em ZIP (PDF + evidências)")}
- records.forEach{r->Card(Modifier.fillMaxWidth()){Column(Modifier.padding(12.dp),verticalArrangement=Arrangement.spacedBy(6.dp)){Row{Checkbox(checked=r.id in selected,onCheckedChange={selected=if(it)selected+r.id else selected-r.id});Column{Text("Inspeção ${r.number.ifBlank{"#${r.id}"}}",style=MaterialTheme.typography.titleMedium);Text("${r.date} • ${r.location}");Text("${r.responsible}")}};Row{Button(onClick={startForm(r)}){Text("Editar")};Button(onClick={val f=File(r.pdf);shareFiles(listOf(if(f.exists())f else pdf(r)))}){Text("PDF")}}}}}
+ if(pendingHistoryEdit!=null){val target=pendingHistoryEdit!!;AlertDialog(onDismissRequest={pendingHistoryEdit=null},title={Text("Rascunho em andamento")},text={Text("Há um rascunho não concluído. Para editar esta inspeção, será necessário descartá-lo. Você pode retomar o rascunho em vez de descartá-lo.")},confirmButton={TextButton(onClick={draftPrefs.edit().remove("inspectionDraft").apply();draftExists=false;pendingHistoryEdit=null;startForm(target)}){Text("Descartar e editar")}},dismissButton={TextButton(onClick={pendingHistoryEdit=null;resumeDraft()}){Text("Retomar rascunho")}})}
+ records.forEach{r->Card(Modifier.fillMaxWidth()){Column(Modifier.padding(12.dp),verticalArrangement=Arrangement.spacedBy(6.dp)){Row{Checkbox(checked=r.id in selected,onCheckedChange={selected=if(it)selected+r.id else selected-r.id});Column{Text("Inspeção ${r.number.ifBlank{"#${r.id}"}}",style=MaterialTheme.typography.titleMedium);Text("${r.date} • ${r.location}");Text("${r.responsible}")}};Row{Button(onClick={if(draftExists)pendingHistoryEdit=r else startForm(r)}){Text("Editar")};Button(onClick={val f=File(r.pdf);shareFiles(listOf(if(f.exists())f else pdf(r)))}){Text("PDF")}}}}}
  }
  }
  }
