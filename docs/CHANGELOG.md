@@ -1,3 +1,8 @@
+## 2.2.20 — CI em validação
+- Captura pela câmera valida assinatura de arquivo de imagem reconhecida antes de vincular o arquivo ao desvio; rejeita arquivos vazios, ausentes ou de formato não reconhecido e remove o arquivo rejeitado.
+- Testes unitários para JPEG, PNG, WebP, GIF, BMP, HEIF, arquivo vazio, assinatura desconhecida e arquivo inexistente.
+- versionCode 25 / versionName 2.2.20.
+
 ## 2.2.19 — CI em validação
 - Corrige o texto da versão exibida na tela inicial, alinhando APP_VERSION ao versionName do Gradle.
 - Normaliza a extensão de mídia da galeria e evita registrar foto quando a URI não pode ser aberta ou resulta em arquivo vazio; o arquivo parcial é removido.
