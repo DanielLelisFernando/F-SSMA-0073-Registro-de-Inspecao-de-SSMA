@@ -33,3 +33,9 @@
 - Corrige o retorno da função local `addUri` no ZIP e o tipo `ExportEvidenceStatus` usado na coleta.
 - Atualiza `versionCode` 20 e `versionName` 2.2.15.
 - Runs #103/#104 executaram testes unitários e assembleDebug com sucesso; artifact publicado.
+
+
+## 2.2.19 — CI em validação
+- Normaliza a extensão de mídia da galeria e evita registrar foto quando a URI não pode ser aberta ou resulta em arquivo vazio; o arquivo parcial é removido.
+- Testes unitários para normalização da extensão MIME e fallback JPG.
+- versionCode 24 / versionName 2.2.19.
