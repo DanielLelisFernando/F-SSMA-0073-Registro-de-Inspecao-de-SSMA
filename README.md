@@ -15,7 +15,7 @@ Aplicativo Android nativo (Kotlin/Jetpack Compose) para registro digital offline
 - Funcionamento offline.
 
 ## Validação
-Build debug 2.2.7 (run #90, commit 63b63c06) e testes unitários concluídos com sucesso. A 2.2.8 falhou nas builds #91/#92 devido a erros de Kotlin e sintaxe Gradle; a 2.2.9 contém as correções e aguarda CI. A 2.2.10 protege rascunhos ao editar registros, também aguardando CI.
+Build debug 2.2.7 (run #90) e 2.2.9 (run #93) com testes unitários concluídos com sucesso; artifacts publicados. A 2.2.8 falhou nas builds #91/#92 por erros de Kotlin e sintaxe Gradle, corrigidos e validados na 2.2.9. A 2.2.10 protege rascunhos ao editar registros e aguarda CI.
 
 Testes em aparelho/emulador e validação funcional integral permanecem pendentes.
 
