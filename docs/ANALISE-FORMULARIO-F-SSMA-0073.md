@@ -1,6 +1,6 @@
 # Projeto — Aplicativo de Registro de Inspeções de SSMA
 
-**Estado atual (26/11/2026):** versão 2.2.19 commitada, com normalização de extensão MIME, proteção contra importação vazia/inacessível e etiqueta de versão da home sincronizada com o Gradle. CI não confirmado. Testes em aparelho e validação funcional integral continuam pendentes. As seções históricas 8–10 registram a baseline documental inicial.
+**Estado atual (26/11/2026):** versão 2.2.20 commitada, com validação da assinatura do arquivo de imagem capturado pela câmera antes de vincular a evidência. CI ainda pendente. Testes em aparelho e validação funcional integral continuam pendentes. Testes em aparelho e validação funcional integral continuam pendentes. As seções históricas 8–10 registram a baseline documental inicial.
 
 
 ## Documento de referência
@@ -249,3 +249,10 @@ As atualizações documentais 1.0.1 e 1.0.2 e a baseline 1.0.0 não representam 
 - URI sem stream ou arquivo vazio não é associado ao desvio; arquivo parcial é removido.
 - Testes unitários para normalização da extensão.
 - versionCode 24 / versionName 2.2.19.
+
+
+## Atualização 2.2.20 — CI em validação
+- A captura da câmera valida a assinatura do arquivo de imagem (JPEG, PNG, WebP, GIF, BMP ou HEIF) antes de associar a URI ao desvio.
+- Arquivos ausentes, vazios ou com assinatura não reconhecida são removidos e não são vinculados ao desvio.
+- Testes unitários adicionados; CI e teste em aparelho pendentes.
+- versionCode 25 / versionName 2.2.20.
