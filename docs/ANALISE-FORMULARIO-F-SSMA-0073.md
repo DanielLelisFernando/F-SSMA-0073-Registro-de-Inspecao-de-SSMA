@@ -242,3 +242,10 @@ As atualizações documentais 1.0.1 e 1.0.2 e a baseline 1.0.0 não representam 
 - Fotos importadas da galeria são nomeadas com extensão compatível com o MIME informado pelo Android, evitando rotular arquivos WebP/PNG como JPG.
 - O ZIP preserva a extensão detectada no armazenamento local, com fallback JPG para URI sem extensão reconhecível.
 - versionCode 23 / versionName 2.2.18.
+
+
+## Atualização 2.2.19 — CI em validação
+- Extensão da imagem importada normalizada com fallback JPG.
+- URI sem stream ou arquivo vazio não é associado ao desvio; arquivo parcial é removido.
+- Testes unitários para normalização da extensão.
+- versionCode 24 / versionName 2.2.19.
