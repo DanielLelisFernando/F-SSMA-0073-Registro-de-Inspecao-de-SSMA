@@ -71,3 +71,6 @@ Atualizado para a versão **2.2.17**. A 2.2.16 falhou no CI por separação de e
 - [ ] CI 2.2.17: testes unitários e APK debug.
 
 - [x] 2.2.18: preserva a extensão MIME das fotos da galeria e o nome no ZIP; testes unitários adicionados. CI pendente.
+
+
+- [x] 2.2.19: normalização da extensão MIME, importação de galeria rejeita URI sem stream/arquivo vazio e remove arquivo parcial; testes unitários adicionados. CI pendente.
