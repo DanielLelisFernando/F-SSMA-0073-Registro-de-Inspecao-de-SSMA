@@ -61,4 +61,18 @@ class ExportEvidenceTest {
         assertEquals(0, manifest.lines().count { it.contains("[INCLUÍDA]") || it.contains("[AUSENTE]") })
         assertTrue(manifest.contains("Nenhuma evidência adicional foi registrada."))
     }
+    @Test
+    fun collectorPreservesStoredPhotoExtension() {
+        val inspection = Inspection(
+            id = 2, responsible = "Responsável", number = "SCL-0002", date = "26/11/2026", location = "Obra",
+            findings = listOf(Finding(photo = "file:///foto.webp")), participants = emptyList()
+        )
+        assertEquals("Foto_Desvio_1.webp", collectInspectionEvidence(inspection).first().archiveFileName)
+    }
+
+    @Test
+    fun unknownPhotoExtensionFallsBackToJpg() {
+        assertEquals("jpg", photoEvidenceExtension("content://media/external/images/123"))
+    }
+
 }
