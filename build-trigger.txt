@@ -1,0 +1,1 @@
+Trigger de build Android APK para a branch 2.4.0.
