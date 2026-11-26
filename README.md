@@ -1,29 +1,25 @@
-# SCL Inspeções — F-SSMA-0073
+# Inspeções SSMA Android
 
-Aplicativo Android nativo (Kotlin/Jetpack Compose) para registro digital offline de inspeções de SSMA da Salum Construções.
+Aplicativo Android nativo (Kotlin/Jetpack Compose) para registro digital offline de inspeções da Salum Construções, conforme F-SSMA-0073 Rev.00.
 
-**Versão de desenvolvimento do código: 2.2.5.**
+**Versão de desenvolvimento: 2.2.6 (em validação).**
 
 ## Funcionalidades
-- Identificação da inspeção e numeração automática.
-- Participantes com assinaturas individuais.
-- Assinatura e matrícula do responsável.
-- Registro repetível de desvios com severidade, ação, prazo, responsável e foto opcional.
-- Fotos copiadas para armazenamento interno privado.
-- Consulta, edição, filtro por datas e pesquisa por número/local/responsável.
-- PDF com cabeçalho/paginação, quebra de texto, classificação de severidade, fotos e assinaturas.
-- Exportação ZIP contendo PDFs e evidências.
-- Compartilhamento via FileProvider.
-- Recuperação automática de rascunho local durante o preenchimento (retomada pela home).\n- Operação offline.
+- Identificação da inspeção, numeração local, data e local.
+- Participantes e assinaturas; matrícula e assinatura do responsável.
+- Desvios repetíveis com severidade, ação, prazo, responsável e foto opcional.
+- Câmera e galeria com armazenamento local.
+- SQLite, autosave, consulta, pesquisa, edição e filtros por data.
+- PDF com cabeçalho, paginação, severidades, fotos e assinaturas.
+- Compartilhamento e exportação ZIP de inspeções selecionadas.
+- Funcionamento offline.
 
-## Build
-O workflow GitHub Actions executa `gradle assembleDebug` e publica o APK debug como artifact.
+## Validação
+Build debug 2.2.5 (run #80, commit ff744c6c) concluído com sucesso. A 2.2.6 adiciona testes unitários de datas e muda o workflow para executá-los antes de gerar o APK.
 
-**Baseline anterior validada:** versão 2.2.1, run #58, commit `271b9861c0ea00521b9a1c5682452d1b375a65ff` — build e publicação do APK com sucesso.
-
-A versão 2.2.2 foi validada no run #71 (commit `1476b4cf`), 2.2.3 no run #74 (`f3b1aa2f`) e 2.2.4 no run #76 (`82f0e6bb`). A versão 2.2.5 (filtros de data por calendário e exportação de seleção) está em validação. Testes em aparelho/emulador não foram executados por CI e permanecem pendentes.
+Testes em aparelho/emulador e validação funcional integral permanecem pendentes.
 
 ## Documentação
 - [Checklist mestre](docs/CHECKLIST-MESTRE-REVISAO.md)
 - [Análise do formulário](docs/ANALISE-FORMULARIO-F-SSMA-0073.md)
-- [Histórico de versões](docs/CHANGELOG.md)
+- [Changelog](docs/CHANGELOG.md)
