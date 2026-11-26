@@ -47,7 +47,7 @@ import java.io.FileOutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-private const val APP_VERSION = "2.2.5"
+private const val APP_VERSION = "2.2.6"
 private const val LOGO_ASSET = "salum_logo.jpg"
 data class Finding(val desc:String="",val severity:String="LEVE",val action:String="",val deadline:String="",val owner:String="",val photo:String="")
 data class Participant(val name:String="",val signature:String="")
@@ -237,7 +237,7 @@ class MainActivity:ComponentActivity(){
  "history"->Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(10.dp)){
  Row{TextButton(onClick={screen="home"}){Text("← Início")};Text("Inspeções realizadas",style=MaterialTheme.typography.titleLarge)}
  OutlinedTextField(filterText,{filterText=it},label={Text("Buscar número, local ou responsável")},modifier=Modifier.fillMaxWidth());OutlinedTextField(filterStart,{filterStart=it},label={Text("Data inicial (dd/mm/aaaa)")},modifier=Modifier.fillMaxWidth(),readOnly=true,trailingIcon={IconButton(onClick={filterStartDialog=true}){Text("📅")}});OutlinedTextField(filterEnd,{filterEnd=it},label={Text("Data final (dd/mm/aaaa)")},modifier=Modifier.fillMaxWidth(),readOnly=true,trailingIcon={IconButton(onClick={filterEndDialog=true}){Text("📅")}});Row{TextButton(onClick={filterStart=""}){Text("Limpar início")};TextButton(onClick={filterEnd=""}){Text("Limpar fim")}}
- fun dateKey(raw:String):Long { return try { if(!raw.matches(Regex("\\d{2}/\\d{2}/\\d{4}"))||dateTextToPickerMillis(raw)==null)0L else { val parts=raw.trim().split("/"); (parts[2].toInt()*10000L+parts[1].toInt()*100L+parts[0].toInt()) } } catch(_:Exception){0L} }
+
  val startKey=if(filterStart.isBlank())0L else dateKey(filterStart);val endKey=if(filterEnd.isBlank())Long.MAX_VALUE else dateKey(filterEnd)
  val invalidStart=filterStart.isNotBlank()&&startKey==0L;val invalidEnd=filterEnd.isNotBlank()&&endKey==0L;val invalidOrder=!invalidStart&&!invalidEnd&&filterStart.isNotBlank()&&filterEnd.isNotBlank()&&startKey>endKey
  if(invalidStart||invalidEnd||invalidOrder)Text(if(invalidOrder)"A data inicial não pode ser posterior à data final." else "Selecione datas válidas no calendário.",color=MaterialTheme.colorScheme.error)
@@ -269,8 +269,7 @@ class MainActivity:ComponentActivity(){
  }
  }
  }
- private fun datePickerMillisToText(ms:Long):String = java.text.SimpleDateFormat("dd/MM/yyyy",java.util.Locale("pt","BR")).apply{timeZone=java.util.TimeZone.getTimeZone("UTC")}.format(java.util.Date(ms))
-private fun dateTextToPickerMillis(raw:String):Long? = try{java.text.SimpleDateFormat("dd/MM/yyyy",java.util.Locale("pt","BR")).apply{timeZone=java.util.TimeZone.getTimeZone("UTC");isLenient=false}.parse(raw)?.time}catch(_:Exception){null}
+ 
 private fun severityDescription(value:String):String=when(value){
  "LEVE"->"Condição de risco/desvio que não gera transtornos à saúde e ocasiona acidentes que demandam somente primeiros socorros ou impacto ambiental não significativo."
  "MODERADA"->"Condição de risco/desvio que gera transtornos à saúde e ocasiona acidentes sem afastamento (com restrição médica) ou impacto ambiental que afeta ecossistemas comuns."
