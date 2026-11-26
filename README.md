@@ -73,6 +73,6 @@ Testes em aparelho/emulador e validação funcional integral permanecem pendente
 
 
 ## Versão 2.2.20 — CI em validação
-- Captura da câmera valida assinatura de imagem reconhecida antes de associar a foto, removendo arquivos vazios ou inválidos.
-- Testes unitários adicionados para formatos de imagem reconhecidos e rejeição de arquivos inválidos.
+- Captura da câmera valida assinatura JPEG antes de associar a foto, removendo arquivos vazios ou inválidos.
+- Testes unitários adicionados para assinatura JPEG e rejeição de arquivos inválidos.
 - versionCode 25 / versionName 2.2.20; resultado CI pendente.
