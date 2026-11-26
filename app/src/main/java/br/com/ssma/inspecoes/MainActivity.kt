@@ -49,7 +49,7 @@ import java.io.FileOutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-private const val APP_VERSION = "2.2.8"
+private const val APP_VERSION = "2.2.9"
 private const val LOGO_ASSET = "salum_logo.jpg"
 data class Finding(val desc:String="",val severity:String="LEVE",val action:String="",val deadline:String="",val owner:String="",val photo:String="")
 data class Participant(val name:String="",val signature:String="")
@@ -281,7 +281,10 @@ private fun severityDescription(value:String):String=when(value){
 }
 private fun safeFilePart(raw:String):String = raw.trim().replace(Regex("[^A-Za-z0-9_-]"),"_").trim('_').ifBlank{"sem_dado"}
 private fun loadBitmap(context:android.content.Context, uri:Uri, reqWidth:Int=1024, reqHeight:Int=1024):Bitmap? {
-  fun openStream():java.io.InputStream? = if(uri.scheme=="file") File(uri.path ?: return null).inputStream() else context.contentResolver.openInputStream(uri)
+  fun openStream():java.io.InputStream? {
+    if(uri.scheme=="file"){ val path=uri.path ?: return null; return File(path).inputStream() }
+    return context.contentResolver.openInputStream(uri)
+  }
   return try {
    val bounds=BitmapFactory.Options().apply{inJustDecodeBounds=true}
    openStream()?.use{BitmapFactory.decodeStream(it,null,bounds)}

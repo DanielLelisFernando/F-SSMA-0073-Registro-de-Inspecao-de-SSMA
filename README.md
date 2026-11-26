@@ -2,7 +2,7 @@
 
 Aplicativo Android nativo (Kotlin/Jetpack Compose) para registro digital offline de inspeções da Salum Construções, conforme F-SSMA-0073 Rev.00.
 
-**Versão de desenvolvimento: 2.2.8 (em validação).**
+**Versão de desenvolvimento: 2.2.9 (em validação).**
 
 ## Funcionalidades
 - Identificação da inspeção, numeração local, data e local.
@@ -15,7 +15,7 @@ Aplicativo Android nativo (Kotlin/Jetpack Compose) para registro digital offline
 - Funcionamento offline.
 
 ## Validação
-Build debug 2.2.7 (run #90, commit 63b63c06) e testes unitários concluídos com sucesso. A 2.2.8 adiciona decodificação limitada e orientação EXIF, aguardando CI.
+Build debug 2.2.7 (run #90, commit 63b63c06) e testes unitários concluídos com sucesso. A 2.2.8 falhou nas builds #91/#92 devido a erros de Kotlin e sintaxe Gradle; a 2.2.9 contém as correções e aguarda CI.
 
 Testes em aparelho/emulador e validação funcional integral permanecem pendentes.
 

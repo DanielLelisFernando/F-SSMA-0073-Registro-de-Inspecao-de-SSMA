@@ -1,6 +1,6 @@
 # Checklist mestre — F-SSMA-0073 Rev.00
 
-Atualizado para a versão **2.2.8**. A versão 2.2.7 foi validada no run #90 (testes unitários + APK). A 2.2.8 reduz a resolução de imagens na decodificação e aplica orientação EXIF para evitar consumo excessivo de memória e fotos giradas incorretamente. CI não substitui validação funcional em aparelho.
+Atualizado para a versão **2.2.9**. A versão 2.2.7 foi validada no run #90. A 2.2.8 teve falhas de CI #91/#92 por erro na função local de abertura de streams e newline literal no Gradle. A 2.2.9 corrige esses pontos e mantém decodificação limitada/orientação EXIF. CI não substitui validação funcional em aparelho.
 
 ## Implementado no código
 - [x] Identificação: responsável, número automático, data por calendário e local.
@@ -35,12 +35,14 @@ Atualizado para a versão **2.2.8**. A versão 2.2.7 foi validada no run #90 (te
 - [ ] Testar atualização sobre banco existente.
 
 ## Pendências conhecidas
+- [x] Corrige newline literal no `app/build.gradle.kts` que impedia script Gradle de compilar (runs #92).
+- [x] Corrige `openStream()` com retorno dentro de corpo de expressão e habilita EXIF via dependência válida (run #91/#92).
 - [x] Recuperação de rascunho offline.
 - [x] Conversão UTC nos DatePicker (build #74).
 - [x] Preseleção da data ao editar (build #76).
 - [x] Filtro de histórico por datas e exportação selecionada (build #80).
 - [x] Testes automatizados de parsing, UTC, ordenação e datas inválidas (build #86).
-- [x] Validação de campos obrigatórios de responsável, data, local e descrição dos desvios (2.2.7, run #90).\n- [ ] Validação de decodificação limitada e orientação EXIF de imagens (2.2.8, aguardando CI).
+- [x] Validação de campos obrigatórios de responsável, data, local e descrição dos desvios (2.2.7, run #90).\n- [ ] Validação de decodificação limitada e orientação EXIF de imagens (2.2.9, aguardando CI).
 - [ ] Testes de lifecycle, permissões e tamanhos de tela.
 - [ ] Validar layout do PDF contra o formulário original; conteúdo representado, mas tabela não reproduz fielmente o desenho.
 - [ ] Confirmar captura de câmera, assinaturas e exportações no aparelho.

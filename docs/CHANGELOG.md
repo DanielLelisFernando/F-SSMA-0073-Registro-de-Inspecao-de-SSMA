@@ -1,5 +1,15 @@
 # Histórico de alterações
 
+## 2.2.9 — em validação
+- Corrige newline literal no arquivo Gradle Kotlin DSL que causava erro de sintaxe na build #92.
+- Corrige retorno antecipado na função local `openStream()` para corpo de função explícito, resolvendo erro Kotlin #91.
+- Mantém decodificação de imagens em resolução limitada e leitura de orientação EXIF.
+- versionCode 14 / versionName 2.2.9.
+- CI pendente.
+
+## 2.2.8 — falhou CI (#91/#92)
+- Implementação de decodificação limitada e orientação EXIF; correção de build incorporada na 2.2.9.
+
 ## 2.2.7 — em validação
 - Validação antes do salvamento: responsável, data válida, local e descrição de todos os desvios.
 - Testes unitários para campos obrigatórios, data bissexta e rejeição de data inválida.
