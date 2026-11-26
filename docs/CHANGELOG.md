@@ -1,12 +1,18 @@
 # Histórico de alterações
 
-## 2.2.6 — em validação
+## 2.2.7 — em validação
+- Validação antes do salvamento: responsável, data válida, local e descrição de todos os desvios.
+- Testes unitários para campos obrigatórios, data bissexta e rejeição de data inválida.
+- versionCode 12 / versionName 2.2.7.
+- Build CI pendente.
+
+## 2.2.6 — validada (build #86)
 - Utilitário de conversão/validação de datas extraído para código Kotlin independente.
 - Parsing estrito do formato dd/MM/yyyy, incluindo rejeição de datas inválidas e texto residual.
 - Testes unitários para parsing, formatação UTC e ordenação por data.
 - CI passa a executar testDebugUnitTest antes de assembleDebug.
 - versionCode 11 / versionName 2.2.6.
-- Build CI pendente.
+- CI executa testDebugUnitTest e assembleDebug; run #86, commit 87a1651c, sucesso; artifact publicado.
 
 ## 2.2.5 — validada (build #80)
 - Filtros do histórico por data inicial/final com calendário, validação de datas e intervalo.
