@@ -1,6 +1,6 @@
 # Checklist mestre — F-SSMA-0073 Rev.00
 
-Atualizado para a versão **2.2.6**. A versão 2.2.5 foi validada no build #80. A 2.2.6 adiciona testes automatizados de datas e está aguardando CI. Build e testes de unidade não substituem validação funcional em aparelho.
+Atualizado para a versão **2.2.7**. A 2.2.6 foi validada no build #86 (testes unitários + APK). A 2.2.7 adiciona validação dos campos obrigatórios de identificação antes do salvamento. Build e testes de unidade não substituem validação funcional em aparelho.
 
 ## Implementado no código
 - [x] Identificação: responsável, número automático, data por calendário e local.
@@ -25,7 +25,7 @@ Atualizado para a versão **2.2.6**. A versão 2.2.5 foi validada no build #80. 
 - [x] Build debug 2.2.3: run #74, sucesso.
 - [x] Build debug 2.2.4: run #76, sucesso.
 - [x] Build debug 2.2.5: run #80, commit ff744c6c, sucesso; artifact publicado.
-- [ ] Testes unitários e build debug 2.2.6.
+- [x] Testes unitários e build debug 2.2.6: run #86, commit 87a1651c, sucesso; artifact publicado.
 - [ ] Testes em aparelho/emulador.
 - [ ] Teste offline integral.
 - [ ] Criar inspeção com múltiplos desvios e fotos, fechar/reabrir.
@@ -39,6 +39,8 @@ Atualizado para a versão **2.2.6**. A versão 2.2.5 foi validada no build #80. 
 - [x] Conversão UTC nos DatePicker (build #74).
 - [x] Preseleção da data ao editar (build #76).
 - [x] Filtro de histórico por datas e exportação selecionada (build #80).
+- [x] Testes automatizados de parsing, UTC, ordenação e datas inválidas (build #86).
+- [ ] Validação de campos obrigatórios de responsável, data, local e descrição dos desvios (implementada em 2.2.7, aguardando CI).
 - [ ] Testes de lifecycle, permissões e tamanhos de tela.
 - [ ] Validar layout do PDF contra o formulário original; conteúdo representado, mas tabela não reproduz fielmente o desenho.
 - [ ] Confirmar captura de câmera, assinaturas e exportações no aparelho.
