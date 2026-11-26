@@ -23,4 +23,7 @@ Testes em aparelho/emulador e validação funcional integral permanecem pendente
 - [Checklist mestre](docs/CHECKLIST-MESTRE-REVISAO.md)
 - [Análise do formulário](docs/ANALISE-FORMULARIO-F-SSMA-0073.md)
 - [Changelog](docs/CHANGELOG.md)
-\n## Versão 2.2.11\n- PDF reorganizado em tabela paginada com repetição do cabeçalho de tabela nas continuações.\n- Compilação CI pendente; validação visual em aparelho permanece pendente.\n
+
+## Versão 2.2.11
+- PDF reorganizado em tabela paginada com repetição do cabeçalho de tabela nas continuações.
+- Compilação CI pendente; validação visual em aparelho permanece pendente.
