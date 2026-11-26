@@ -1,6 +1,6 @@
 # Projeto — Aplicativo de Registro de Inspeções de SSMA
 
-**Estado atual (26/11/2026):** versões 2.2.20 (run #124) e 2.2.21 (run #125) validadas com testes unitários e APK debug aprovados. A versão 2.2.22 valida traços visíveis no diálogo de assinatura e adiciona testes unitários; CI pendente. Testes em aparelho e validação funcional integral continuam pendentes. As seções históricas 8–10 registram a baseline documental inicial.
+**Estado atual (26/11/2026):** versões 2.2.20 (run #124) e 2.2.21 (run #125) validadas com testes unitários e APK debug aprovados. A versão 2.2.22 valida traços visíveis. A 2.2.23 valida a gravação do PNG da assinatura, descarta arquivos inválidos e adiciona testes unitários; CI pendente. Testes em aparelho e validação funcional integral continuam pendentes. As seções históricas 8–10 registram a baseline documental inicial.
 
 
 ## Documento de referência
@@ -262,3 +262,9 @@ As atualizações documentais 1.0.1 e 1.0.2 e a baseline 1.0.0 não representam 
 - Captura de assinatura só permite salvar quando há pelo menos um traço com deslocamento visível; traços de ponto único ou estacionários são rejeitados.
 - Testes unitários adicionados para casos vazios, ponto único, movimento estacionário e traço válido.
 - CI pendente.
+
+
+## Atualização 2.2.23
+- Grava assinatura em staging e valida cabeçalho PNG e tamanho mínimo antes de associar o arquivo; staging/arquivo final inválido é removido.
+- Erro de escrita ou validação mantém diálogo aberto com mensagem de retry.
+- Testes unitários de PNG válido, assinatura incorreta e arquivo truncado; CI pendente.

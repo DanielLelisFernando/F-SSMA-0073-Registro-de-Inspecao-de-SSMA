@@ -1,3 +1,9 @@
+## 2.2.23 — CI pendente
+- Captura de assinatura grava em arquivo temporário, valida assinatura PNG e tamanho mínimo antes de vincular a URI ao registro.
+- Arquivo parcial/inválido é descartado; erro de gravação permanece no diálogo sem encerrar a captura.
+- Testes unitários para cabeçalho PNG válido, inválido e arquivo truncado.
+- versionCode 28 / versionName 2.2.23.
+
 ## 2.2.20 — validada (build #124)
 - Captura pela câmera valida assinatura JPEG antes de vincular o arquivo ao desvio; rejeita arquivos vazios, ausentes ou de formato não JPEG e remove o arquivo rejeitado.
 - Testes unitários para JPEG, arquivo vazio, assinatura desconhecida e arquivo inexistente.

@@ -2,7 +2,7 @@
 
 Aplicativo Android nativo (Kotlin/Jetpack Compose) para registro digital offline de inspeções da Salum Construções, conforme F-SSMA-0073 Rev.00.
 
-**Versão 2.2.22 — validação de traço na captura de assinatura; CI em validação.**
+**Versão 2.2.23 — validação do arquivo PNG da assinatura; CI pendente.**
 
 A etiqueta de versão da tela inicial foi sincronizada com o versionName do Gradle.
 
@@ -17,7 +17,7 @@ A etiqueta de versão da tela inicial foi sincronizada com o versionName do Grad
 - Funcionamento offline.
 
 ## Validação
-Build debug 2.2.20 (run #124) e 2.2.21 (run #125) com testes unitários e APK aprovados; artifacts publicados. A 2.2.22 adiciona validação de traços visíveis no diálogo de assinatura e testes unitários, aguardando CI. As falhas históricas de Kotlin/Gradle foram corrigidas nas versões posteriores. Testes funcionais em aparelho permanecem pendentes.
+Build debug 2.2.20 (run #124) e 2.2.21 (run #125) com testes unitários e APK aprovados; artifacts publicados. A 2.2.22 adiciona validação de traços visíveis. A 2.2.23 valida o PNG produzido e descarta arquivos incompletos; CI pendente. As falhas históricas de Kotlin/Gradle foram corrigidas nas versões posteriores. Testes funcionais em aparelho permanecem pendentes.
 
 Testes em aparelho/emulador e validação funcional integral permanecem pendentes.
 

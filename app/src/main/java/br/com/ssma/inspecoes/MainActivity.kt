@@ -50,7 +50,7 @@ import java.security.MessageDigest
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-private const val APP_VERSION = "2.2.22"
+private const val APP_VERSION = "2.2.23"
 private const val LOGO_ASSET = "salum_logo.jpg"
 data class Finding(val desc:String="",val severity:String="LEVE",val action:String="",val deadline:String="",val owner:String="",val photo:String="")
 data class Participant(val name:String="",val signature:String="")
@@ -411,6 +411,7 @@ private fun SignaturePadDialog(onDismiss:()->Unit,onSave:(String)->Unit){
  var strokes by remember{mutableStateOf(listOf<List<Offset>>())}
  var active by remember{mutableStateOf(listOf<Offset>())}
  var canvasSize by remember{mutableStateOf(IntSize.Zero)}
+ var saveError by remember{mutableStateOf("")}
  val signatureStrokes=if(active.isNotEmpty())strokes+listOf(active) else strokes
  val canSaveSignature=signatureHasDrawableStroke(signatureStrokes)&&canvasSize.width>0&&canvasSize.height>0
  AlertDialog(
@@ -419,6 +420,7 @@ private fun SignaturePadDialog(onDismiss:()->Unit,onSave:(String)->Unit){
   text={
    Column(verticalArrangement=Arrangement.spacedBy(8.dp)){
     Text("Assine dentro da área abaixo.")
+    if(saveError.isNotBlank())Text(saveError,color=MaterialTheme.colorScheme.error,style=MaterialTheme.typography.bodySmall)
     Canvas(
      Modifier.fillMaxWidth().height(180.dp).border(1.dp,Color.Gray,RoundedCornerShape(8.dp)).background(Color.White)
       .onSizeChanged{canvasSize=it}
@@ -438,12 +440,13 @@ private fun SignaturePadDialog(onDismiss:()->Unit,onSave:(String)->Unit){
      }
     }
     if(!canSaveSignature)Text("Desenhe um traço para habilitar salvar.",style=MaterialTheme.typography.bodySmall,color=MaterialTheme.colorScheme.onSurfaceVariant)
-    TextButton(onClick={strokes=emptyList();active=emptyList()}){Text("Limpar assinatura")}
+    TextButton(onClick={strokes=emptyList();active=emptyList();saveError=""}){Text("Limpar assinatura")}
    }
   },
   confirmButton={
    Button(onClick={
     if(canSaveSignature){
+     saveError=""
      val bmp=Bitmap.createBitmap(1000,400,Bitmap.Config.ARGB_8888)
      val c=android.graphics.Canvas(bmp);c.drawColor(android.graphics.Color.WHITE)
      val paint=android.graphics.Paint().apply{color=android.graphics.Color.BLACK;strokeWidth=8f;style=android.graphics.Paint.Style.STROKE;strokeCap=android.graphics.Paint.Cap.ROUND;strokeJoin=android.graphics.Paint.Join.ROUND;isAntiAlias=true}
@@ -454,10 +457,29 @@ private fun SignaturePadDialog(onDismiss:()->Unit,onSave:(String)->Unit){
        c.drawPath(path,paint)
       }
      }
-     val file=File(context.filesDir,"signature_${System.currentTimeMillis()}.png")
-     FileOutputStream(file).use{bmp.compress(Bitmap.CompressFormat.PNG,100,it)}
-     bmp.recycle()
-     onSave(Uri.fromFile(file).toString())
+     var stagingFile:File?=null
+     var targetFile:File?=null
+     var savedFile:File?=null
+     try{
+      stagingFile=File.createTempFile("signature_",".png.tmp",context.filesDir)
+      targetFile=File(context.filesDir,stagingFile.name.removeSuffix(".tmp"))
+      val compressed=FileOutputStream(stagingFile).use{bmp.compress(Bitmap.CompressFormat.PNG,100,it)}
+      if(compressed&&hasValidPngFile(stagingFile)&&stagingFile.renameTo(targetFile)&&hasValidPngFile(targetFile)){
+       savedFile=targetFile
+      }
+     }catch(_:Exception){
+      savedFile=null
+     }finally{
+      bmp.recycle()
+      stagingFile?.delete()
+     }
+     if(savedFile!=null){
+      saveError=""
+      onSave(Uri.fromFile(savedFile).toString())
+     }else{
+      targetFile?.delete()
+      saveError="Não foi possível gerar uma assinatura PNG válida. Tente novamente."
+     }
     }
    },enabled=canSaveSignature){Text("Salvar")}
   },
