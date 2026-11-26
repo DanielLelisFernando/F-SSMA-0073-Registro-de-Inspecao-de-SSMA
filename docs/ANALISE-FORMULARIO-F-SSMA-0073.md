@@ -1,6 +1,6 @@
 # Projeto — Aplicativo de Registro de Inspeções de SSMA
 
-**Estado atual (26/11/2026):** a 2.2.16 falhou no CI com erro de sintaxe Kotlin na tela de histórico; correção 2.2.17 commitada, CI pendente. Testes em aparelho e validação funcional integral continuam pendentes. As seções históricas 8–10 registram a baseline documental inicial.
+**Estado atual (26/11/2026):** versão 2.2.19 commitada, com normalização de extensão MIME e proteção contra importação vazia/inacessível. CI não confirmado. Testes em aparelho e validação funcional integral continuam pendentes. As seções históricas 8–10 registram a baseline documental inicial.
 
 
 ## Documento de referência
