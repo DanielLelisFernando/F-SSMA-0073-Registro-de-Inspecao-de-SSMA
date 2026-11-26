@@ -50,7 +50,7 @@ import java.security.MessageDigest
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-private const val APP_VERSION = "2.2.16"
+private const val APP_VERSION = "2.2.17"
 private const val LOGO_ASSET = "salum_logo.jpg"
 data class Finding(val desc:String="",val severity:String="LEVE",val action:String="",val deadline:String="",val owner:String="",val photo:String="")
 data class Participant(val name:String="",val signature:String="")
@@ -358,7 +358,8 @@ class MainActivity:ComponentActivity(){
    z.delete()
    toast("Falha ao gerar ZIP: ${e.message}")
   }
- },modifier=Modifier.fillMaxWidth()){Text("Exportar selecionadas em ZIP (PDF + evidências)")} if(pendingHistoryEdit!=null){val target=pendingHistoryEdit!!;AlertDialog(onDismissRequest={pendingHistoryEdit=null},title={Text("Rascunho em andamento")},text={Text("Há um rascunho não concluído. Para editar esta inspeção, será necessário descartá-lo. Você pode retomar o rascunho em vez de descartá-lo.")},confirmButton={TextButton(onClick={draftPrefs.edit().remove("inspectionDraft").apply();draftExists=false;pendingHistoryEdit=null;startForm(target)}){Text("Descartar e editar")}},dismissButton={TextButton(onClick={pendingHistoryEdit=null;resumeDraft()}){Text("Retomar rascunho")}})}
+ },modifier=Modifier.fillMaxWidth()){Text("Exportar selecionadas em ZIP (PDF + evidências)")}
+ if(pendingHistoryEdit!=null){val target=pendingHistoryEdit!!;AlertDialog(onDismissRequest={pendingHistoryEdit=null},title={Text("Rascunho em andamento")},text={Text("Há um rascunho não concluído. Para editar esta inspeção, será necessário descartá-lo. Você pode retomar o rascunho em vez de descartá-lo.")},confirmButton={TextButton(onClick={draftPrefs.edit().remove("inspectionDraft").apply();draftExists=false;pendingHistoryEdit=null;startForm(target)}){Text("Descartar e editar")}},dismissButton={TextButton(onClick={pendingHistoryEdit=null;resumeDraft()}){Text("Retomar rascunho")}})}
  records.forEach{r->Card(Modifier.fillMaxWidth()){Column(Modifier.padding(12.dp),verticalArrangement=Arrangement.spacedBy(6.dp)){Row{Checkbox(checked=r.id in selected,onCheckedChange={selected=if(it)selected+r.id else selected-r.id});Column{Text("Inspeção ${r.number.ifBlank{"#${r.id}"}}",style=MaterialTheme.typography.titleMedium);Text("${r.date} • ${r.location}");Text("${r.responsible}")}};Row{Button(onClick={if(draftExists)pendingHistoryEdit=r else startForm(r)}){Text("Editar")};Button(onClick={val f=File(r.pdf);shareFiles(listOf(if(f.exists())f else pdf(r)))}){Text("PDF")}}}}}
  }
  }
