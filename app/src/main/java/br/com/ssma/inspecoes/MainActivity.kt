@@ -49,7 +49,7 @@ import java.io.FileOutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-private const val APP_VERSION = "2.2.13"
+private const val APP_VERSION = "2.2.14"
 private const val LOGO_ASSET = "salum_logo.jpg"
 data class Finding(val desc:String="",val severity:String="LEVE",val action:String="",val deadline:String="",val owner:String="",val photo:String="")
 data class Participant(val name:String="",val signature:String="")
@@ -299,20 +299,46 @@ class MainActivity:ComponentActivity(){
  if(selected.isNotEmpty())Button(onClick={
   val chosen=db.list().filter{it.id in selected}
   val z=File(cacheDir,"Inspecoes_${System.currentTimeMillis()}.zip")
+  var evidenceExpected=0
+  var evidenceIncluded=0
+  var evidenceMissing=0
   ZipOutputStream(FileOutputStream(z)).use{zip->
    chosen.forEach{r->
     val base=safeFilePart("${r.number.ifBlank{r.id.toString()}}_ID_${r.id}")
     val pdfFile=File(r.pdf).takeIf{it.exists()}?:pdf(r)
     zip.putNextEntry(ZipEntry("$base/Inspecao.pdf"));pdfFile.inputStream().use{it.copyTo(zip)};zip.closeEntry()
-    fun addUri(raw:String,name:String){
-     try{val uri=Uri.parse(raw);val input=if(uri.scheme=="file")File(uri.path?:return).inputStream() else contentResolver.openInputStream(uri);input?.use{zip.putNextEntry(ZipEntry("$base/$name"));it.copyTo(zip);zip.closeEntry()}}catch(_:Exception){}
+    fun addUri(raw:String,name:String):Boolean{
+     var entryOpen=false
+     try{
+      val uri=Uri.parse(raw)
+      val input=if(uri.scheme=="file")File(uri.path?:return false).takeIf{it.exists()&&it.isFile}?.inputStream() else contentResolver.openInputStream(uri)
+      if(input==null)return false
+      input.use{
+       zip.putNextEntry(ZipEntry("$base/$name"))
+       entryOpen=true
+       it.copyTo(zip)
+       zip.closeEntry()
+       entryOpen=false
+      }
+      true
+     }catch(_:Exception){
+      if(entryOpen)try{zip.closeEntry()}catch(_:Exception){}
+      false
+     }
     }
-    r.findings.forEachIndexed{idx,f->if(f.photo.isNotBlank())addUri(f.photo,"Foto_Desvio_${idx+1}.jpg")}
-    r.participants.forEachIndexed{idx,part->if(part.signature.isNotBlank())addUri(part.signature,"Assinatura_Participante_${idx+1}.png")}
-    if(r.inspectorSignature.isNotBlank())addUri(r.inspectorSignature,"Assinatura_Responsavel.png")
+    val evidence=collectInspectionEvidence(r)
+    evidenceExpected+=evidence.size
+    val outcomes=evidence.map{item->EvidenceExportStatus(item,addUri(item.sourceUri,item.archiveFileName))}
+    evidenceIncluded+=outcomes.count{it.included}
+    evidenceMissing+=outcomes.count{!it.included}
+    zip.putNextEntry(ZipEntry("$base/Manifest_Evidencias.txt"))
+    zip.write(buildEvidenceManifest(r.number,r.date,r.location,outcomes).toByteArray(Charsets.UTF_8))
+    zip.closeEntry()
    }
   }
-  shareFiles(listOf(z),true);selected=setOf()
+  shareFiles(listOf(z),true)
+  toast(if(evidenceMissing>0) "ZIP exportado: $evidenceIncluded/$evidenceExpected evidências incluídas. Consulte o Manifesto." else if(evidenceExpected==0) "ZIP exportado. Nenhuma evidência adicional registrada." else "ZIP exportado: todas $evidenceIncluded evidências incluídas.")
+  selected=setOf()
  },modifier=Modifier.fillMaxWidth()){Text("Exportar selecionadas em ZIP (PDF + evidências)")}
  if(pendingHistoryEdit!=null){val target=pendingHistoryEdit!!;AlertDialog(onDismissRequest={pendingHistoryEdit=null},title={Text("Rascunho em andamento")},text={Text("Há um rascunho não concluído. Para editar esta inspeção, será necessário descartá-lo. Você pode retomar o rascunho em vez de descartá-lo.")},confirmButton={TextButton(onClick={draftPrefs.edit().remove("inspectionDraft").apply();draftExists=false;pendingHistoryEdit=null;startForm(target)}){Text("Descartar e editar")}},dismissButton={TextButton(onClick={pendingHistoryEdit=null;resumeDraft()}){Text("Retomar rascunho")}})}
  records.forEach{r->Card(Modifier.fillMaxWidth()){Column(Modifier.padding(12.dp),verticalArrangement=Arrangement.spacedBy(6.dp)){Row{Checkbox(checked=r.id in selected,onCheckedChange={selected=if(it)selected+r.id else selected-r.id});Column{Text("Inspeção ${r.number.ifBlank{"#${r.id}"}}",style=MaterialTheme.typography.titleMedium);Text("${r.date} • ${r.location}");Text("${r.responsible}")}};Row{Button(onClick={if(draftExists)pendingHistoryEdit=r else startForm(r)}){Text("Editar")};Button(onClick={val f=File(r.pdf);shareFiles(listOf(if(f.exists())f else pdf(r)))}){Text("PDF")}}}}}

@@ -1,3 +1,9 @@
+## 2.2.14 — CI pendente
+- ZIP de inspeções selecionadas inclui manifesto com status de cada foto/assinatura e contagem de ausentes.
+- Feedback ao usuário após exportação informa quantas evidências foram copiadas.
+- Testes unitários adicionados para coleta de evidências e manifesto.
+- Build e validação CI pendentes.
+
 ## 2.2.13 — validada (build #101)
 - Compartilhamento individual e múltiplo passa a incluir ClipData além de EXTRA_STREAM, reforçando a concessão de URI read permission aos aplicativos destinatários.
 - Filtra arquivos inexistentes antes de montar a intent.
