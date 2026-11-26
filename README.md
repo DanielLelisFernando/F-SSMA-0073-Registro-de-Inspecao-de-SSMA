@@ -2,7 +2,7 @@
 
 Aplicativo Android nativo (Kotlin/Jetpack Compose) para registro digital offline de inspeções da Salum Construções, conforme F-SSMA-0073 Rev.00.
 
-**Versão 2.2.21 — limpeza de rastreamento temporário; CI pendente.**
+**Versão 2.2.22 — validação de traço na captura de assinatura; CI em validação.**
 
 A etiqueta de versão da tela inicial foi sincronizada com o versionName do Gradle.
 
@@ -17,7 +17,7 @@ A etiqueta de versão da tela inicial foi sincronizada com o versionName do Grad
 - Funcionamento offline.
 
 ## Validação
-Build debug 2.2.11 (runs #96/#97), 2.2.12 (#98/#99) e 2.2.13 (#101) com testes unitários e APK concluídos com sucesso; artifacts publicados. A 2.2.14 adicionou manifesto de evidências; os erros Kotlin do run #102 foram corrigidos e validados nos runs #103/#104 (2.2.15). A 2.2.16 falhou no CI por separação de expressões Kotlin na tela de histórico; a correção e o versionamento 2.2.17 foram commitados e aguardam CI. A 2.2.8 falhou nas builds #91/#92 por erros de Kotlin e sintaxe Gradle, corrigidos e validados na 2.2.9. A 2.2.10 protege rascunhos ao editar registros; testes unitários e APK debug concluídos com sucesso no run #95 (commit `7a07e771`).
+Build debug 2.2.20 (run #124) e 2.2.21 (run #125) com testes unitários e APK aprovados; artifacts publicados. A 2.2.22 adiciona validação de traços visíveis no diálogo de assinatura e testes unitários, aguardando CI. As falhas históricas de Kotlin/Gradle foram corrigidas nas versões posteriores. Testes funcionais em aparelho permanecem pendentes.
 
 Testes em aparelho/emulador e validação funcional integral permanecem pendentes.
 
@@ -82,6 +82,6 @@ Testes em aparelho/emulador e validação funcional integral permanecem pendente
 - Validação da captura da câmera por assinatura JPEG.
 - Testes unitários e APK debug aprovados; artifact publicado.
 
-## Versão 2.2.21 — CI pendente
+## Versão 2.2.21 — validada (build #125)
 - Removidos logs temporários de rastreamento da seleção de data e prazo.
 - versionCode 26 / versionName 2.2.21.
