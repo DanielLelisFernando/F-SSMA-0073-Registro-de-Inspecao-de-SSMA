@@ -1,4 +1,4 @@
-# Histórico de alterações
+## 2.2.11 — validação CI pendente\n- PDF reorganizado em tabela paginada com as seis colunas principais de condições e ações, repetindo o cabeçalho da tabela nas páginas de continuação.\n- Evidências fotográficas permanecem vinculadas ao desvio e são apresentadas após a linha correspondente.\n- versionCode 16 / versionName 2.2.11.\n- Build acionado; validação visual em aparelho ainda pendente.\n\n# Histórico de alterações
 
 ## 2.2.10 — validada (build #95)
 - Protege rascunho existente ao abrir edição de inspeção pelo histórico: oferece retomar ou descartar e editar, evitando sobrescrita silenciosa.
