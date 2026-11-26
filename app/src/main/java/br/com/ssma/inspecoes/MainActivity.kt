@@ -51,7 +51,7 @@ import java.security.MessageDigest
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-private const val APP_VERSION = "2.2.19"
+private const val APP_VERSION = "2.2.20"
 private const val LOGO_ASSET = "salum_logo.jpg"
 data class Finding(val desc:String="",val severity:String="LEVE",val action:String="",val deadline:String="",val owner:String="",val photo:String="")
 data class Participant(val name:String="",val signature:String="")
@@ -228,7 +228,7 @@ class MainActivity:ComponentActivity(){
  var showNewFormConfirm by remember{mutableStateOf(false)};var pendingHistoryEdit by remember{mutableStateOf<Inspection?>(null)}
  val gallery=rememberLauncherForActivityResult(ActivityResultContracts.GetContent()){uri->if(uri!=null&&photoIndex>=0&&photoIndex<findings.size){val extension=normalizedPhotoExtension(contentResolver.getType(uri)?.let{android.webkit.MimeTypeMap.getSingleton().getExtensionFromMimeType(it)});val stored=File(filesDir,"photo_gallery_${System.currentTimeMillis()}.$extension");try{val input=contentResolver.openInputStream(uri)?:throw java.io.IOException("Não foi possível abrir a imagem selecionada");input.use{stream->FileOutputStream(stored).use{output->stream.copyTo(output)}};if(stored.length()<=0L)throw java.io.IOException("A imagem importada está vazia");findings=findings.toMutableList().also{list->list[photoIndex]=list[photoIndex].copy(photo=Uri.fromFile(stored).toString())}}catch(e:Exception){stored.delete();toast("Falha ao salvar foto: ${e.message}")}}}
  var pendingCameraFile by remember{mutableStateOf<File?>(null)}
- val camera=rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()){success->val f=pendingCameraFile;if(success&&f!=null&&photoIndex in findings.indices){findings=findings.toMutableList().also{list->list[photoIndex]=list[photoIndex].copy(photo=Uri.fromFile(f).toString())}}else f?.delete();pendingCameraFile=null}
+ val camera=rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()){success->val f=pendingCameraFile;if(success&&f!=null&&photoIndex in findings.indices&&isValidCameraImageFile(f)){findings=findings.toMutableList().also{list->list[photoIndex]=list[photoIndex].copy(photo=Uri.fromFile(f).toString())}}else{f?.delete();if(success)toast("A câmera não gerou um arquivo de imagem válido.")};pendingCameraFile=null}
  
  var filterStart by remember{mutableStateOf("")};var filterEnd by remember{mutableStateOf("")};var filterText by remember{mutableStateOf("")};var selected by remember{mutableStateOf(setOf<Int>())};var filterStartDialog by remember{mutableStateOf(false)};var filterEndDialog by remember{mutableStateOf(false)}
  fun startForm(ins:Inspection?){editing=ins;responsible=ins?.responsible?: "";number=ins?.number?:db.nextNumber();date=ins?.date?: "";location=ins?.location?: "";findings=ins?.findings?:listOf(Finding());participants=ins?.participants?:listOf(Participant());inspectorSignature=ins?.inspectorSignature?: "";registration=ins?.registration?: "";screen="form"}
