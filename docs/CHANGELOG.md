@@ -1,3 +1,8 @@
+## 2.2.18 — CI em validação
+- Fotos selecionadas da galeria passam a ser armazenadas com extensão correspondente ao MIME informado pelo Android, com fallback JPG.
+- ZIP preserva a extensão da foto no nome do arquivo exportado; testes para WebP e fallback.
+- versionCode 23 / versionName 2.2.18.
+
 ## 2.2.17 — CI em validação
 - Corrige separação de expressões Kotlin no fechamento do botão de exportação ZIP e no diálogo de rascunho do histórico.
 - versionCode 22 / versionName 2.2.17.
