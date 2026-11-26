@@ -6,6 +6,11 @@ data class ExportEvidenceItem(
     val sourceUri: String
 )
 
+fun normalizedPhotoExtension(candidate: String?): String {
+    val extension = candidate?.trim()?.lowercase()
+    return extension?.takeIf { it.matches(Regex("(?=.*[a-z])[a-z0-9]{1,8}")) } ?: "jpg"
+}
+
 fun photoEvidenceExtension(sourceUri: String): String {
     val path = try {
         java.net.URI(sourceUri).path ?: java.net.URI(sourceUri).rawPath.orEmpty()
@@ -13,7 +18,7 @@ fun photoEvidenceExtension(sourceUri: String): String {
         sourceUri
     }
     val extension = java.io.File(path).extension.lowercase()
-    return extension.takeIf { it.matches(Regex("(?=.*[a-z])[a-z0-9]{1,8}")) } ?: "jpg"
+    return normalizedPhotoExtension(extension)
 }
 
 data class ExportEvidenceStatus(
