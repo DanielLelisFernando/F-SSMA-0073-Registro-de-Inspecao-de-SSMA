@@ -17,7 +17,7 @@ A etiqueta de versão da tela inicial foi sincronizada com o versionName do Grad
 - Funcionamento offline.
 
 ## Validação
-Build debug 2.2.20 (run #124) e 2.2.21 (run #125) com testes unitários e APK aprovados; artifacts publicados. A 2.2.22 adiciona validação de traços visíveis. A 2.2.23 valida o PNG produzido e descarta arquivos incompletos; CI pendente. As falhas históricas de Kotlin/Gradle foram corrigidas nas versões posteriores. Testes funcionais em aparelho permanecem pendentes.
+Build debug 2.2.20 (#124), 2.2.21 (#125) e 2.2.22 (#126–#129) aprovados com testes unitários; artifacts publicados. A 2.2.23 valida a gravação do PNG produzido e descarta arquivos incompletos; CI pendente. As falhas históricas de Kotlin/Gradle foram corrigidas nas versões posteriores. Testes funcionais em aparelho permanecem pendentes.
 
 Testes em aparelho/emulador e validação funcional integral permanecem pendentes.
 

@@ -57,7 +57,8 @@
 - Removidos logs temporários de rastreamento de datas e prazos.
 - Testes unitários e APK debug aprovados; artifact publicado.
 
-## 2.2.22 — CI em validação
+## 2.2.22 — validada (runs #126–#129)
 - Captura de assinatura habilita salvar apenas quando existe movimento de traço visível; rejeita traço de ponto único ou movimento nulo.
 - Testes unitários para traços vazios, ponto único, movimento nulo e movimento visível.
+- Testes unitários e APK debug aprovados nos runs #126/#127/#128/#129; artifacts publicados #128/#129.
 - versionCode 27 / versionName 2.2.22.

@@ -1,6 +1,6 @@
 # Checklist mestre — F-SSMA-0073 Rev.00
 
-Atualizado para a versão **2.2.23**. A versão 2.2.20 foi aprovada no run #124 e a 2.2.21 no run #125. A 2.2.22 impede salvar assinatura sem traço visível e adiciona testes unitários; CI pendente. CI não substitui validação funcional em aparelho.
+Atualizado para a versão **2.2.23**. A 2.2.20 foi aprovada no run #124, a 2.2.21 no run #125 e a 2.2.22 nos runs #126–#129. A 2.2.23 valida a gravação PNG da assinatura; CI pendente. CI não substitui validação funcional em aparelho.
 
 ## Implementado no código
 - [x] Identificação: responsável, número automático, data por calendário e local.
@@ -91,7 +91,7 @@ Atualizado para a versão **2.2.23**. A versão 2.2.20 foi aprovada no run #124 
 
 
 - [x] 2.2.22: diálogo de assinatura exige traço visível (mais de um ponto e deslocamento); testes unitários adicionados.
-- [ ] CI 2.2.22: testes unitários e APK debug.
+- [x] CI 2.2.22: testes unitários e APK debug aprovados nos runs #126/#127/#128/#129; artifacts publicados #128/#129.
 
 
 - [x] 2.2.23: assinatura é gravada em staging, valida cabeçalho PNG e tamanho mínimo antes de ser associada; falhas removem arquivos incompletos. Testes para cabeçalho válido, inválido e arquivo truncado. CI pendente.
