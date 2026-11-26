@@ -1,6 +1,6 @@
 # Projeto — Aplicativo de Registro de Inspeções de SSMA
 
-**Estado atual (26/11/2026):** a versão 2.2.13 foi validada no run #101. A versão 2.2.14 adiciona manifesto de evidências ao ZIP; CI está pendente. Testes em aparelho e validação funcional integral continuam pendentes. As seções históricas 8–10 registram a baseline documental inicial.
+**Estado atual (26/11/2026):** a versão 2.2.13 foi validada no run #101. A 2.2.14 adicionou manifesto ao ZIP, mas o run #102 falhou na compilação Kotlin; a correção está na 2.2.15, aguardando CI. Testes em aparelho e validação funcional integral continuam pendentes. As seções históricas 8–10 registram a baseline documental inicial.
 
 
 ## Documento de referência
@@ -218,3 +218,8 @@ As atualizações documentais 1.0.1 e 1.0.2 e a baseline 1.0.0 não representam 
 - ZIP passa a registrar no manifesto quais fotos/assinaturas foram incluídas e quais referências não puderam ser copiadas.
 - Exportação exibe contagem de evidências incluídas/ausentes.
 - Testes unitários para coleta de referências e geração do manifesto; CI pendente.
+
+
+## Atualização 2.2.15 — CI em validação
+- Corrige o retorno da função local `addUri` no ZIP e o nome de tipo `ExportEvidenceStatus`.
+- CI com testes unitários e APK debug pendente.
