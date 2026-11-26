@@ -51,3 +51,13 @@
 - Mantém o parsing/formatação de datas UTC e os testes existentes.
 - versionCode 26 / versionName 2.2.21.
 - Baseline 2.2.20 validada no run #124: testes unitários e APK debug aprovados.
+
+
+## 2.2.21 — validada (build #125)
+- Removidos logs temporários de rastreamento de datas e prazos.
+- Testes unitários e APK debug aprovados; artifact publicado.
+
+## 2.2.22 — CI em validação
+- Captura de assinatura habilita salvar apenas quando existe movimento de traço visível; rejeita traço de ponto único ou movimento nulo.
+- Testes unitários para traços vazios, ponto único, movimento nulo e movimento visível.
+- versionCode 27 / versionName 2.2.22.
