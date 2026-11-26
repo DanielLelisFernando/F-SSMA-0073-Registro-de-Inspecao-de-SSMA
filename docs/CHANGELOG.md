@@ -1,3 +1,8 @@
+## 2.2.19 — CI em validação
+- Normaliza a extensão de mídia da galeria e evita registrar foto quando a URI não pode ser aberta ou resulta em arquivo vazio; o arquivo parcial é removido.
+- Testes unitários para normalização da extensão MIME e fallback JPG.
+- versionCode 24 / versionName 2.2.19.
+
 ## 2.2.18 — CI em validação
 - Fotos selecionadas da galeria passam a ser armazenadas com extensão correspondente ao MIME informado pelo Android, com fallback JPG.
 - ZIP preserva a extensão da foto no nome do arquivo exportado; testes para WebP e fallback.
@@ -33,9 +38,3 @@
 - Corrige o retorno da função local `addUri` no ZIP e o tipo `ExportEvidenceStatus` usado na coleta.
 - Atualiza `versionCode` 20 e `versionName` 2.2.15.
 - Runs #103/#104 executaram testes unitários e assembleDebug com sucesso; artifact publicado.
-
-
-## 2.2.19 — CI em validação
-- Normaliza a extensão de mídia da galeria e evita registrar foto quando a URI não pode ser aberta ou resulta em arquivo vazio; o arquivo parcial é removido.
-- Testes unitários para normalização da extensão MIME e fallback JPG.
-- versionCode 24 / versionName 2.2.19.
