@@ -80,3 +80,7 @@ Atualizado para a versão **2.2.20**. A captura pela câmera agora valida a assi
 
 
 - [x] 2.2.20: captura da câmera valida assinatura de imagem e rejeita arquivos vazios/desconhecidos antes de associar a evidência; testes unitários adicionados. CI pendente.
+
+
+- [x] Diagnóstico do run #105 (commit `c44435b2`, versão 2.2.16): `compileDebugKotlin` falhou em `MainActivity.kt:361` com `Syntax error: Unexpected tokens`; a correção de separação das expressões foi commitada na 2.2.17, mas seu CI não foi confirmado neste acesso.
+- [x] 2.2.20: validação da captura da câmera pela assinatura JPEG; testes unitários adicionados e verificação local isolada da função passou. CI do aplicativo completo permanece pendente de confirmação.
