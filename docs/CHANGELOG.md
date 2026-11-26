@@ -46,12 +46,6 @@
 - Runs #103/#104 executaram testes unitários e assembleDebug com sucesso; artifact publicado.
 
 
-## Versão 2.2.21
-- Remove instrumentação temporária de rastreamento de seleção de datas e prazos do código de produção.
-- Mantém o parsing/formatação de datas UTC e os testes existentes.
-- versionCode 26 / versionName 2.2.21.
-- Baseline 2.2.20 validada no run #124: testes unitários e APK debug aprovados.
-
 
 ## 2.2.21 — validada (build #125)
 - Removidos logs temporários de rastreamento de datas e prazos.
