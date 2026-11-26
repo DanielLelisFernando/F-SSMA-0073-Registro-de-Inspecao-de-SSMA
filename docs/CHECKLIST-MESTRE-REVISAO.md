@@ -46,7 +46,8 @@ Atualizado para a versão **2.2.11**. A versão 2.2.7 foi validada no run #90. A
 - [x] Validação de decodificação limitada e orientação EXIF de imagens (2.2.9, run #93, sucesso; artifact publicado).
 - [x] Proteção para edição de inspeção existente quando há rascunho ativo (2.2.10, run #95, sucesso; artifact publicado).
 - [ ] Testes de lifecycle, permissões e tamanhos de tela.
-- [x] PDF 2.2.11: tabela paginada para condições, severidade, ação, prazo e responsável, com cabeçalho de tabela repetido ao continuar entre páginas.\n- [ ] Validar layout do PDF contra o formulário original em leitor externo/aparelho.
+- [x] PDF 2.2.11: tabela paginada para condições, severidade, ação, prazo e responsável, com cabeçalho de tabela repetido ao continuar entre páginas.
+- [ ] Validar layout do PDF contra o formulário original em leitor externo/aparelho.
 - [ ] Confirmar captura de câmera, assinaturas e exportações no aparelho.
 
 ## Regras de escopo
