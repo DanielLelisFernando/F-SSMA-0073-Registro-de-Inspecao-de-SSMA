@@ -3,7 +3,7 @@
 ## 2.2.10 — em validação
 - Protege rascunho existente ao abrir edição de inspeção pelo histórico: oferece retomar ou descartar e editar, evitando sobrescrita silenciosa.
 - versionCode 15 / versionName 2.2.10.
-- Testes unitários e APK debug concluídos com sucesso no run #93; artifact publicado.
+- CI pendente.
 
 
 ## 2.2.9 — validada (build #93)
@@ -11,7 +11,7 @@
 - Corrige retorno antecipado na função local `openStream()` para corpo de função explícito, resolvendo erro Kotlin #91.
 - Mantém decodificação de imagens em resolução limitada e leitura de orientação EXIF.
 - versionCode 14 / versionName 2.2.9.
-- CI pendente.
+- Testes unitários e APK debug concluídos com sucesso no run #93; artifact publicado.
 
 ## 2.2.8 — falhou CI (#91/#92)
 - Implementação de decodificação limitada e orientação EXIF; correção de build incorporada na 2.2.9.
