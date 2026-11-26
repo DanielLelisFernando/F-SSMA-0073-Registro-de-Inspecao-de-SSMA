@@ -62,3 +62,9 @@ Testes em aparelho/emulador e validação funcional integral permanecem pendente
 - Fotos de galeria preservam a extensão identificada pelo MIME do Android; exportação ZIP usa a extensão armazenada, com fallback JPG.
 - Testes unitários para WebP e extensão desconhecida.
 - versionCode 23 / versionName 2.2.18.
+
+
+## Versão 2.2.19 — CI em validação
+- Normaliza extensões de imagens importadas e rejeita URI inacessível ou arquivo vazio; remove staging parcial.
+- Testes unitários para extensão MIME e fallback JPG.
+- versionCode 24 / versionName 2.2.19.
