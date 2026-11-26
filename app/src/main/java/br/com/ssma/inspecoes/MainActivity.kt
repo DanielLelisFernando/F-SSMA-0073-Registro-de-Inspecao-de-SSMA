@@ -10,7 +10,6 @@ import android.graphics.Matrix
 import android.graphics.pdf.PdfDocument
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
@@ -51,7 +50,7 @@ import java.security.MessageDigest
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-private const val APP_VERSION = "2.2.20"
+private const val APP_VERSION = "2.2.21"
 private const val LOGO_ASSET = "salum_logo.jpg"
 data class Finding(val desc:String="",val severity:String="LEVE",val action:String="",val deadline:String="",val owner:String="",val photo:String="")
 data class Participant(val name:String="",val signature:String="")
@@ -258,8 +257,8 @@ class MainActivity:ComponentActivity(){
   }
  }
  BackHandler(enabled=screen!="home"){screen="home"}
- if(dateDialog){val state=rememberDatePickerState(initialSelectedDateMillis=dateTextToPickerMillis(date));DatePickerDialog(onDismissRequest={dateDialog=false},confirmButton={TextButton(onClick={state.selectedDateMillis?.let{ms->val formatted=datePickerMillisToText(ms);Log.i("SSMA_DATE_TRACE","campo=DATA rawMillis=$ms utcFormatted=$formatted localDate=${java.util.Date(ms)} timezone=${java.util.TimeZone.getDefault().id}");date=formatted};dateDialog=false}){Text("Confirmar")}},dismissButton={TextButton(onClick={dateDialog=false}){Text("Cancelar")}}){DatePicker(state)}}
- if(deadlineDialogIndex>=0){val idx=deadlineDialogIndex;val current=findings.getOrNull(idx)?.deadline?: "";val initialMillis=try{dateTextToPickerMillis(current)}catch(_:Exception){null};val state=rememberDatePickerState(initialSelectedDateMillis=initialMillis);DatePickerDialog(onDismissRequest={deadlineDialogIndex=-1},confirmButton={TextButton(onClick={state.selectedDateMillis?.let{ms->val formatted=datePickerMillisToText(ms);Log.i("SSMA_DATE_TRACE","campo=PRAZO indice=$idx rawMillis=$ms utcFormatted=$formatted localDate=${java.util.Date(ms)} timezone=${java.util.TimeZone.getDefault().id}");findings=findings.toMutableList().also{list->list[idx]=list[idx].copy(deadline=formatted)} };deadlineDialogIndex=-1}){Text("Confirmar")}},dismissButton={TextButton(onClick={deadlineDialogIndex=-1}){Text("Cancelar")}}){DatePicker(state)}}
+ if(dateDialog){val state=rememberDatePickerState(initialSelectedDateMillis=dateTextToPickerMillis(date));DatePickerDialog(onDismissRequest={dateDialog=false},confirmButton={TextButton(onClick={state.selectedDateMillis?.let{ms->val formatted=datePickerMillisToText(ms);date=formatted};dateDialog=false}){Text("Confirmar")}},dismissButton={TextButton(onClick={dateDialog=false}){Text("Cancelar")}}){DatePicker(state)}}
+ if(deadlineDialogIndex>=0){val idx=deadlineDialogIndex;val current=findings.getOrNull(idx)?.deadline?: "";val initialMillis=try{dateTextToPickerMillis(current)}catch(_:Exception){null};val state=rememberDatePickerState(initialSelectedDateMillis=initialMillis);DatePickerDialog(onDismissRequest={deadlineDialogIndex=-1},confirmButton={TextButton(onClick={state.selectedDateMillis?.let{ms->val formatted=datePickerMillisToText(ms);findings=findings.toMutableList().also{list->list[idx]=list[idx].copy(deadline=formatted)} };deadlineDialogIndex=-1}){Text("Confirmar")}},dismissButton={TextButton(onClick={deadlineDialogIndex=-1}){Text("Cancelar")}}){DatePicker(state)}}
  if(filterStartDialog){val state=rememberDatePickerState(initialSelectedDateMillis=dateTextToPickerMillis(filterStart));DatePickerDialog(onDismissRequest={filterStartDialog=false},confirmButton={TextButton(onClick={state.selectedDateMillis?.let{filterStart=datePickerMillisToText(it)};filterStartDialog=false}){Text("Confirmar")}},dismissButton={TextButton(onClick={filterStartDialog=false}){Text("Cancelar")}}){DatePicker(state)}}
  if(filterEndDialog){val state=rememberDatePickerState(initialSelectedDateMillis=dateTextToPickerMillis(filterEnd));DatePickerDialog(onDismissRequest={filterEndDialog=false},confirmButton={TextButton(onClick={state.selectedDateMillis?.let{filterEnd=datePickerMillisToText(it)};filterEndDialog=false}){Text("Confirmar")}},dismissButton={TextButton(onClick={filterEndDialog=false}){Text("Cancelar")}}){DatePicker(state)}}
  Column(Modifier.fillMaxSize().imePadding().navigationBarsPadding().padding(16.dp),verticalArrangement=Arrangement.spacedBy(12.dp)){

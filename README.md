@@ -2,7 +2,7 @@
 
 Aplicativo Android nativo (Kotlin/Jetpack Compose) para registro digital offline de inspeções da Salum Construções, conforme F-SSMA-0073 Rev.00.
 
-**Versão 2.2.20 — CI em validação.**
+**Versão 2.2.21 — limpeza de rastreamento temporário; CI pendente.**
 
 A etiqueta de versão da tela inicial foi sincronizada com o versionName do Gradle.
 
@@ -76,3 +76,12 @@ Testes em aparelho/emulador e validação funcional integral permanecem pendente
 - Captura da câmera valida assinatura JPEG antes de associar a foto, removendo arquivos vazios ou inválidos.
 - Testes unitários adicionados para assinatura JPEG e rejeição de arquivos inválidos.
 - versionCode 25 / versionName 2.2.20; resultado CI pendente.
+
+
+## Versão 2.2.20 — validada (build #124)
+- Validação da captura da câmera por assinatura JPEG.
+- Testes unitários e APK debug aprovados; artifact publicado.
+
+## Versão 2.2.21 — CI pendente
+- Removidos logs temporários de rastreamento da seleção de data e prazo.
+- versionCode 26 / versionName 2.2.21.

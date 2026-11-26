@@ -1,6 +1,6 @@
 # Projeto — Aplicativo de Registro de Inspeções de SSMA
 
-**Estado atual (26/11/2026):** versão 2.2.20 commitada, com validação da assinatura do arquivo de imagem capturado pela câmera antes de vincular a evidência. CI ainda pendente. Testes em aparelho e validação funcional integral continuam pendentes. Testes em aparelho e validação funcional integral continuam pendentes. As seções históricas 8–10 registram a baseline documental inicial.
+**Estado atual (26/11/2026):** versão 2.2.20 validada no run #124, com testes unitários e APK debug aprovados. A versão 2.2.21 remove logs temporários de rastreamento de datas; CI pendente. Testes em aparelho e validação funcional integral continuam pendentes. Testes em aparelho e validação funcional integral continuam pendentes. As seções históricas 8–10 registram a baseline documental inicial.
 
 
 ## Documento de referência

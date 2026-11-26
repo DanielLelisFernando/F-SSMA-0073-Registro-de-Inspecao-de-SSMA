@@ -44,3 +44,10 @@
 - Corrige o retorno da função local `addUri` no ZIP e o tipo `ExportEvidenceStatus` usado na coleta.
 - Atualiza `versionCode` 20 e `versionName` 2.2.15.
 - Runs #103/#104 executaram testes unitários e assembleDebug com sucesso; artifact publicado.
+
+
+## Versão 2.2.21
+- Remove instrumentação temporária de rastreamento de seleção de datas e prazos do código de produção.
+- Mantém o parsing/formatação de datas UTC e os testes existentes.
+- versionCode 26 / versionName 2.2.21.
+- Baseline 2.2.20 validada no run #124: testes unitários e APK debug aprovados.

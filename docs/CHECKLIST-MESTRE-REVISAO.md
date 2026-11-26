@@ -84,3 +84,7 @@ Atualizado para a versão **2.2.20**. A captura pela câmera agora valida a assi
 
 - [x] Diagnóstico do run #105 (commit `c44435b2`, versão 2.2.16): `compileDebugKotlin` falhou em `MainActivity.kt:361` com `Syntax error: Unexpected tokens`; a correção de separação das expressões foi commitada na 2.2.17, mas seu CI não foi confirmado neste acesso.
 - [x] 2.2.20: validação da captura da câmera pela assinatura JPEG; testes unitários adicionados e verificação local isolada da função passou. CI do aplicativo completo permanece pendente de confirmação.
+
+
+- [x] 2.2.20: testes unitários e APK debug aprovados no run #124 (commit `a4f9b6e4`); artifact publicado.
+- [x] 2.2.21: removidos logs temporários `SSMA_DATE_TRACE` do fluxo de seleção de data e prazo; testes de datas existentes preservados. CI pendente.
