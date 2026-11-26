@@ -1,0 +1,50 @@
+name: Deploy iOS PWA to GitHub Pages
+
+on:
+  push:
+    branches:
+      - ios-1.0.0
+    paths:
+      - 'ios/**'
+      - '.github/workflows/deploy-ios-pwa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-ios-pwa
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Validate PWA files
+        run: |
+          test -f ios/index.html
+          test -f ios/app.js
+          test -f ios/manifest.json
+          test -f ios/sw.js
+          test -f ios/icon.svg
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ios
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
