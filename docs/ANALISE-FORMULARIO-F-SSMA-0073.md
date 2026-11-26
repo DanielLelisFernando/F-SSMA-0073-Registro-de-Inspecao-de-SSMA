@@ -236,3 +236,9 @@ As atualizações documentais 1.0.1 e 1.0.2 e a baseline 1.0.0 não representam 
 - Separada a expressão `if` do diálogo de rascunho da expressão de botão de exportação ZIP, eliminando a junção de statements Kotlin na linha 361.
 - versionCode 22 / versionName 2.2.17.
 - CI pendente.
+
+
+## Atualização 2.2.18 — CI em validação
+- Fotos importadas da galeria são nomeadas com extensão compatível com o MIME informado pelo Android, evitando rotular arquivos WebP/PNG como JPG.
+- O ZIP preserva a extensão detectada no armazenamento local, com fallback JPG para URI sem extensão reconhecível.
+- versionCode 23 / versionName 2.2.18.
