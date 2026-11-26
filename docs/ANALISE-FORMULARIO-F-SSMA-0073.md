@@ -1,5 +1,8 @@
 # Projeto — Aplicativo de Registro de Inspeções de SSMA
 
+> **Estado atual (26/11/2026):** o aplicativo já implementa os fluxos descritos neste inventário. A versão 2.2.9 foi validada no run #93 (testes unitários + APK debug). A 2.2.10 acrescenta proteção contra sobrescrita silenciosa de rascunho ao editar pelo histórico e aguarda CI. Testes em aparelho e validação funcional integral continuam pendentes. As seções históricas 8–10 registram a baseline documental inicial.
+
+
 ## Documento de referência
 
 - **Formulário:** F-SSMA-0073 — Registro de Inspeção de SSMA
