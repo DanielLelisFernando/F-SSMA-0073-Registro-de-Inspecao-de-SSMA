@@ -16,11 +16,11 @@
 ## 2.2.8 — falhou CI (#91/#92)
 - Implementação de decodificação limitada e orientação EXIF; correção de build incorporada na 2.2.9.
 
-## 2.2.7 — em validação
+## 2.2.7 — validada (build #90)
 - Validação antes do salvamento: responsável, data válida, local e descrição de todos os desvios.
 - Testes unitários para campos obrigatórios, data bissexta e rejeição de data inválida.
 - versionCode 12 / versionName 2.2.7.
-- Build CI pendente.
+- Testes unitários e APK debug concluídos com sucesso no run #90; artifact publicado.
 
 ## 2.2.6 — validada (build #86)
 - Utilitário de conversão/validação de datas extraído para código Kotlin independente.
