@@ -119,7 +119,8 @@ Relação: uma inspeção para vários participantes.
 - `id`
 - `inspection_id` (FK)
 - `sequence_number` (R01)
-- `risk_condition_nonconformity` (R02; **obrigatório no app**, regra aprovada pelo usuário, não impressa no formulário original)\n- `photo_uri` ou referência ao arquivo local de foto (R07; opcional, associada à ocorrência; origem galeria ou câmera; guardar arquivo local e referência no banco)
+- `risk_condition_nonconformity` (R02; **obrigatório no app**, regra aprovada pelo usuário, não impressa no formulário original)
+- `photo_uri` ou referência ao arquivo local de foto (R07; opcional, associada à ocorrência; origem galeria ou câmera; guardar arquivo local e referência no banco)
 - `severity` (R03; valores: LEVE, MODERADA, GRAVE, CRÍTICO)
 - `corrective_action` (R04)
 - `execution_deadline` (R05; manter representação compatível com a entrada definida)
@@ -178,7 +179,13 @@ Até confirmação, manter entrada flexível e não implementar validações de 
 - Versionamento Git e migrações locais não destrutivas.
 - Preservação da revisão do formulário e da versão do app em cada registro.
 
-## 8. Estado da versão 1.0.2 — limite de foto confirmado\n\n- **Versão do projeto:** 1.0.2 — atualização documental.\n- **Decisão:** máximo de uma foto por desvio, escolhida da galeria ou capturada pela câmera; foto opcional; incluir no PDF exportado.\n- **Implementação e testes:** ainda pendentes.\n\n## 9. Estado da versão 1.0.1 — alteração de escopo aprovada
+## 8. Estado da versão 1.0.2 — limite de foto confirmado
+
+- **Versão do projeto:** 1.0.2 — atualização documental.
+- **Decisão:** máximo de uma foto por desvio, escolhida da galeria ou capturada pela câmera; foto opcional; incluir no PDF exportado.
+- **Implementação e testes:** ainda pendentes.
+
+## 9. Estado da versão 1.0.1 — alteração de escopo aprovada
 
 - **Versão do projeto:** 1.0.1 — atualização documental de escopo.
 - **Alteração:** descrição do desvio R02 passa a ser obrigatória no app; fotografia por ocorrência é opcional, via galeria ou câmera, e pode ser incluída no PDF.
