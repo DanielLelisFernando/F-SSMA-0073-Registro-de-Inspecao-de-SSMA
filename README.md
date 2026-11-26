@@ -4,6 +4,8 @@ Aplicativo Android nativo (Kotlin/Jetpack Compose) para registro digital offline
 
 **Versão 2.2.19 — CI em validação.**
 
+A etiqueta de versão da tela inicial foi sincronizada com o versionName do Gradle.
+
 ## Funcionalidades
 - Identificação da inspeção, numeração local, data e local.
 - Participantes e assinaturas; matrícula e assinatura do responsável.
