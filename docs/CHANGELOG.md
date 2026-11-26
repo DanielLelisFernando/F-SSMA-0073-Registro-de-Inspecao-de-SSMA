@@ -1,6 +1,6 @@
 ## 2.2.12 — validação CI pendente
 - Aumenta a altura do cabeçalho tabular para acomodar três linhas do rótulo de ação sem corte.
-- Reserva espaço antes de blocos de assinatura e evidência fotográfica para reduzir rótulos órfãos entre páginas.
+- Reserva espaço antes de blocos de nome/assinatura de participantes, assinatura final e evidência fotográfica para reduzir rótulos órfãos entre páginas.
 - versionCode 17 / versionName 2.2.12.
 - CI acionado após commit; validação visual em aparelho permanece pendente.
 

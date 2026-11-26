@@ -1,6 +1,6 @@
 # Checklist mestre — F-SSMA-0073 Rev.00
 
-Atualizado para a versão **2.2.12**. A versão 2.2.11 foi validada nos runs #96 e #97 (testes unitários e APK debug). A 2.2.12 ajusta altura do cabeçalho tabular e reserva espaço para assinaturas/evidências no PDF; validação CI pendente. A 2.2.8 teve falhas de CI #91/#92 por erro na função local de abertura de streams e newline literal no Gradle. A 2.2.9 corrige esses pontos e mantém decodificação limitada/orientação EXIF. CI não substitui validação funcional em aparelho.
+Atualizado para a versão **2.2.12**. A versão 2.2.11 foi validada nos runs #96 e #97 (testes unitários e APK debug). A 2.2.12 ajusta altura do cabeçalho tabular e reserva espaço para assinaturas/evidências no PDF (incluindo nome e assinatura do participante como bloco); validação CI pendente. A 2.2.8 teve falhas de CI #91/#92 por erro na função local de abertura de streams e newline literal no Gradle. A 2.2.9 corrige esses pontos e mantém decodificação limitada/orientação EXIF. CI não substitui validação funcional em aparelho.
 
 ## Implementado no código
 - [x] Identificação: responsável, número automático, data por calendário e local.

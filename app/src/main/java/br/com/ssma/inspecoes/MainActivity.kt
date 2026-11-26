@@ -141,8 +141,9 @@ class MainActivity:ComponentActivity(){
   y+=8f
   line("PARTICIPANTES",h)
   i.participants.forEachIndexed{n,participant->
+   if(participant.signature.isNotBlank())ensureSpace(190f)
    line("${n+1}. ${participant.name}")
-   if(participant.signature.isNotBlank()){ensureSpace(150f);line("Assinatura do participante:");image(participant.signature,220f,80f)}
+   if(participant.signature.isNotBlank()){line("Assinatura do participante:");image(participant.signature,220f,80f)}
   }
   y+=8f
   line("CLASSIFICAÇÃO DE SEVERIDADE",h)
