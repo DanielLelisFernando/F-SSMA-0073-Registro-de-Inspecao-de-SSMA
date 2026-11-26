@@ -93,3 +93,28 @@ fun buildEvidenceManifest(
         appendLine("Verifique a inspeção no aplicativo e reexporte se necessário.")
     }
 }
+
+
+fun isValidCameraImageFile(file: java.io.File?): Boolean {
+    if (file == null || !file.exists() || !file.isFile || file.length() < 4L) return false
+    val header = ByteArray(12)
+    val read = try {
+        file.inputStream().use { it.read(header) }
+    } catch (_: Exception) {
+        return false
+    }
+    if (read < 4) return false
+    fun ascii(offset: Int, length: Int): String =
+        String(header, offset, length.coerceAtMost(read - offset), Charsets.US_ASCII)
+    val jpeg = (header[0].toInt() and 0xff) == 0xff &&
+        (header[1].toInt() and 0xff) == 0xd8 && (header[2].toInt() and 0xff) == 0xff
+    val png = read >= 8 && header.copyOfRange(0, 8).contentEquals(
+        byteArrayOf(0x89.toByte(), 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a)
+    )
+    val webp = read >= 12 && ascii(0, 4) == "RIFF" && ascii(8, 4) == "WEBP"
+    val gif = read >= 6 && (ascii(0, 6) == "GIF87a" || ascii(0, 6) == "GIF89a")
+    val bmp = ascii(0, 2) == "BM"
+    val heif = read >= 12 && ascii(4, 4) == "ftyp" &&
+        ascii(8, 4) in setOf("heic", "heix", "hevc", "hevx", "mif1", "msf1")
+    return jpeg || png || webp || gif || bmp || heif
+}
