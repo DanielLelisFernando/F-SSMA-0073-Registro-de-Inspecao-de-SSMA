@@ -1,6 +1,6 @@
 # Checklist mestre — F-SSMA-0073 Rev.00
 
-Atualizado para a versão **2.2.19**. A 2.2.16 falhou no CI; a correção 2.2.17 e a preservação de extensão MIME da 2.2.18 foram registradas, mas não há confirmação CI disponível para essas versões neste acompanhamento. A 2.2.19 acrescenta validação da importação de fotos e testes unitários. CI não substitui validação funcional em aparelho.
+Atualizado para a versão **2.2.19**. Corrigida a identificação exibida na home para refletir o versionName do Gradle (2.2.19). A 2.2.16 falhou no CI; a correção 2.2.17 e a preservação de extensão MIME da 2.2.18 foram registradas, mas não há confirmação CI disponível para essas versões neste acompanhamento. A 2.2.19 acrescenta validação da importação de fotos e testes unitários. CI não substitui validação funcional em aparelho.
 
 ## Implementado no código
 - [x] Identificação: responsável, número automático, data por calendário e local.
