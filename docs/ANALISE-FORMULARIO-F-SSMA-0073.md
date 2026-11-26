@@ -1,6 +1,6 @@
 # Projeto — Aplicativo de Registro de Inspeções de SSMA
 
-**Estado atual (26/11/2026):** a versão 2.2.15 foi validada nos runs #103/#104. A 2.2.16 adiciona staging temporário e SHA-256 no manifesto ZIP; CI pendente. Testes em aparelho e validação funcional integral continuam pendentes. As seções históricas 8–10 registram a baseline documental inicial.
+**Estado atual (26/11/2026):** a 2.2.16 falhou no CI com erro de sintaxe Kotlin na tela de histórico; correção 2.2.17 commitada, CI pendente. Testes em aparelho e validação funcional integral continuam pendentes. As seções históricas 8–10 registram a baseline documental inicial.
 
 
 ## Documento de referência
@@ -230,3 +230,9 @@ As atualizações documentais 1.0.1 e 1.0.2 e a baseline 1.0.0 não representam 
 - Manifesto registra bytes e SHA-256 para cada evidência incluída.
 - Falha de escrita do ZIP cancela a exportação e impede compartilhamento do arquivo incompleto.
 - versionCode 21 / versionName 2.2.16. CI pendente.
+
+
+## Atualização 2.2.17 — CI em validação
+- Separada a expressão `if` do diálogo de rascunho da expressão de botão de exportação ZIP, eliminando a junção de statements Kotlin na linha 361.
+- versionCode 22 / versionName 2.2.17.
+- CI pendente.
