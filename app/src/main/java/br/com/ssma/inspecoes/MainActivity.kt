@@ -47,7 +47,7 @@ import java.io.FileOutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-private const val APP_VERSION = "2.2.6"
+private const val APP_VERSION = "2.2.7"
 private const val LOGO_ASSET = "salum_logo.jpg"
 data class Finding(val desc:String="",val severity:String="LEVE",val action:String="",val deadline:String="",val owner:String="",val photo:String="")
 data class Participant(val name:String="",val signature:String="")
@@ -232,7 +232,7 @@ class MainActivity:ComponentActivity(){
  Button(onClick={findings=findings+Finding()},modifier=Modifier.fillMaxWidth()){Text("Adicionar desvio")}
 
  if(signatureTarget!=null){SignaturePadDialog(onDismiss={signatureTarget=null},onSave={path->val target=signatureTarget;if(target=="inspector")inspectorSignature=path else if(target?.startsWith("participant:")==true){val idx=target.substringAfter(":").toIntOrNull();if(idx!=null&&idx in participants.indices)participants=participants.toMutableList().also{it[idx]=it[idx].copy(signature=path)} };signatureTarget=null})}
- Button(onClick={if(findings.any{it.desc.isBlank()}){toast("Preencha a descrição de todos os desvios")}else{val record=Inspection(editing?.id?:0,responsible,number,date,location,findings,participants=participants,inspectorSignature=inspectorSignature,registration=registration);val file=pdf(record);val saved=record.copy(pdf=file.absolutePath);if(editing==null)db.save(saved) else db.update(saved);toast("Registro salvo");draftPrefs.edit().remove("inspectionDraft").apply();draftExists=false;refresh++;shareFiles(listOf(file));screen="home"}},modifier=Modifier.fillMaxWidth()){Text("Salvar e exportar PDF")}
+ Button(onClick={val validation=validateInspectionFields(responsible,date,location,findings);if(validation!=null){toast(validation)}else{val record=Inspection(editing?.id?:0,responsible,number,date,location,findings,participants=participants,inspectorSignature=inspectorSignature,registration=registration);val file=pdf(record);val saved=record.copy(pdf=file.absolutePath);if(editing==null)db.save(saved) else db.update(saved);toast("Registro salvo");draftPrefs.edit().remove("inspectionDraft").apply();draftExists=false;refresh++;shareFiles(listOf(file));screen="home"}},modifier=Modifier.fillMaxWidth()){Text("Salvar e exportar PDF")}
  }
  "history"->Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(10.dp)){
  Row{TextButton(onClick={screen="home"}){Text("← Início")};Text("Inspeções realizadas",style=MaterialTheme.typography.titleLarge)}
