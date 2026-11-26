@@ -49,7 +49,7 @@ import java.io.FileOutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-private const val APP_VERSION = "2.2.14"
+private const val APP_VERSION = "2.2.15"
 private const val LOGO_ASSET = "salum_logo.jpg"
 data class Finding(val desc:String="",val severity:String="LEVE",val action:String="",val deadline:String="",val owner:String="",val photo:String="")
 data class Participant(val name:String="",val signature:String="")
@@ -309,7 +309,7 @@ class MainActivity:ComponentActivity(){
     zip.putNextEntry(ZipEntry("$base/Inspecao.pdf"));pdfFile.inputStream().use{it.copyTo(zip)};zip.closeEntry()
     fun addUri(raw:String,name:String):Boolean{
      var entryOpen=false
-     try{
+     return try{
       val uri=Uri.parse(raw)
       val input=if(uri.scheme=="file")File(uri.path?:return false).takeIf{it.exists()&&it.isFile}?.inputStream() else contentResolver.openInputStream(uri)
       if(input==null)return false
@@ -328,7 +328,7 @@ class MainActivity:ComponentActivity(){
     }
     val evidence=collectInspectionEvidence(r)
     evidenceExpected+=evidence.size
-    val outcomes=evidence.map{item->EvidenceExportStatus(item,addUri(item.sourceUri,item.archiveFileName))}
+    val outcomes=evidence.map{item->ExportEvidenceStatus(item,addUri(item.sourceUri,item.archiveFileName))}
     evidenceIncluded+=outcomes.count{it.included}
     evidenceMissing+=outcomes.count{!it.included}
     zip.putNextEntry(ZipEntry("$base/Manifest_Evidencias.txt"))
