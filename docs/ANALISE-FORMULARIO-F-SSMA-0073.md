@@ -1,6 +1,6 @@
 # Projeto — Aplicativo de Registro de Inspeções de SSMA
 
-**Estado atual (26/11/2026):** a versão 2.2.11 foi validada nos runs #96/#97. A versão 2.2.12 ajusta o espaço de cabeçalhos, assinaturas e evidências no PDF; CI está em validação. Testes em aparelho e validação funcional integral continuam pendentes. As seções históricas 8–10 registram a baseline documental inicial.
+**Estado atual (26/11/2026):** a versão 2.2.12 foi validada nos runs #98/#99. A versão 2.2.13 reforça o compartilhamento de arquivos por ClipData; CI está pendente. Testes em aparelho e validação funcional integral continuam pendentes. As seções históricas 8–10 registram a baseline documental inicial.
 
 
 ## Documento de referência
@@ -202,6 +202,11 @@ Até confirmação, manter entrada flexível e não implementar validações de 
 
 As atualizações documentais 1.0.1 e 1.0.2 e a baseline 1.0.0 não representam APK funcional nem versão de produção.
 
+
+## Atualização 2.2.13
+- Compartilhamento passa a usar ClipData junto ao EXTRA_STREAM, reforçando concessão de leitura para apps destinatários.
+- Filtra arquivos inexistentes antes do compartilhamento.
+- CI pendente; validação em aparelho não executada.
 
 ## Atualização 2.2.12
 - Cabeçalho da tabela PDF ampliado para acomodar o rótulo de ação em três linhas.
