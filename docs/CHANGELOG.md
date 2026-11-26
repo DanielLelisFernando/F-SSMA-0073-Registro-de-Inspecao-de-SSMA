@@ -1,4 +1,4 @@
-## 2.2.20 — CI em validação
+## 2.2.20 — validada (build #124)
 - Captura pela câmera valida assinatura JPEG antes de vincular o arquivo ao desvio; rejeita arquivos vazios, ausentes ou de formato não JPEG e remove o arquivo rejeitado.
 - Testes unitários para JPEG, arquivo vazio, assinatura desconhecida e arquivo inexistente.
 - versionCode 25 / versionName 2.2.20.
