@@ -1,6 +1,6 @@
 # Projeto — Aplicativo de Registro de Inspeções de SSMA
 
-**Estado atual (26/11/2026):** a versão 2.2.13 foi validada no run #101. A 2.2.14 adicionou manifesto ao ZIP, mas o run #102 falhou na compilação Kotlin; a correção está na 2.2.15, aguardando CI. Testes em aparelho e validação funcional integral continuam pendentes. As seções históricas 8–10 registram a baseline documental inicial.
+**Estado atual (26/11/2026):** a versão 2.2.15 foi validada nos runs #103/#104. A 2.2.16 adiciona staging temporário e SHA-256 no manifesto ZIP; CI pendente. Testes em aparelho e validação funcional integral continuam pendentes. As seções históricas 8–10 registram a baseline documental inicial.
 
 
 ## Documento de referência
@@ -223,3 +223,10 @@ As atualizações documentais 1.0.1 e 1.0.2 e a baseline 1.0.0 não representam 
 ## Atualização 2.2.15 — CI em validação
 - Corrige o retorno da função local `addUri` no ZIP e o nome de tipo `ExportEvidenceStatus`.
 - CI com testes unitários e APK debug pendente.
+
+
+## Atualização 2.2.16 — CI em validação
+- Evidências são staged em arquivo temporário antes da gravação no ZIP; falha de leitura é marcada como ausente.
+- Manifesto registra bytes e SHA-256 para cada evidência incluída.
+- Falha de escrita do ZIP cancela a exportação e impede compartilhamento do arquivo incompleto.
+- versionCode 21 / versionName 2.2.16. CI pendente.

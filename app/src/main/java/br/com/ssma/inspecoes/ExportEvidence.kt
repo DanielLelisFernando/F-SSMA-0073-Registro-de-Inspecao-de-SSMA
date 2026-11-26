@@ -8,7 +8,9 @@ data class ExportEvidenceItem(
 
 data class ExportEvidenceStatus(
     val item: ExportEvidenceItem,
-    val included: Boolean
+    val included: Boolean,
+    val bytesCopied: Long? = null,
+    val sha256: String? = null
 )
 
 fun collectInspectionEvidence(inspection: Inspection): List<ExportEvidenceItem> {
@@ -63,7 +65,12 @@ fun buildEvidenceManifest(
         } else {
             statuses.forEach { status ->
                 val label = if (status.included) "[INCLUÍDA]" else "[AUSENTE]"
-                appendLine("$label ${status.item.displayName} | ${status.item.archiveFileName}")
+                val integrity = if (status.included) {
+                    " | bytes: ${status.bytesCopied ?: 0} | SHA-256: ${status.sha256 ?: "não calculado"}"
+                } else {
+                    " | não copiada"
+                }
+                appendLine("$label ${status.item.displayName} | ${status.item.archiveFileName}$integrity")
             }
         }
         appendLine()

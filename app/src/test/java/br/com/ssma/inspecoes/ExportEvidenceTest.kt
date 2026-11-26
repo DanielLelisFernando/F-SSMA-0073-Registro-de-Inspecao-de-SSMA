@@ -41,6 +41,18 @@ class ExportEvidenceTest {
         assertTrue(manifest.contains("Ausentes: 1"))
         assertTrue(manifest.contains("[INCLUÍDA] Foto do desvio #1"))
         assertTrue(manifest.contains("[AUSENTE] Assinatura do participante #1"))
+        assertTrue(manifest.contains("não copiada"))
+    }
+
+    @Test
+    fun manifestIncludesSizeAndSha256ForCopiedEvidence() {
+        val item = ExportEvidenceItem("Foto do desvio #1", "Foto_Desvio_1.jpg", "file:///foto.jpg")
+        val manifest = buildEvidenceManifest(
+            "SCL-0001", "26/11/2026", "Obra",
+            listOf(ExportEvidenceStatus(item, true, 2048L, "a".repeat(64)))
+        )
+        assertTrue(manifest.contains("bytes: 2048"))
+        assertTrue(manifest.contains("SHA-256: " + "a".repeat(64)))
     }
 
     @Test

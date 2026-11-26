@@ -1,6 +1,6 @@
 # Checklist mestre — F-SSMA-0073 Rev.00
 
-Atualizado para a versão **2.2.15**. A 2.2.13 foi validada no run #101. A 2.2.14 implementou manifesto de evidências no ZIP, mas o run #102 falhou na compilação Kotlin; a correção de retorno e tipo está na 2.2.15, aguardando CI. A versão 2.2.12 foi validada nos runs #98 e #99. A 2.2.8 teve falhas de CI #91/#92 por erro na função local de abertura de streams e newline literal no Gradle; esses pontos foram corrigidos na 2.2.9. CI não substitui validação funcional em aparelho.
+Atualizado para a versão **2.2.16**. A 2.2.15 foi validada nos runs #103/#104. A 2.2.16 adiciona staging e SHA-256 para evidências ZIP; CI pendente. CI não substitui validação funcional em aparelho. A versão 2.2.12 foi validada nos runs #98 e #99. A 2.2.8 teve falhas de CI #91/#92 por erro na função local de abertura de streams e newline literal no Gradle; esses pontos foram corrigidos na 2.2.9. CI não substitui validação funcional em aparelho.
 
 ## Implementado no código
 - [x] Identificação: responsável, número automático, data por calendário e local.
@@ -36,6 +36,8 @@ Atualizado para a versão **2.2.15**. A 2.2.13 foi validada no run #101. A 2.2.1
 - [ ] Conferir ZIP e compartilhamento.
 - [ ] Testar atualização sobre banco existente.
 
+- [x] 2.2.16: staging temporário para evidências ZIP, manifesto com bytes e SHA-256; erro de escrita aborta exportação e não compartilha arquivo incompleto. CI pendente.
+
 ## Pendências conhecidas
 - [x] Corrige newline literal no `app/build.gradle.kts` que impedia script Gradle de compilar (runs #92).
 - [x] Corrige `openStream()` com retorno dentro de corpo de expressão e habilita EXIF via dependência válida (run #91/#92).
@@ -53,7 +55,7 @@ Atualizado para a versão **2.2.15**. A 2.2.13 foi validada no run #101. A 2.2.1
 - [x] Compartilhamento 2.2.13 via ClipData: run #101, commit `abaf91b7`, testes unitários e APK debug aprovados.
 - [x] ZIP 2.2.14: manifesto de evidências e contagem de ausentes implementados no código.
 - [x] Correção 2.2.15: retorno explícito da função local `addUri` e referência correta ao `ExportEvidenceStatus`.
-- [ ] CI da 2.2.15: testes unitários e APK debug pendentes.
+- [x] CI 2.2.15: runs #103/#104, testes unitários e APK debug aprovados.
 - [ ] Validar transferência de PDFs/ZIPs via ClipData em aparelho.
 - [ ] Validar layout do PDF contra o formulário original em leitor externo/aparelho.
 - [ ] Confirmar captura de câmera, assinaturas e exportações no aparelho.

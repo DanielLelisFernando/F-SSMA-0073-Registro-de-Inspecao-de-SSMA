@@ -46,10 +46,11 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
+import java.security.MessageDigest
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-private const val APP_VERSION = "2.2.15"
+private const val APP_VERSION = "2.2.16"
 private const val LOGO_ASSET = "salum_logo.jpg"
 data class Finding(val desc:String="",val severity:String="LEVE",val action:String="",val deadline:String="",val owner:String="",val photo:String="")
 data class Participant(val name:String="",val signature:String="")
@@ -302,45 +303,62 @@ class MainActivity:ComponentActivity(){
   var evidenceExpected=0
   var evidenceIncluded=0
   var evidenceMissing=0
-  ZipOutputStream(FileOutputStream(z)).use{zip->
-   chosen.forEach{r->
-    val base=safeFilePart("${r.number.ifBlank{r.id.toString()}}_ID_${r.id}")
-    val pdfFile=File(r.pdf).takeIf{it.exists()}?:pdf(r)
-    zip.putNextEntry(ZipEntry("$base/Inspecao.pdf"));pdfFile.inputStream().use{it.copyTo(zip)};zip.closeEntry()
-    fun addUri(raw:String,name:String):Boolean{
-     var entryOpen=false
-     return try{
-      val uri=Uri.parse(raw)
-      val input=if(uri.scheme=="file")File(uri.path?:return false).takeIf{it.exists()&&it.isFile}?.inputStream() else contentResolver.openInputStream(uri)
-      if(input==null)return false
-      input.use{
-       zip.putNextEntry(ZipEntry("$base/$name"))
-       entryOpen=true
-       it.copyTo(zip)
-       zip.closeEntry()
-       entryOpen=false
-      }
-      true
-     }catch(_:Exception){
-      if(entryOpen)try{zip.closeEntry()}catch(_:Exception){}
-      false
-     }
-    }
-    val evidence=collectInspectionEvidence(r)
-    evidenceExpected+=evidence.size
-    val outcomes=evidence.map{item->ExportEvidenceStatus(item,addUri(item.sourceUri,item.archiveFileName))}
-    evidenceIncluded+=outcomes.count{it.included}
-    evidenceMissing+=outcomes.count{!it.included}
-    zip.putNextEntry(ZipEntry("$base/Manifest_Evidencias.txt"))
-    zip.write(buildEvidenceManifest(r.number,r.date,r.location,outcomes).toByteArray(Charsets.UTF_8))
-    zip.closeEntry()
-   }
+  fun stageUri(raw:String):File?{
+   var staged:File?=null
+   try{
+    val temp=File.createTempFile("ssma_evidence_",".tmp",cacheDir)
+    staged=temp
+    val uri=Uri.parse(raw)
+    val input=if(uri.scheme=="file")uri.path?.let{File(it).takeIf{file->file.exists()&&file.isFile}?.inputStream()} else contentResolver.openInputStream(uri)
+    if(input==null){temp.delete();return null}
+    input.use{source->temp.outputStream().use{output->source.copyTo(output,8192)}}
+    if(temp.length()<=0L){temp.delete();return null}
+    return temp
+   }catch(_:Exception){staged?.delete();return null}
   }
-  shareFiles(listOf(z),true)
-  toast(if(evidenceMissing>0) "ZIP exportado: $evidenceIncluded/$evidenceExpected evidências incluídas. Consulte o Manifesto." else if(evidenceExpected==0) "ZIP exportado. Nenhuma evidência adicional registrada." else "ZIP exportado: todas $evidenceIncluded evidências incluídas.")
-  selected=setOf()
- },modifier=Modifier.fillMaxWidth()){Text("Exportar selecionadas em ZIP (PDF + evidências)")}
- if(pendingHistoryEdit!=null){val target=pendingHistoryEdit!!;AlertDialog(onDismissRequest={pendingHistoryEdit=null},title={Text("Rascunho em andamento")},text={Text("Há um rascunho não concluído. Para editar esta inspeção, será necessário descartá-lo. Você pode retomar o rascunho em vez de descartá-lo.")},confirmButton={TextButton(onClick={draftPrefs.edit().remove("inspectionDraft").apply();draftExists=false;pendingHistoryEdit=null;startForm(target)}){Text("Descartar e editar")}},dismissButton={TextButton(onClick={pendingHistoryEdit=null;resumeDraft()}){Text("Retomar rascunho")}})}
+  fun sha256(file:File):String{
+   val digest=MessageDigest.getInstance("SHA-256")
+   file.inputStream().buffered().use{input->
+    val buffer=ByteArray(8192)
+    while(true){val count=input.read(buffer);if(count<0)break;digest.update(buffer,0,count)}
+   }
+   return digest.digest().joinToString(""){byte->"%02x".format(byte)}
+  }
+  try{
+   ZipOutputStream(FileOutputStream(z)).use{zip->
+    chosen.forEach{r->
+     val base=safeFilePart("${r.number.ifBlank{r.id.toString()}}_ID_${r.id}")
+     val pdfFile=File(r.pdf).takeIf{it.exists()}?:pdf(r)
+     zip.putNextEntry(ZipEntry("$base/Inspecao.pdf"));pdfFile.inputStream().use{it.copyTo(zip)};zip.closeEntry()
+     val evidence=collectInspectionEvidence(r)
+     evidenceExpected+=evidence.size
+     val outcomes=evidence.map{item->
+      val staged=stageUri(item.sourceUri)
+      if(staged==null)ExportEvidenceStatus(item,false)
+      else try{
+       val bytes=staged.length()
+       val checksum=sha256(staged)
+       zip.putNextEntry(ZipEntry("$base/${item.archiveFileName}"))
+       staged.inputStream().use{it.copyTo(zip,8192)}
+       zip.closeEntry()
+       ExportEvidenceStatus(item,true,bytes,checksum)
+      }finally{staged.delete()}
+     }
+     evidenceIncluded+=outcomes.count{it.included}
+     evidenceMissing+=outcomes.count{!it.included}
+     zip.putNextEntry(ZipEntry("$base/Manifest_Evidencias.txt"))
+     zip.write(buildEvidenceManifest(r.number,r.date,r.location,outcomes).toByteArray(Charsets.UTF_8))
+     zip.closeEntry()
+    }
+   }
+   shareFiles(listOf(z),true)
+   toast(if(evidenceMissing>0) "ZIP exportado: $evidenceIncluded/$evidenceExpected evidências incluídas. Consulte o Manifesto." else if(evidenceExpected==0) "ZIP exportado. Nenhuma evidência adicional registrada." else "ZIP exportado: todas $evidenceIncluded evidências incluídas.")
+   selected=setOf()
+  }catch(e:Exception){
+   z.delete()
+   toast("Falha ao gerar ZIP: ${e.message}")
+  }
+ },modifier=Modifier.fillMaxWidth()){Text("Exportar selecionadas em ZIP (PDF + evidências)")} if(pendingHistoryEdit!=null){val target=pendingHistoryEdit!!;AlertDialog(onDismissRequest={pendingHistoryEdit=null},title={Text("Rascunho em andamento")},text={Text("Há um rascunho não concluído. Para editar esta inspeção, será necessário descartá-lo. Você pode retomar o rascunho em vez de descartá-lo.")},confirmButton={TextButton(onClick={draftPrefs.edit().remove("inspectionDraft").apply();draftExists=false;pendingHistoryEdit=null;startForm(target)}){Text("Descartar e editar")}},dismissButton={TextButton(onClick={pendingHistoryEdit=null;resumeDraft()}){Text("Retomar rascunho")}})}
  records.forEach{r->Card(Modifier.fillMaxWidth()){Column(Modifier.padding(12.dp),verticalArrangement=Arrangement.spacedBy(6.dp)){Row{Checkbox(checked=r.id in selected,onCheckedChange={selected=if(it)selected+r.id else selected-r.id});Column{Text("Inspeção ${r.number.ifBlank{"#${r.id}"}}",style=MaterialTheme.typography.titleMedium);Text("${r.date} • ${r.location}");Text("${r.responsible}")}};Row{Button(onClick={if(draftExists)pendingHistoryEdit=r else startForm(r)}){Text("Editar")};Button(onClick={val f=File(r.pdf);shareFiles(listOf(if(f.exists())f else pdf(r)))}){Text("PDF")}}}}}
  }
  }
